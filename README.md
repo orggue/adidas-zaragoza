@@ -29,6 +29,7 @@ Training modules for all kind of trainings
 | AM  | Advanced Mesos                     | Framework development, working with Minimesos                                             |
 | MP  | Mesos in Production*               | Running production grade Zookeeper… Debugging                                             |
 | AKE | Apache Kafka Essentials            | Concepts, Clients etc.                                                                    |
+| SE  | Scheduling Essentials              | Concepts,                                                                                 |
 
 *) Flavours: GCE, AWS, Azure, Metal (leveraging the respective tools like EC2/Azure Container Service)
 
