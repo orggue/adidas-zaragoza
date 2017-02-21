@@ -5,6 +5,7 @@ metadata:
   labels:
     k8s-app: ingress-controller
     component: core
+  namespace: kube-system
 spec:
   template:
     metadata:
@@ -41,8 +42,9 @@ spec:
           hostPort: 443
         args:
         - /nginx-ingress-controller
-        - --default-backend-service=$(POD_NAMESPACE)/ingress-controller-defb
-        - --nginx-configmap=$(POD_NAMESPACE)/ingress-controller-config
+        - --default-backend-service=$(POD_NAMESPACE)/default-http-backend
+        - --nginx-configmap=$(POD_NAMESPACE)/ingress-controller-config-template
+        - --default-ssl-certificate=$(POD_NAMESPACE)/tls-certificate
         - --v=3
         volumeMounts:
           - mountPath: /etc/nginx/template

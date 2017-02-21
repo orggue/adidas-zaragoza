@@ -5,6 +5,7 @@ metadata:
   labels:
     k8s-app: ingress-controller
     component: config-template
+  namespace: kube-system
 data:
   nginx.tmpl: |
     {{ $cfg := .cfg }}

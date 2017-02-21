@@ -1,11 +1,24 @@
 ## Creating and Managing Services
 
-Services provide stable endpoints for Pods based on a set of labels and selectors.
-
 In this section you will create the `k8s-hello-world` service and "expose" the `k8s-hello-world` Pod. You will learn how to:
 
 * Create a service
 * Use label and selectors to expose a limited set of Pods externally
+
+----
+
+### Introduction to services
+Services provide stable endpoints for Pods based on a set of labels and selectors.
+Some of the service types are :
+`ClusterIP` Your service is only expose internally to the cluster on the internal cluster IP. A example would be to deploy Hasicorp’s vault and expose it only internally.
+
+`NodePort` Expose the service on the instances on the specified or random assigned port.
+
+`LoadBalancer` Supported on e.g. Amazon and Google cloud, this creates load balancer VIP
+
+`ExternalName` Create a CNAME dns record to a external domain.
+
+For more information about Services look at https://kubernetes.io/docs/user-guide/services/
 
 ----
 
