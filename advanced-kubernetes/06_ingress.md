@@ -67,6 +67,9 @@ spec:
 This section will focus on the nginx-ingress-controller. There are others like HAProxy or Traefik available. They can easily be exchanged. To check which one is best suited for you, please check the documentation of the loadbalancers if they meet your requirements.
 There are also implementations for hardware loadbalancers like F5 available, but I haven't seen them used out in the wild.
 
+Specialities of the NGINX ingress controller
+The NGINX ingress controller does not uses Services to route traffic to the pods. Instead it uses the Endpoints API in order to bypass kube-proxy to allow NGINX features like session affinity and custom load balancing algorithms. It also removes some overhead, such as conntrack entries for iptables DNAT.
+
 ----
 
 ### Setup
@@ -222,3 +225,46 @@ curl -H "Host: foo.bar.com" https://$(minikube ip)/ssl --insecure
 * Write a ingress manifest to expose the nginx service on port 80 listening on training.example.com/nginx
 * Create a SSL certificate for training.example.com and create a ingress manifest for ssl and path /ssl
 * Access the nginx via `curl` or a browser on port 80 and 443
+
+----
+
+### Whitelist
+
+### TCP
+https://github.com/kubernetes/contrib/tree/master/ingress/controllers/nginx/examples/tcp
+### UDP
+
+Ingress does not support UDP services (yet). For this reason this Ingress controller uses a ConfigMap where the key is the external port to use and the value is <namespace/service name>:<service port> It is possible to use a number or the name of the port.
+
+```
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: udp-configmap-example
+  namespace: kube-system
+data:
+  53: "kube-system/kube-dns:53"
+```
+
+To enable this capability you also need to tell the ingress controller where the service is deployed and the name of it. In our example it will be `--udp-services-configmap=$(POD_NAMESPACE)/udp-configmap-example`.
+
+----
+
+### Deploy UDP ingress ressource
+
+```
+kubectl replace -f configs/ingress-daemonset-udp.yaml
+kubectl create -f configs/udp-configmap-example.yaml
+````
+
+### Test our UDP service
+
+
+
+https://github.com/kubernetes/ingress/tree/master/examples
+
+https://github.com/kubernetes/contrib/tree/master/ingress/controllers/nginx/examples/udp
+### External Auth
+https://github.com/kubernetes/contrib/tree/master/ingress/controllers/nginx/examples/external-auth
+### Sticky Session
+https://github.com/kubernetes/ingress/tree/master/examples/affinity/cookie/nginx

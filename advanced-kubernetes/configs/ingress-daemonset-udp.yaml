@@ -15,7 +15,8 @@ spec:
     spec:
       terminationGracePeriodSeconds: 60
       containers:
-      - image: gcr.io/google_containers/nginx-ingress-controller:0.8.3
+#      - image: gcr.io/google_containers/nginx-ingress-controller:0.8.3
+      - image: gcr.io/google_containers/nginx-ingress-controller:0.9.0-beta.1
         name: ingress-controller-core
         imagePullPolicy: Always
         livenessProbe:
@@ -43,7 +44,7 @@ spec:
         args:
         - /nginx-ingress-controller
         - --default-backend-service=$(POD_NAMESPACE)/default-http-backend
-        - --nginx-configmap=$(POD_NAMESPACE)/ingress-controller-config-template
+        - --configmap=$(POD_NAMESPACE)/ingress-controller-config-template
         - --udp-services-configmap=$(POD_NAMESPACE)/udp-configmap-example
         - --v=3
         volumeMounts:
