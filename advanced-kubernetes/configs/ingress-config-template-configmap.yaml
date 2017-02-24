@@ -5,6 +5,7 @@ metadata:
   labels:
     k8s-app: ingress-controller
     component: config-template
+  namespace: kube-system
 data:
   nginx.tmpl: |
     {{ $cfg := .cfg }}
@@ -337,7 +338,7 @@ data:
     }
 
     stream {
-    # TCP services
+    TCP services
     {{ range $i, $tcpServer := .tcpUpstreams }}
         upstream tcp-{{ $tcpServer.Upstream.Name }} {
             {{ range $server := $tcpServer.Upstream.Backends }}server {{ $server.Address }}:{{ $server.Port }};
@@ -352,7 +353,7 @@ data:
         }
     {{ end }}
 
-    # UDP services
+    UDP services
     {{ range $i, $udpServer := .udpUpstreams }}
         upstream udp-{{ $udpServer.Upstream.Name }} {
             {{ range $server := $udpServer.Upstream.Backends }}server {{ $server.Address }}:{{ $server.Port }};

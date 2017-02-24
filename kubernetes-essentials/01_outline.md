@@ -1,4 +1,13 @@
 # Outline
+
+## Objectives
+Attendees who successfully complete this course will be able to:
+
+* Discuss about Kubernetes features, benefits, and basic use cases
+* Explain the shortcomings of containers, and how Kubernetes can help here
+* Describe the architecture of Kubernetes and its different components
+* Deploy and manage workloads 
+
 ## Day 1
 ### Introduction to Docker containers
 * A brief history of Docker

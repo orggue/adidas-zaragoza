@@ -64,89 +64,207 @@ spec:
 
 ----
 
-This is a ingress controller based on nginx. There are others like HAProxy or Traefik available. They can easily be exchanged. To check which one is best suited for you, please check the documentation of the loadbalancers if they meet your requirements.
+This section will focus on the nginx-ingress-controller. There are others like HAProxy or Traefik available. They can easily be exchanged. To check which one is best suited for you, please check the documentation of the loadbalancers if they meet your requirements.
 There are also implementations for hardware loadbalancers like F5 available, but I haven't seen them used out in the wild.
 
-```
-apiVersion: extensions/v1beta1
-kind: DaemonSet
-metadata:
-  name: ingress-controller
-  labels:
-    k8s-app: ingress-controller
-    component: core
-spec:
-  template:
-    metadata:
-      labels:
-        k8s-app: ingress-controller
-        component: core
-    spec:
-      terminationGracePeriodSeconds: 60
-      containers:
-      - image: gcr.io/google_containers/nginx-ingress-controller:0.8.3
-        name: ingress-controller-core
-        imagePullPolicy: Always
-        livenessProbe:
-          httpGet:
-            path: /healthz
-            port: 10254
-            scheme: HTTP
-          initialDelaySeconds: 30
-          timeoutSeconds: 5
-        # use downward API
-        env:
-        - name: POD_NAME
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.name
-        - name: POD_NAMESPACE
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.namespace
-        ports:
-        - containerPort: 80
-          hostPort: 80
-        - containerPort: 443
-          hostPort: 443
-        args:
-        - /nginx-ingress-controller
-        - --default-backend-service=$(POD_NAMESPACE)/ingress-controller-defb
-        - --nginx-configmap=$(POD_NAMESPACE)/ingress-controller-config
-        - --v=3
-        volumeMounts:
-          - mountPath: /etc/nginx/template
-            name: config-template
-            readOnly: true
-      volumes:
-        - name: config-template
-          configMap:
-            name: ingress-controller-config-template
-            items:
-            - key: nginx.tmpl
-              path: nginx.tmpl
-```
-
-Here you see a DaemonSet. DaemonSets are currently in beta, that's why we don't go any deeper here. DaemonSets ensure that on each node one instance is of the specified pod is running. You can do the same with NodeSelectors and RC/RS/Deployments, but for portability DaemonSets are a better fit. For the ingress controller ifself it makes no difference.
+Specialities of the NGINX ingress controller
+The NGINX ingress controller does not uses Services to route traffic to the pods. Instead it uses the Endpoints API in order to bypass kube-proxy to allow NGINX features like session affinity and custom load balancing algorithms. It also removes some overhead, such as conntrack entries for iptables DNAT.
 
 ----
 
-### Try it!
+### Setup
 
-* Deploy the content of the ingress folder ```kubectl create -f ingress```
+For the controller, the first thing we need to do is setup a default backend service for nginx.
 
-Hint: with the above command you specify a folder and k8s will deploy everything in this folder.
+The default backend is the default fall-back service if the controller cannot route a request to a service. The default backend needs to satisfy the following two requirements :
+* serves a 404 page at /
+* serves 200 on a /healthz
 
-Test it
-```bash
-curl -I -H 'Host: frontend.example.com' $(minikube ip)
+Infos about the default backend can be found [here:](https://github.com/kubernetes/contrib/tree/master/404-server)
+
+----
+
+### Create the default backend
+
+Let’s use the example default backend of the official kubernetes nginx ingress project:
+
+```
+kubectl create -f https://raw.githubusercontent.com/kubernetes/ingress/master/examples/deployment/nginx/default-backend.yaml
+
+```
+
+----
+
+### Deploy the loadbalancer
+
+```
+kubectl create -f configs/ingress-config-template-configmap.yaml
+kubectl create -f configs/ingress-daemonset.yaml
+```
+
+This will create a nginx-ingress-controller on each available node
+
+----
+
+### Deploy some application
+
+First we need to deploy some application to publish. To keep this simple we will use the echoheaders app that just returns information about the http request as output
+```
+kubectl run echoheaders --image=gcr.io/google_containers/echoserver:1.4 --replicas=1 --port=8080
+```
+Now we expose the same application in two different services (so we can create different Ingress rules)
+```
+kubectl expose deployment echoheaders --port=80 --target-port=8080 --name=echoheaders-x
+kubectl expose deployment echoheaders --port=80 --target-port=8080 --name=echoheaders-y
+```
+
+----
+
+### Create ingress rules
+
+Next we create a couple of Ingress rules
+
+kubectl create -f configs/ingress.yaml
+
+```
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata: 
+  name: echomap
+spec: 
+  rules: 
+    - host: foo.bar.com
+      http: 
+        paths: 
+          - path: /foo
+            backend: 
+              serviceName: echoheaders-x
+              servicePort: 80           
+    - host: bar.baz.com
+      http: 
+        paths: 
+          - path: /bar
+            backend: 
+              serviceName: echoheaders-y
+              servicePort: 80
+          - path: /foo
+            backend: 
+              serviceName: echoheaders-x
+              servicePort: 80
+```
+
+----
+
+### Accessing the application
+
+We can use curl or a browser. If you want to access the applications you need either to edit you `/etc/hosts` file with the domains `foo.bar.com` and `bar.baz.com` and as the IP use the IP of minikube. Or having a browser plugin installed to manipulate the host header.
+
+Here we'll use `curl``
+
+```
+curl -H "Host: foo.bar.com" http://$(minikube ip)/bar
+curl -H "Host: bar.baz.com" http://$(minikube ip)/bar
+curl -H "Host: bar.baz.com" http://$(minikube ip)/foo
+````
+
+----
+
+### Enabling SSL
+
+We want to have SSL for our services enabled. So let's create first the needed certificates for `foo.bar.com`:
+
+```
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout tls.key -out tls.crt -subj "/CN=foo.bar.com"
+```
+
+----
+
+### Create secrets for the SSL certificates
+
+In order to pass the cert and key to the controller we'll create secrets as follow, where tsl.key is the key name and tsl.crt is your certificate and server.pem is the pem file.
+```
+kubectl create secret tls foo-secret --key tls.key --cert tls.crt
+kubectl create secret generic tls-dhparam --from-file=dhparam.pem 
+```
+
+----
+
+### Create an ingress using SSL
+
+```
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: foo-ssl
+  namespace: default
+spec:
+  tls:
+  - hosts:
+    - foo.bar.com
+    secretName: foo-secret
+  rules:
+  - host: foo.bar.com
+    http:
+      paths:
+      - backend:
+          serviceName: echoheaders-x
+          servicePort: 80
+        path: /ssl
+```
+
+```
+kubectl create -f configs/ingress-ssl.yaml
+curl -H "Host: foo.bar.com" https://$(minikube ip)/ssl --insecure
 ```
 
 ----
 
 ### Do it yourself
 
-* Write a ingress manifest to expose the nginx service on port 80
-* Access the nginx via `curl` or a browser on port 80
- 
- You don't need to change the controller
+* Deploy an nginx and expose it using a service
+* Write a ingress manifest to expose the nginx service on port 80 listening on training.example.com/nginx
+* Create a SSL certificate for training.example.com and create a ingress manifest for ssl and path /ssl
+* Access the nginx via `curl` or a browser on port 80 and 443
+
+----
+
+### Whitelist
+
+### TCP
+https://github.com/kubernetes/contrib/tree/master/ingress/controllers/nginx/examples/tcp
+### UDP
+
+Ingress does not support UDP services (yet). For this reason this Ingress controller uses a ConfigMap where the key is the external port to use and the value is <namespace/service name>:<service port> It is possible to use a number or the name of the port.
+
+```
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: udp-configmap-example
+  namespace: kube-system
+data:
+  53: "kube-system/kube-dns:53"
+```
+
+To enable this capability you also need to tell the ingress controller where the service is deployed and the name of it. In our example it will be `--udp-services-configmap=$(POD_NAMESPACE)/udp-configmap-example`.
+
+----
+
+### Deploy UDP ingress ressource
+
+```
+kubectl replace -f configs/ingress-daemonset-udp.yaml
+kubectl create -f configs/udp-configmap-example.yaml
+````
+
+### Test our UDP service
+
+
+
+https://github.com/kubernetes/ingress/tree/master/examples
+
+https://github.com/kubernetes/contrib/tree/master/ingress/controllers/nginx/examples/udp
+### External Auth
+https://github.com/kubernetes/contrib/tree/master/ingress/controllers/nginx/examples/external-auth
+### Sticky Session
+https://github.com/kubernetes/ingress/tree/master/examples/affinity/cookie/nginx
