@@ -98,7 +98,6 @@ kubectl create -f https://raw.githubusercontent.com/kubernetes/ingress/master/ex
 ### Deploy the loadbalancer
 
 ```
-kubectl create -f configs/ingress-config-template-configmap.yaml
 kubectl create -f configs/ingress-daemonset.yaml
 ```
 
@@ -230,8 +229,136 @@ curl -H "Host: foo.bar.com" https://$(minikube ip)/ssl --insecure
 
 ### Whitelist
 
+If you are using Ingress on your Kubernetes cluster it is possible to restrict access to your application based on dedicated IP addresses. 
+IP whitelisting to restrict access can be used .This can be done with specifying the allowed client IP source ranges through the `ingress.kubernetes.io/whitelist-source-range` annotation. The value is a comma separated list of CIDR block, e.g. 10.0.0.0/24,1.1.1.1/32.
+
+If you want to set a default global set of IPs this needs to be set in the config of the ingress-controller. 
+
+----
+
+### The configuration:
+
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: whitelist
+  annotations:
+    ingress.kubernetes.io/whitelist-source-range: "1.1.1.1/24"
+spec:
+  rules:
+  - host: whitelist.test.net
+  http:
+    paths:
+    - path: /
+    backend:
+      serviceName: webserver
+      servicePort: 80
+
+----
+
+### Testing with the annotation set:
+
+curl -v -H "Host: whitelist.test.net" <HOST-IP>/graph
+* Trying <HOST-IP>...
+* TCP_NODELAY set
+* Connected to <HOST-IP> (<HOST-IP>) port 80 (#0)
+> GET /graph HTTP/1.1
+> Host: whitelist.test.net
+> User-Agent: curl/7.51.0
+> Accept: */*
+> 
+< HTTP/1.1 403 Forbidden
+< Server: nginx/1.11.3
+< Date: Tue, 07 Feb 2017 09:46:51 GMT
+< Content-Type: text/html
+< Content-Length: 169
+< Connection: keep-alive
+< 
+<html>
+<head><title>403 Forbidden</title></head>
+<body bgcolor="white">
+<center><h1>403 Forbidden</h1></center>
+<hr><center>nginx/1.11.3</center>
+</body>
+</html>
+* Curl_http_done: called premature == 0
+* Connection #0 to host <HOST-IP> left intact
+
+----
+
+### Testing without the annotation set:
+
+```bash
+curl -v -H "Host: whitelist.test.net" <HOST-IP>/graph
+* Trying <HOST-IP>...
+* TCP_NODELAY set
+* Connected to <HOST-IP> (<HOST-IP>) port 80 (#0)
+> GET /graph HTTP/1.1
+> Host: whitelist.test.net
+> User-Agent: curl/7.51.0
+> Accept: */*
+> 
+< HTTP/1.1 200 OK
+< Server: nginx/1.11.3
+< Date: Tue, 07 Feb 2017 09:49:01 GMT
+< Content-Type: text/html; charset=utf-8
+< Transfer-Encoding: chunked
+< Connection: keep-alive
+
+* Curl_http_done: called premature == 0
+* Connection #0 to host <HOST-IP> left intact
+```
+
+Using this simple annotation, you’re able to restrict who can access the applications in your kubernetes cluster by its IPs.
+
+----
+
+### Path rewrites
+
+Sometimes, there is a need to rewrite the path of a request to match up with the backend service. One such scenario might be, a API got developed and deployed, got changed over time, but there is still a need to be backwards compatibility on the API endpoints.
+
+```
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: apitest
+  namespace: applications
+  annotations:
+    ingress.kubernetes.io/rewrite-target: /new/get
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  rules:
+  - host: "foo.bar.com"
+    http:
+      paths:
+      - path: /get/new
+        backend:
+          serviceName: echoheaders-y
+          servicePort: 80
+````
+
+----
+
 ### TCP
-https://github.com/kubernetes/contrib/tree/master/ingress/controllers/nginx/examples/tcp
+
+Ingress does not support TCP services (yet). For this reason this Ingress controller uses the flag --tcp-services-configmap to point to an existing config map where the key is the external port to use and the value is <namespace/service name>:<service port> It is possible to use a number or the name of the port.
+
+
+```
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tcp-configmap-example
+data:
+  9000: "default/example-go:8080"
+```
+
+----
+
+### Test your TCP service
+
+----
+
 ### UDP
 
 Ingress does not support UDP services (yet). For this reason this Ingress controller uses a ConfigMap where the key is the external port to use and the value is <namespace/service name>:<service port> It is possible to use a number or the name of the port.
@@ -255,16 +382,15 @@ To enable this capability you also need to tell the ingress controller where the
 ```
 kubectl replace -f configs/ingress-daemonset-udp.yaml
 kubectl create -f configs/udp-configmap-example.yaml
-````
+```
+
+----
 
 ### Test our UDP service
 
 
 
-https://github.com/kubernetes/ingress/tree/master/examples
 
-https://github.com/kubernetes/contrib/tree/master/ingress/controllers/nginx/examples/udp
 ### External Auth
-https://github.com/kubernetes/contrib/tree/master/ingress/controllers/nginx/examples/external-auth
 ### Sticky Session
 https://github.com/kubernetes/ingress/tree/master/examples/affinity/cookie/nginx
