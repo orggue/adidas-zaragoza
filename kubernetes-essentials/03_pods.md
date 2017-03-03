@@ -54,7 +54,7 @@ Save that to a file called `server.js`
 
 ### Create a docker container image
 
-Create the file Dockerfile for hello-node (note port 8080 in the EXPOSE command):
+Create the file `Dockerfile` for hello-node (note port 8080 in the EXPOSE command):
 ```
 FROM node:6.9
 EXPOSE 8080
@@ -148,24 +148,42 @@ kubectl describe pods <pod-name>
 
 ### Interact with a Pod remotely
 
-Pods are allocated a private IP address by default and cannot be reached outside of the cluster. Use the `kubectl port-forward` command to map a local port to a port inside the `k8s-hello-world` pod.
+Pods are allocated a private IP address by default and cannot be reached outside of the cluster. Use the `kubectl port-forward`, as allreday done in the previous section, to map a local port to a port inside the `hello-node` pod.
 
 Use two terminals. One to run the `kubectl port-forward` command, and the other to issue `curl` commands.
 
 ----
-
-### Do it yourself
-* Configure `port-forward``
-* Get output of the application using `cur`or your browser
+Terminal 1
+```
+kubectl port-forward hello-node 8080 8080
+```
+Terminal 2
+```
+curl 0.0.0.0:8080
+Hello World!
+````
 
 ----
 
+### Do it yourself
+* Create a `nginx.conf` which returns a 200 "From zero to hero"
+* Create a Docker container based on nginx and copy the `nginx.conf` file in that container
+* Build the container on minikube
+* Create a Pod manifest using the new container
+* Get output of the application using `curl`or your browser
+* Access the pod on port 80 using port-forward
+* View the logs of the nginx container
+
+----
+
+### Debugging
+
 ### View the logs of a Pod
 
-Use the `kubectl logs` command to view the logs for the `k8s-hello-world` Pod:
+Use the `kubectl logs` command to view the logs for the `<PODNAME>` Pod:
 
 ```
-kubectl logs k8s-hello-world
+kubectl logs <PODNAME>
 ```
 
 > Use the -f flag and observe what happens.
@@ -174,15 +192,11 @@ kubectl logs k8s-hello-world
 
 ### Run an interactive shell inside a Pod
 
-Like with Docker you can establish an interactive shell to a pod with almost the same sytax. Use the `kubectl exec` command to run an interactive shell inside the `k8s-hello-world` Pod:
+Like with Docker you can establish an interactive shell to a pod with almost the same sytax. Use the `kubectl exec` command to run an interactive shell inside the `<PODNAME>` Pod:
 
 ```
-kubectl exec -ti k8s-hello-world /bin/sh
+kubectl exec -ti <PODNAME> /bin/sh
 ```
 
 ----
 
-### Do it yourself
-* Create a Pod manifest using the nginx containers
-* Access the pod on port 80 using port-forward
-* View the logs of the nginx container
