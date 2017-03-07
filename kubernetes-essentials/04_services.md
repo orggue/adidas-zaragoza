@@ -1,6 +1,6 @@
 ## Creating and Managing Services
 
-In this section you will create the `k8s-hello-world` service and "expose" the `k8s-hello-world` Pod. You will learn how to:
+In this section you will create the `hello-node` service and "expose" the `hello-node` Pod. You will learn how to:
 
 * Create a service
 * Use label and selectors to expose a limited set of Pods externally
@@ -24,29 +24,28 @@ For more information about Services look at https://kubernetes.io/docs/user-guid
 
 ### Create a Service
 
-Explore the k8s-hello-world service configuration file:
+Explore the hello-node service configuration file:
 
 ```
 cat service.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: k8s-hello-world
+  name: hello-node
 spec:
   type: NodePort
   ports:
-    - port: 8080
+  - port: 8080
     protocol: TCP
     targetPort: 8080
     nodePort: 30080
   selector:
-    app: k8s-hello-world
+    app: hello-node
 ```
-type: NodePort is needed as we don't have a integrated loadbalancer like at GKE/AWS
-nodePort: We assigned a static high-port for having consistency in this doc. If not statically set, a random port between 30000-32000 will be assigned.
+type: NodePort is needed as we don't have a integrated loadbalancer like at GKE/AWS and we assign a static high-port for having consistency in this doc. If not statically set, a random port between 30000-32000 will be allocated.
 ----
 
-Create the k8s-hello-world service using kubectl:
+Create the hello-node service using kubectl:
 
 ```
 kubectl create -f service.yaml
@@ -54,7 +53,7 @@ kubectl create -f service.yaml
 
 ----
 
-### Interact with the k8s-hello-world Service Remotely
+### Interact with the hello-node Service Remotely
 
 ```
 curl -i 0.0.0.0:30080
@@ -62,14 +61,14 @@ curl -i 0.0.0.0:30080
 
 ----
 
-### Explore the k8s-hello-world Service
+### Explore the hello-node Service
 
 ```
-kubectl get services k8s-hello-world
+kubectl get services hello-node
 ```
 
 ```
-kubectl describe services k8s-hello-world
+kubectl describe services hello-node
 ```
 
 ----
@@ -79,21 +78,21 @@ kubectl describe services k8s-hello-world
 One way to troubleshoot an issue is to use the `kubectl get pods` command with a label query.
 
 ```
-kubectl get pods -l "app=k8s-hello-world"
+kubectl get pods -l "app=hello-node"
 ```
 
 With the `kubectl label` command you can add labels like `secure=disabled` to a Pod.
 
 ```
-kubectl label pods k8s-hello-world 'secure=disabled'
+kubectl label pods hello-node 'secure=disabled'
 ```
 
 ----
 
-View the list of endpoints on the `k8s-hello-world` service:
+View the list of endpoints on the `hello-node` service:
 
 ```
-kubectl describe services k8s-hello-world
+kubectl describe services hello-node
 ```
 
 ----
