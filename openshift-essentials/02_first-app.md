@@ -3,14 +3,10 @@
 The format of a oc command is: oc [action] [resource]  
 This performs the specified action  (like create, describe) on the specified resource (like node, container). You can use --help after the command to get additional info about possible parameters (oc get nodes --help).
 
-Before we start we need to ensure that OpenShift is running and that `oc` is configured to talk to your cluster:
+Before we start we need to ensure that you're loged-in and OpenShift is running and that `oc` is configured to talk to your cluster:
 ```
+oc login -u <USER$> -p <PASSWORD>
 oc version
-```
-
-You can see both the client and the server versions
-```
-oc get nodes
 ```
 
 Here we see the available nodes, just one in our case. OpenShift will choose where to deploy our application based on the available Node resources.
@@ -24,8 +20,8 @@ Let’s run our first app on OpenShift with the oc run command. The run command 
 Create a new project
 
 ```bash
-oc new-project <YOUR_LASTNAME>
-Now using project "<YOUR_LASTNAME>" on server "https://ip-172-16-254-94.eu-central-1.compute.internal:8443".
+oc new-project <USER$>
+Now using project "<USER$>" on server "https://ip-172-16-254-94.eu-central-1.compute.internal:8443".
 
 You can add applications to this project with the 'new-app' command. For example, try:
 
