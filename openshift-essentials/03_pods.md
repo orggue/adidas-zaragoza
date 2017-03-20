@@ -54,10 +54,10 @@ docker-registry    172.30.6.185    <none>        5000/TCP                  2h
 
 ### Build the container
 
-Use the IP of the registry as usernamsace for the image
+Use the IP of the registry as usernamespace for the image
 
 ```
-docker build -t 172.30.6.185:5000/training/hello-node:v1 .
+docker build -t 172.30.6.185:5000/<LASTNAME>/hello-node:v1 .
 ```
 
 ----
@@ -68,7 +68,7 @@ docker build -t 172.30.6.185:5000/training/hello-node:v1 .
 oc login
 oc whoami -t
 AF1oHmFQa9EQ483SXYBe6XRnfZuGftbkRDIdMiZgsVw
-docker login -u admin -e test@what.com -p AF1oHmFQa9EQ483SXYBe6XRnfZuGftbkRDIdMiZgsVw https://172.30.6.185:5000/v2/
+docker login -u <USER$> -e test@what.com -p AF1oHmFQa9EQ483SXYBe6XRnfZuGftbkRDIdMiZgsVw https://172.30.6.185:5000/v2/
 ```
 
 ----
@@ -78,7 +78,7 @@ docker login -u admin -e test@what.com -p AF1oHmFQa9EQ483SXYBe6XRnfZuGftbkRDIdMi
 The docker client is now configured to push the image to the OpenShift registry
 
 ```
-docker push 172.30.6.185:5000/training/hello-node:v1
+docker push 172.30.6.185:5000/<USER$>/hello-node:v1
 ```
 
 ----
@@ -95,7 +95,6 @@ deploymentconfig "hello-node" created
 ### Check Deployment and Pod
 
 ```
-oc get deploymentconfig
 oc get deploymentconfig
 NAME         REVISION   DESIRED   CURRENT   TRIGGERED BY
 hello-node   1          1         1         config
