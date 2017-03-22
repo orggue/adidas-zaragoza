@@ -21,7 +21,7 @@ Training modules for all kind of trainings
 | PE  | Prometheus Essentials              | Scraping, Query Language, Alerting, Building dashboards...                                |
 | DTE | Distributed Tracing Essentials     | Dapper, OpenTracing, ZipKin, app integration (Go/Java/Node..)                             |
 | CLE | Cloud Native Logging Essentials    | fluentd, app integration, comparison to ELK stack                                         |
-| CDC | Continuous Delivery with Container | CI/CD with Docker/Jenkins and an Orchestrator                                             |
+| CDC | Continuous Delivery with Containers| Intro & Background to CI/CD, practicals with Drone, Docker, k8s                           |
 | MCM | Modern Configuration Management    | Nix, Habitat                                                                              |
 | TE  | Terraform Essentials               |                                                                                           |
 | AE  | Ansible Essentials                 |                                                                                           |
@@ -34,3 +34,22 @@ Training modules for all kind of trainings
 *) Flavours: GCE, AWS, Azure, Metal (leveraging the respective tools like EC2/Azure Container Service)
 
 **) Flavours: MongoDB, ElasticSearch
+
+## Usage
+
+Content is written in Markdown designed to be shown as a revealjs presentation
+(full instructions to follow).
+
+## Suggested Workflow (by AM)
+
+For a specific training, create a new branch. In this branch, remove the modules
+you don't need and make any unique changes (e.g. date, title). Any fixes or
+general improvements should be made to the _master_ branch and cherrypicked into
+the specific branch. If I find branches have fixes not in master, I will change
+all example code to Fortran 77.
+
+(I did steal this workflow the Google SRE book's chapter on releases)
+
+## Creating PDFs
+
+Instructions to follow...
