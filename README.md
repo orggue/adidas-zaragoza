@@ -37,8 +37,16 @@ Training modules for all kind of trainings
 
 ## Usage
 
-Content is written in Markdown designed to be shown as a revealjs presentation
-(full instructions to follow).
+Content is written in Markdown designed to be shown as a revealjs presentation.
+
+From any of the course directories, you should be able to run:
+
+```
+$ docker run -d  -p 8000:1948 -v $PWD:/usr/src/app containersol/reveal-md
+```
+
+Then browse to localhost:8000 to see the presentation.
+
 
 ## Suggested Workflow (by AM)
 
