@@ -5,8 +5,8 @@ This performs the specified action  (like create, describe) on the specified res
 
 Before we start we need to ensure that you're loged-in and OpenShift is running and that `oc` is configured to talk to your cluster:
 ```
-oc login -u <USER$> -p <PASSWORD>
 oc version
+oc login -u <USER$> -p <PASSWORD>
 ```
 
 Here we see the available nodes, just one in our case. OpenShift will choose where to deploy our application based on the available Node resources.
@@ -37,6 +37,30 @@ oc run hello-openshift --image=gcr.io/google_containers/echoserver:1.4 --port=80
 deploymentconfig "hello-openshift" created
 ```
 
+Check that the pods are created correctly via:  
+```
+oc get pods
+```
+
+After executing the command several times you should see an error `CrashLoopBackOff`  
+OpenShift makes sure a proviledged container cannot run.  
+This is a great feature and it SHOULD NOT be DISABLED for production!  
+
+```
+oadm --config=/etc/origin/master/admin.kubeconfig policy add-scc-to-group anyuid system:authenticated
+```
+
+For more info:  
+https://docs.openshift.com/container-platform/3.4/admin_guide/manage_scc.html#grant-access-to-the-privileged-scc
+
+The changes are applied automatically, but to speed it up, delete the pod.
+
+```
+oc get pods
+oc delete pod <POD_NAME$>
+oc get pods
+```
+
 This performed a few things for you:
 * searched for a suitable node
 * scheduled the application to run on that Node
@@ -47,7 +71,7 @@ This performed a few things for you:
 ### list your deploymentconfigs
 
 ```bash
-deploymentconfigs
+oc get deploymentconfig
 NAME        DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
 hello-openshift   1         1         1            1           31s
 ````
@@ -65,7 +89,7 @@ oc get pod
 ```
 Create the proxy
 ```bash
-oc port-forward hello-openshift-1-ogizd 8080 8080 
+oc port-forward hello-openshift-1-ogizd 8080
 ```
 We now have a connection between our host and the OpenShift cluster.
 
