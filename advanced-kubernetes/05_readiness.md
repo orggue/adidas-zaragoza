@@ -1,13 +1,21 @@
 ### What is Liveness and Readiness
 
-Kubernetes health checks are divided into liveness and readiness probes. 
-Kubernetes is focusing on running containers in production. Production means that we need a way to ensure pods are actually running and healthy. To achieve this, Kubernetes provides a way to declare if a pod is ready using a readiness probe.
+* Kubernetes health checks are divided into liveness and readiness probes. 
+* Kubernetes ensures pods are actually running and healthy. 
+* To achieve this, Kubernetes provides a way to declare if a pod is ready using a readiness probe.
 
 ----
 
 ### ReadinessProbe
 
-Readiness probes allow you to specify checks to verify if a Pod is ready for use. There are three methods that can be used to determine readiness. HTTP, Exec or TCPSocket.
+Readiness probes allow you to specify checks to verify if a Pod is ready for use with three methods:
+* HTTP
+* Exec 
+* TCPSocket
+
+----
+
+### HTTP Example
 
 ```
 readinessProbe:
@@ -25,7 +33,14 @@ readinessProbe:
 
 ### Liveness probes
 
-Once the application pod is up and running we need a way to confirm that it’s healthy and ready for serving traffic. If your application is crashing Kubernetes will see that the app has terminated and will restart it. Liveness probes are for situations when an app has crashed or isn't responding anymore. Just like the readiness probe, a liveness probe can be used to preform a set of health checks via HTTP or exec.
+* Once the application pod is up and running we need a way to confirm that it’s healthy and ready for serving traffic. 
+* If your application is crashing Kubernetes will restart it. 
+* Liveness probes are for situations where an app has crashed or isn't responding anymore. 
+* Just like the readiness probe, a liveness probe can be used to preform a set of health checks
+
+----
+
+### HTTP Example
 
 ```
 livenessProbe:
@@ -39,19 +54,13 @@ livenessProbe:
 
 `periodSeconds: 10` means that the check will be every 10 seconds performed
 
-----
-
-We are reusing the /ping endpoint to verify the health of the influxdb pod. It’s also possible to use another endpoint or leverage a command line utility in the container via the exec probe.
-
 Combining the readiness and liveness probes help ensure only healthy containers are running within the cluster. With the liveness probe you can monitor also downstream dependencies.
 
 ----
 
-### Example implementations
+### Example implementations / Liveness Probe
 
-### Liveness Probes
-
-As a simple example here is a health for a Go applications.
+As a simple example here is a healthcheck for a Go applications.
 
 ```
 http.HandleFunc("/healthcheck", func(w http.ResponseWriter, r *http.Request) {
@@ -60,7 +69,6 @@ http.HandleFunc("/healthcheck", func(w http.ResponseWriter, r *http.Request) {
 http.ListenAndServe(":8080", nil)
 ```
 
-----
 And this needs to be added into the Pod manifest
 ```
 livenessProbe:
@@ -75,7 +83,7 @@ livenessProbe:
 
 ### Readiness Probes
 
-A simple check if I can connect to the database
+A simple check to check the connection to the database
 
 ```
 http.HandleFunc("/readiness", func(w http.ResponseWriter, r *http.Request) {
@@ -132,26 +140,13 @@ livenessProbe:
 
 `httpHeaders` describes a custom header to be used in HTTP probes
 
+----
+
 ### Tutorial: Creating Pods with Liveness and Readiness Probes
 
-Explore the influxdb pod configuration:
+Explore the influxdb pod configuration: `configs/healthy-monolith.yaml`
 
 ```
-apiVersion: v1
-kind: Pod
-metadata:
-  name: "healthy-monolith"
-  labels:
-    app: monolith
-spec:
-  containers:
-    - name: monolith
-      image: kelseyhightower/monolith:1.0.0
-      ports:
-        - name: http
-          containerPort: 80
-        - name: health
-          containerPort: 81
       livenessProbe:
         httpGet:
           path: /healthz
@@ -169,6 +164,8 @@ spec:
         timeoutSeconds: 1
 ```
 
+----
+
 Create the healthy-monolith pod using 
 ```
 kubectl create -f configs/healthy-monolith.yaml
@@ -180,7 +177,7 @@ Thanks to Kelsey for this application
 
 ### View Pod details
 
-Pods will not be marked ready until the readiness probe returns an HTTP 200 response. Use the kubectl describe to view details for the healthy-monolith Pod.
+Pods will not be marked ready until the readiness probe returns an HTTP 200 response. Use the `kubectl describe` to view details for the healthy-monolith Pod.
 
 The healthy-monolith Pod logs each health check. Use the `kubectl logs` command to view them.
 
@@ -204,7 +201,7 @@ Force the monolith container readiness probe to fail. Use the curl command to to
 
 ```
 curl http://127.0.0.1:10081/readiness/status
-````
+```
 Wait about 45 seconds and get the status of the healthy-monolith Pod using the kubectl get pods command:
 
 ```
