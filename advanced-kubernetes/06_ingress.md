@@ -109,28 +109,28 @@ This will create a nginx-ingress-controller on each available node
 
 First we need to deploy some application to publish. To keep this simple we will use the echoheaders app that just returns information about the http request as output
 ```
-kubectl run echoheaders --image=gcr.io/google_containers/echoserver:1.4 --replicas=1 --port=8080
+kubectl run echoheaders --image=gcr.io/google_containers/echoserver:1.4 \
+  --replicas=1 --port=8080
 ```
 Now we expose the same application in two different services (so we can create different Ingress rules)
 ```
-kubectl expose deployment echoheaders --port=80 --target-port=8080 --name=echoheaders-x
-kubectl expose deployment echoheaders --port=80 --target-port=8080 --name=echoheaders-y
+kubectl expose deployment echoheaders --port=80 --target-port=8080 \
+  --name=echoheaders-x
+kubectl expose deployment echoheaders --port=80 --target-port=8080 \
+  --name=echoheaders-y
 ```
 
 ----
 
 ### Create ingress rules
 
-Next we create a couple of Ingress rules
-
-kubectl create -f configs/ingress.yaml
+Explore and create some Ingress rules
 
 ```
-apiVersion: extensions/v1beta1
-kind: Ingress
-metadata: 
-  name: echomap
-spec: 
+kubectl create -f configs/ingress.yaml
+```
+
+```
   rules: 
     - host: foo.bar.com
       http: 
@@ -164,7 +164,7 @@ Here we'll use `curl``
 curl -H "Host: foo.bar.com" http://$(minikube ip)/bar
 curl -H "Host: bar.baz.com" http://$(minikube ip)/bar
 curl -H "Host: bar.baz.com" http://$(minikube ip)/foo
-````
+```
 
 ----
 
@@ -173,7 +173,14 @@ curl -H "Host: bar.baz.com" http://$(minikube ip)/foo
 We want to have SSL for our services enabled. So let's create first the needed certificates for `foo.bar.com`:
 
 ```
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout tls.key -out tls.crt -subj "/CN=foo.bar.com"
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /work/tls.key \
+-out /work/tls.crt -subj "/CN=foo.bar.com"
+```
+No openssl installed? No Prob
+```
+docker run -v $PWD:/work -it nginx openssl req -x509 -nodes -days 365 \
+  -newkey rsa:2048 -keyout /work/tls.key -out /work/tls.crt \
+  -subj "/CN=foo.bar.com"
 ```
 
 ----
