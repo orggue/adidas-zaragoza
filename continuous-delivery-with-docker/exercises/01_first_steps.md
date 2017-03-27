@@ -1,7 +1,7 @@
 # First Steps with Drone
 
 You should run these exercises from a cloud VM. You'll also need a GitHub
-account.
+account and a Docker Hub account.
 
 _You can also use a local laptop, but be aware that you will need to use a
 forwarder such as ngrok in order to make your Drone instance externally
@@ -39,6 +39,7 @@ services:
       - DRONE_GITHUB_CLIENT=${DRONE_GITHUB_CLIENT}
       - DRONE_GITHUB_SECRET=${DRONE_GITHUB_SECRET}
       - DRONE_SECRET=${DRONE_SECRET}
+      - DRONE_ADMIN=your_github_username
 
   drone-agent:
     image: drone/drone:0.5
@@ -78,7 +79,8 @@ application (Drone) to access your Github account.
 Once this is done, you should get a "Loading..." message. Ignore this and click
 the button in the top right and select "Account". From here you should see a
 list of the GitHub repositories you have access to. Browse to the TK repository
-and click the slider so it is in the on position.
+and click the slider so it is in the on position. Also click the trusted slider,
+which will allow us to do "trusted" actions such as mount volumes.
 
 Drone is now monitoring the repository, but we still need to tell it what to
 build.
