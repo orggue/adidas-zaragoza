@@ -21,13 +21,11 @@ a new application". In the box that appears, use "Drone" as the application
 name, and the address of your VM for the home page. For the callback URL, use
 "http://<VM_IP>/authorize", where VM_IP is the IP address of your VM.
 
-TK screenshot
-
 Github will now give you a Client ID and Secret, which we need to put in the
 Drone config.
 
 Login to the VM.
-On the VM, create a docker-compose.yml with the following contents:
+On the VM, create a file named `docker-compose.yml` with the following contents:
 
 ```
 version: '2'
@@ -46,7 +44,7 @@ services:
       - DRONE_GITHUB_CLIENT=${DRONE_GITHUB_CLIENT}
       - DRONE_GITHUB_SECRET=${DRONE_GITHUB_SECRET}
       - DRONE_SECRET=${DRONE_SECRET}
-      - DRONE_ADMIN=your_github_username
+      - DRONE_ADMIN=<your_github_username>
 
   drone-agent:
     image: drone/drone:0.5
@@ -58,15 +56,30 @@ services:
     environment:
       - DRONE_SERVER=ws://drone-server:8000/ws/broker
       - DRONE_SECRET=${DRONE_SECRET}
-
 ```
 
-Set the variables and start Drone:
+You can also grab this file from https://raw.githubusercontent.com/ContainerSolutions/go-example-webserver/drone-compose/drone-compose.yml e.g.:
+
+```
+$ curl -o docker-compose.yml https://raw.githubusercontent.com/ContainerSolutions/go-example-webserver/drone-compose/drone-compose.yml
+```
+
+Replace `<your_github_username>` with you Github username. We'll set environment
+variables which will be used in place of the variables in curly brackets. The
+`DRONE_SECRET` variable can be anything you like, but the DRONE_GITHUB_CLIENT
+and DRONE_GITHUB_SECRET are the values that the Github page gave you earlier
+e.g:
+
 
 ```
 $ export DRONE_SECRET=mysecret123
 $ export DRONE_GITHUB_CLIENT=93f1a31a6104a70bc3e4 
 $ export DRONE_GITHUB_SECRET=987ed8882f6cfd6933868b39178fc8a315f97316
+```
+
+We can now start Drone:
+
+```
 $ docker-compose up -d
 Pulling drone-server (drone/drone:0.5)...
 0.5: Pulling from drone/drone
@@ -85,16 +98,70 @@ application (Drone) to access your Github account.
 
 Once this is done, you should get a "Loading..." message. Ignore this and click
 the button in the top right and select "Account". From here you should see a
-list of the GitHub repositories you have access to. Browse to the TK repository
-and click the slider so it is in the on position. Also click the trusted slider,
-which will allow us to do "trusted" actions such as mount volumes.
+list of the GitHub repositories you have access to. Browse to the
+`go-example-code` repository and click the slider so it is in the on position.
+Also click the "trusted" slider, which will allow us to do "trusted" actions such
+as mount volumes.
 
 Drone is now monitoring the repository, but we still need to tell it what to
-build.
+build. To do this, we need to create a `.drone.yml` file at the root of the
+repository, with our instructions. On your laptop, go to the directory where you
+checked out the code and create a `.drone.yml` file with the following contents:
 
-TK .drone.yml
+```
+pipeline:
+  build:
+    image: docker
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    commands:
+      - docker build -t <username>/example-webserver .
+```
 
-Do build, then test
+Replace `<username>` with your username on the Docker Hub. Now commit and push
+your code:
+
+```
+$ git add .drone.yml
+$ git commit -m "Add Drone config"
+$ git push
+```
+
+If you now open the Drone webapp you should see it is building the image. Once
+it's done, you can test the built image by running it on the VM, and you should
+get something similar to the following:
+
+```
+$ docker run -d -p 5000:8080 amouat/example-webserver
+769126c0f4669d39435985920e05f850c756fc0b2b76de66e78a3c83e72c2a05
+$ curl localhost:5000
+Hello From Golang
+$ docker stop $(docker ps -lq)
+769126c0f466
+```
+
+Note that - despite appearances to the contrary - the Drone webapp is not
+updated automatically; you'll need to hit refresh to see updates.
+
+
+## Bonus Task
+
+This project uses a single image for both building and running the application.
+Another approach is to split this into two steps, so that the binary is built in
+one stage, then copied into a new image that is used to run the applicaiton. The
+advantage of this approach is that the final image can be much smaller, as it
+doesn't require all the build files and tools in the first image.
+
+See if you can turn the build into a two stage process, using an alpine image as
+the base for the final image (hint `docker create` and `docker cp` are your
+friends). Once you've done this, see if you can take it even further and run the
+webserver using the empty "scratch" image as a base.
+
+
+
+
+
+Test
 
 If an image succesfully passes the test, the next step is to push it to a
 registry. In our case we'll use the Docker Hub, but this could be any local or
@@ -187,3 +254,4 @@ use k8s/swarm
 use plugins/docker
 multistage-builds
 health endpoint
+badges
