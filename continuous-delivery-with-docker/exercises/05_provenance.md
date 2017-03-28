@@ -1,3 +1,5 @@
+\pagebreak
+
 # Provenance and Labeling
 
 A major improvement we can make to the current system is using labels and tags
@@ -7,7 +9,7 @@ The first, and biggest, problem is that we've implicitly used the "latest" tag
 when building our image. The most striking problem with this is that it makes
 rolling back difficult or impossible, as the previous image had exactly the same
 name. Drone defines a lot of useful environment variables that we could as our
-tag, which you can see at http://readme.drone.io/usage/environment-reference/.
+tag, which you can see at _http://readme.drone.io/usage/environment-reference/_.
 
 In this case, we'll use the `DRONE_COMMIT_SHA`, another possible candidate is
 the `DRONE_BUILD_NUMBER`. Update the `.drone.yml` to:
@@ -19,14 +21,14 @@ pipeline:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     commands:
-      - docker build -t amouat/example-webserver:$DRONE_COMMIT_SHA .
+      - docker build -t <username>/example-webserver:$DRONE_COMMIT_SHA .
 
   test:
     image: docker
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     commands:
-      - docker run amouat/example-webserver:$DRONE_COMMIT_SHA /test.sh
+      - docker run <username>/example-webserver:$DRONE_COMMIT_SHA /test.sh
 
   push:
     image: docker
@@ -35,16 +37,17 @@ pipeline:
     environment:
       - PASS=${HUB_PASS}
     commands:
-      - docker login -u amouat -p $PASS
-      - docker push amouat/example-webserver:$DRONE_COMMIT_SHA
+      - docker login -u <username> -p $PASS
+      - docker push <username>/example-webserver:$DRONE_COMMIT_SHA
 
   deploy:
     image: docker
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     commands:
-      - docker pull amouat/example-webserver:$DRONE_COMMIT_SHA
-      - docker tag amouat/example-webserver:$DRONE_COMMIT_SHA amouat/example-webserver:latest
+      - docker pull <username>/example-webserver:$DRONE_COMMIT_SHA
+      - docker tag <username>/example-webserver:$DRONE_COMMIT_SHA 
+               <username>/example-webserver:latest
       - docker stack deploy -c ./docker-compose.yml example-webserver
 ```
 
@@ -58,7 +61,7 @@ version: '3'
                                                                                 
 services:                                                                       
   server:                                                                       
-    image: amouat/example-webserver:production                                  
+    image: <username>/example-webserver:production
     ports:                                                                      
       - "8080:8080"  
 ```
@@ -74,10 +77,10 @@ Finally, we can also add some labels by updating the build step:
       - /var/run/docker.sock:/var/run/docker.sock
     commands:
       - docker build \
-         --label org.label-schema.vcs-ref=$DRONE_COMMIT_SHA \
-         --label build-number=$DRONE_BUILD_NUMBER \
-         --label build-date="$(date)" \
-         -t amouat/example-webserver:$DRONE_COMMIT_SHA .
+         --label org.label-schema.vcs-ref=$DRONE_COMMIT_SHA
+         --label build-number=$DRONE_BUILD_NUMBER
+         --label build-date="$(date)"
+         -t <username>/example-webserver:$DRONE_COMMIT_SHA .
 
 ```
 

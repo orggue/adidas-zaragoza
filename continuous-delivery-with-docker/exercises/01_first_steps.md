@@ -1,12 +1,12 @@
 # First Steps with Drone
 
 We'll use a mixture of a cloud VM and your laptop for these exercises. You'll
-also need a GitHub account (https://github.com) and a Docker Hub account
-(https://hub.docker.com).
+also need a GitHub account (_https://github.com_) and a Docker Hub account
+(_https://hub.docker.com_).
 
 Start by forking the repository `ContainerSoltuions/go-example-webserver`. You can
 do this by browsing to
-https://github.com/ContainerSolutions/go-example-webserver and clicking the fork
+_https://github.com/ContainerSolutions/go-example-webserver_ and clicking the fork
 button in the top right corner. Once you've done this, checkout the code on your
 local laptop with `git clone` (if you click the "Clone or download" button, you
 should get specific instructions). 
@@ -16,10 +16,10 @@ running on the VM. As we'll be using Github to login to Drone, we first need to
 register Drone as a new application in Github, which will provide us with some
 secrets to pass to Drone.
 
-Navigate to https://github.com/settings/applications -> "OAuth applications" -> "Register
-a new application". In the box that appears, use "Drone" as the application
-name, and the address of your VM for the home page. For the callback URL, use
-`http://<VM_IP>/authorize`, where `VM_IP` is the IP address of your VM.
+Navigate to _https://github.com/settings/applications_ -> "OAuth applications"
+-> "Register a new application". In the box that appears, use "Drone" as the
+application name, and the address of your VM for the home page. For the callback
+URL, use `http://<VM_IP>/authorize`, where `VM_IP` is the IP address of your VM.
 
 Github will now give you a Client ID and Secret, which we need to put in the
 Drone config.
@@ -58,10 +58,12 @@ services:
       - DRONE_SECRET=${DRONE_SECRET}
 ```
 
-You can also grab this file from https://raw.githubusercontent.com/ContainerSolutions/go-example-webserver/drone-compose/drone-compose.yml e.g.:
+You can also grab this file from _https://raw.githubusercontent.com/ContainerSolutions/go-example-webserver/drone-compose/drone-compose.yml_ e.g.:
 
 ```
-$ curl -o docker-compose.yml https://raw.githubusercontent.com/ContainerSolutions/go-example-webserver/drone-compose/drone-compose.yml
+$ curl -o docker-compose.yml \
+  https://raw.githubusercontent.com/ContainerSolutions/go-example-webserver/\
+drone-compose/drone-compose.yml
 ```
 
 Replace `<your_github_username>` with you Github username. We'll set environment

@@ -1,10 +1,12 @@
+\pagebreak
+ 
 # Pushing to a Registry
 
 If an image succesfully passes the test, the next step is to push it to a
 registry. In our case we'll use the Docker Hub, but this could be any local or
 remote registry.
 
-Add the following to .drone.yml:
+Add the following to `.drone.yml`:
 
 ```
   push:
@@ -34,7 +36,7 @@ $ cd
 ```
 
 If you want to install on your laptop, use the instructions at
-http://readme.drone.io/usage/getting-started-cli/.
+_http://readme.drone.io/usage/getting-started-cli/_.
 
 To use the CLI, you'll need to set up environment variables with the IP of your
 VM and the Drone token. The Drone token can be found by going to the "account" page of the Drone webapp and clicking on the "SHOW TOKEN" button on the left. 
@@ -52,7 +54,8 @@ arguments are the name of the repository, the name of the secret and the value
 of the secret:
 
 ```
-$  drone secret add --skip-verify=true <username>/go-example-webserver HUB_PASS mypassword
+$  drone secret add --skip-verify=true <username>/go-example-webserver \
+   HUB_PASS mypassword
 ```
 
 Note that if you add an extra space before the command, it won't be added to the
@@ -66,44 +69,7 @@ able to find it.
 ## Bonus Tasks
 
 1) We used the `--skip-verify` argument to avoid some extra config. Try fixing this
-by signing the repository following the on-line instructions http://readme.drone.io/usage/secret-guide/
+by signing the repository following the on-line instructions _http://readme.drone.io/usage/secret-guide/_.
 
 2) Try pushing to self-hosted registry instead of the Docker Hub. You should be
-able to get one running by following the instructions at `https://hub.docker.com/_/registry/`
-
-
-
-
-The final step in our pipeline is deploy, where we get our code running. We'll
-use swarm for this purpose, although only on a single server. To start Swarm
-running, run `docker swarm init` on the VM.
-
-Add the following to .drone.yml:
-
-```
-  deploy:
-    image: docker
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    commands:
-      - docker pull amouat/example-webserver
-      - docker stack deploy -c ./docker-compose.yml example-webserver
-```
-
-After commiting and pushing this change, you should be able to access the
-running service in your browser using the IP address of your VM and port 8080.
-
-Now try making a change to the code, commiting and pushing it.
-
-Congratulations! You have a fully fledged Continuous Deployment pipeline up and
-running.
-
-provenance
-branches
-sign secrets
-diy with Java/Node/Python
-use other users Drone
-use k8s/swarm
-use plugins/docker
-health endpoint
-badges
+able to get one running by following the instructions at _https://hub.docker.com/_/registry/_.

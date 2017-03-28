@@ -1,3 +1,5 @@
+\pagebreak
+
 # Deploying the Image
 
 The final step in our pipeline is deploy, where we get our code running. We'll
@@ -19,9 +21,10 @@ Now add the following stage to `.drone.yml`:
 The first command will pull the image we pushed earlier. Technically this step
 isn't necessary as we're using the same engine to build and run our image, but
 this isn't normally the case. The second command starts the service using the
-`docker-compose.yml` file in the repository.
+`docker-compose.yml` file in the repository. You'll need to modify this file to
+point to your image instead of mine (replace the text amouat).
 
-After committing and pushing this change, you should be able to access the
+After committing and pushing these changes, you should be able to access the
 running service in your browser using the IP address of your VM and port 8080.
 
 Now try making a change to the code, committing and pushing it. You should
