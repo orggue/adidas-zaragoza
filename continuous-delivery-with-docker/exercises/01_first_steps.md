@@ -1,25 +1,32 @@
 # First Steps with Drone
 
-You should run these exercises from a cloud VM. You'll also need a GitHub
-account and a Docker Hub account.
+We'll use a mixture of a cloud VM and your laptop for these exercises. You'll
+also need a GitHub account (https://github.com) and a Docker Hub account
+(https://hub.docker.com).
 
-_You can also use a local laptop, but be aware that you will need to use a
-forwarder such as ngrok in order to make your Drone instance externally
-addressable. If you don't know how to do this, use a cloud VM._
+Start by forking the repository ContainerSoltuions/go-example-webserver. You can
+do this by browsing to
+https://github.com/ContainerSolutions/go-example-webserver and clicking the fork
+button in the top right corner. Once you've done this, checkout the code on your
+local laptop with `git clone` (if you click the "Clone or download" button, you
+should get specific instructions). 
 
-First, fork the repository TK. 
+We'll come back to the code later, but the next step is to get Drone up and
+running on the VM. As we'll be using Github to login to Drone, we first need to
+register Drone as a new application in Github, which will provide us with some
+secrets to pass to Drone.
 
-Go to https://github.com/settings/applications -> OAuth applications -> Register
-a new application
-
-Give it the application name Drone and a description and a home page. For the callback URL, you
-need to use the address of your VM plus TK e.g. http://104.155.81.69/authorize
+Navigate to https://github.com/settings/applications -> "OAuth applications" -> "Register
+a new application". In the box that appears, use "Drone" as the application
+name, and the address of your VM for the home page. For the callback URL, use
+"http://<VM_IP>/authorize", where VM_IP is the IP address of your VM.
 
 TK screenshot
 
 Github will now give you a Client ID and Secret, which we need to put in the
 Drone config.
 
+Login to the VM.
 On the VM, create a docker-compose.yml with the following contents:
 
 ```
@@ -147,9 +154,29 @@ bash history.
 If you now push the updated .drone.yml, your image should be built and pushed to
 the Hub.
 
-The final step in our pipeline is deploy, where we get our code running.
+The final step in our pipeline is deploy, where we get our code running. We'll
+use swarm for this purpose, although only on a single server. To start Swarm
+running, run `docker swarm init` on the VM.
 
+Add the following to .drone.yml:
 
+```
+  deploy:
+    image: docker
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    commands:
+      - docker pull amouat/example-webserver
+      - docker stack deploy -c ./docker-compose.yml example-webserver
+```
+
+After commiting and pushing this change, you should be able to access the
+running service in your browser using the IP address of your VM and port 8080.
+
+Now try making a change to the code, commiting and pushing it.
+
+Congratulations! You have a fully fledged Continuous Deployment pipeline up and
+running.
 
 provenance
 branches
@@ -157,3 +184,6 @@ sign secrets
 diy with Java/Node/Python
 use other users Drone
 use k8s/swarm
+use plugins/docker
+multistage-builds
+health endpoint
