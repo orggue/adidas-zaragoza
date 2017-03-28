@@ -1,4 +1,4 @@
-## Testing the image
+# Testing the Image
 
 The next stage in the pipeline is to test the image. This is perhaps the part of
 the example code that takes the most shortcuts and is intended as a nod in the
