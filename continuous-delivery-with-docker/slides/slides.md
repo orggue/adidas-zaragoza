@@ -11,7 +11,7 @@
  - Breakdown of the steps in a CI/CD pipeline
  - The Drone CI/CD platform
    - Integrating version control
-   - Integrating orchestartion
+   - Integrating orchestration
  - Advanced topics
    - Labelling
    - Notification
@@ -115,25 +115,118 @@
  - Solution is to do testing in production
    - but hide it from users
  - Lots of techniques
-   - canarys
+   - canaries
    - A/B
    - ...
    - TK fill in 
 
+-
+
+## Release Velocity
+
+Measurement of how long it takes to get a change into production.
+Shorter times mean:
+ - can roll out features faster
+ - can get fixes live faster
+
 ---
 
-# Why Use CI/CD?
+# Containers meet CI/CD
 
 -
 
-"release velocity"
+ - Containers have a big impact on CI/CD
+ - Images replace code as unit of work
+   - testing on level of images
+   - images shipped between stages
+ - Containers used to implement CI/CD
+   - provide isolated, temporary environments
+   - great for running tests and builds
 
-How long does it take to get a change into production?
-Lowering this value means you move faster
-Moving faster 
+-
 
+CD diagram
 
+-
 
-Containers vs Code
+## Build Stage
+
+ - Developer checks code into version control
+ - Build server picks it up
+   - Builds Docker images, or fails
+   - May be multiple steps in building a single image
+ - Passes it on to test
+
+-
+
+## Test Stage
+
+ - Runs unit tests against image
+ - Also run system/integration tests
+ - Raises interesting questions
+   - where do the tests live?
+   - should images be able to test themselves?
+   - should there be separate test images?
+   - should tests be external or injected somehow?
+
+-
+
+ - Need tests to run quickly
+  - maintain release velocity
+  - run in parallel
+ - Test failures will stop build
+
+-
+
+## Push stage
+
+ - Images need to be distributed to production
+ - Normally use a "registry" for this purpose
+   - may be on-prem or remote
+   - can use 3rd party service
+   - orchestrator will pull from the registry
+   - could also "push" images onto nodes
+
+-
+
+## Scan stage
+
+ - Image is scanned for vulnerabilities
+ - Optional, but highly recommended
+ - May not be a separate stage
+ - Output is usually a report
+   - likelihood of vulns and false positives
+   - can't stop build
+
+-
+
+## Rollout stage
+
+ - Tell production to use new image
+ - Probably roll out slowly to subset
+ - Lots of different techniques
+
+-
+
+## Notify
+
+ - Make team aware of new deploy
+ - Automatically send message to slack or similar
+
+---
+
+# The Drone CI/CD Platform
+
+-
+
+ - Drone itself runs in containers
+ - All builds run in containers
+   - provides fine-grained control and isolation
+ - Goal of being replacement for Jenkins
+ - Open Source
+   - originally proprietary SaaS
+
+-
+
 
 
