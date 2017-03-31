@@ -57,7 +57,7 @@ We see that there is 1 deployment running a single instance of your app.
 
 By default deployed applications are visible only inside the Kubernetes cluster. To view that the application output without exposing it externally, we’ll create a route between our terminal and the Kubernetes cluster using a proxy:
 ```bash
-kubectl port-forward hellonode 8080 8080 
+kubectl port-forward hellonode 8080:8080 
 ```
 We now have a connection between our host and the Kubernetes cluster.
 
