@@ -115,10 +115,11 @@
  - Solution is to do testing in production
    - but hide it from users
  - Lots of techniques
-   - canaries
-   - A/B
-   - ...
-   - TK fill in 
+   - canaries 
+   - A/B & multivariate testing
+   - Ramped deployment
+   - Blue/Green
+   - Shadowing
 
 -
 
@@ -145,7 +146,7 @@ Shorter times mean:
 
 -
 
-CD diagram
+<img src="slides/img/cicd.png">
 
 -
 
@@ -215,9 +216,24 @@ CD diagram
 
 ---
 
-# The Drone CI/CD Platform
+## Use Case Specific
+
+ - Huge variation between organizations
+  - CI/CD Platform
+     - Jenkins, CircleCI, Travis, Drone.io...
+  - Method of Interaction
+     - Chatbots, CLI tools, Web apps...
+  - Deployment platforms
+     - Kubernetes, Mesos, Swarm, ECS...
+  - Testing Techniques
+     - Unit, integration, system, contract, API, shadowing…
+  - Monitoring & Alerting
+     - NGINX+, Prometheus, CoScale...
+  - In house tooling
 
 -
+
+# The Drone CI/CD Platform
 
  - Drone itself runs in containers
  - All builds run in containers

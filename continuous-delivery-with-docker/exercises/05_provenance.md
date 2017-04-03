@@ -47,7 +47,7 @@ pipeline:
     commands:
       - docker pull <username>/example-webserver:$DRONE_COMMIT_SHA
       - docker tag <username>/example-webserver:$DRONE_COMMIT_SHA 
-               <username>/example-webserver:latest
+               <username>/example-webserver:production
       - docker stack deploy -c ./docker-compose.yml example-webserver
 ```
 
@@ -76,7 +76,7 @@ Finally, we can also add some labels by updating the build step:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     commands:
-      - docker build \
+      - docker build
          --label org.label-schema.vcs-ref=$DRONE_COMMIT_SHA
          --label build-number=$DRONE_BUILD_NUMBER
          --label build-date="$(date)"

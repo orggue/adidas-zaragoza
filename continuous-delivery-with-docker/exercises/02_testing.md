@@ -17,13 +17,16 @@ Add the following stage to `.drone.yml`:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     commands:
-      - docker run amouat/example-webserver /test.sh
+      - docker run <username>/example-webserver /test.sh
 ```
+
+Make sure you replace `<username>` with your Github username.
 
 Commit and push:
 
 ```
-$ git commit -a .drone.yml
+$ git add .drone.yml
+$ git commit
 $ git push -m "Add test stage"
 ```
 

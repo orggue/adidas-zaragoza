@@ -134,7 +134,7 @@ it's done, you can test the built image by running it on the VM, and you should
 get something similar to the following:
 
 ```
-$ docker run -d -p 5000:8080 amouat/example-webserver
+$ docker run -d -p 5000:8080 <username>/example-webserver
 769126c0f4669d39435985920e05f850c756fc0b2b76de66e78a3c83e72c2a05
 $ curl localhost:5000
 Hello From Golang
