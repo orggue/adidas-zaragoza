@@ -1,0 +1,44 @@
+{
+    "variables": {
+        "workshop_image": "{{ env `TF_VAR_workshop_image` }}",
+        "project": "{{ env `TF_VAR_project` }}",
+        "zone": "{{ env `TF_VAR_zone` }}",
+        "region": "{{ env `TF_VAR_region` }}",
+        "machine_type": "{{ env `TF_VAR_machine_type` }}",
+        "base_image": "{{ env `TF_VAR_base_image` }}"
+    },
+    "builders": [{
+        "type": "googlecompute",
+        "project_id": "{{ user `project` }}",
+        "source_image": "{{ user `base_image` }}",
+        "disk_size": "20",
+        "image_name": "{{ user `workshop_image` }}",
+        "zone": "{{ user `zone` }}",
+        "communicator": "ssh",
+        "ssh_username": "ubuntu"
+    }],
+    "provisioners": [
+    {
+        "type": "file",
+        "source": "./upload/installk8s.sh",
+        "destination": "/tmp/installk8s.sh",
+        "direction": "upload"
+    },
+    {
+        "type": "shell",
+        "execute_command": "echo '{{user `ssh_pass`}}' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'",
+        "inline": [
+            "echo '%sudo    ALL=(ALL)  NOPASSWD:ALL' >> /etc/sudoers",
+            "systemctl restart ssh",
+            "add-apt-repository ppa:ubuntu-lxc/lxd-stable -y",
+            "apt-get update",
+            "useradd -p `openssl passwd -1 workshopCME` -m workshop",
+            "usermod -aG sudo workshop",
+            "curl -sSL https://get.docker.com/ | sh",
+            "usermod -aG docker workshop",
+            "apt-get install -y vim less unzip golang",
+            "sed -i '/^PasswordAuthentication/c\\PasswordAuthentication yes' /etc/ssh/sshd_config",
+            "cp /tmp/installk8s.sh /home/workshop/installk8s.sh"
+        ]
+    }]
+}
