@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "swisscom-bigdata",
+  "private_key_id": "c000a215906cba0a09d2c90e5c96e91185914824",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDJl31bD6f9ctJW\n5IsC/aZmIHfHRpdRm3J0Qp53QM1jS0xsHpdrCiqWURlSuQ/b2rs/rAKpgQq+X87n\ne03p20DOA5bsQgfSbeVdSJTtN54ed0qqe3ysN3NbBUyCnOgFhdw0DTMs3bfEQsQX\no44lrQuUklQU0YqDtRKHWjZQ0CHAkzCcMP8X3yaNAdO/qJJJknkpFL1cHawTGFQQ\nfqjEQQ1Ca1ec0vEJED3mxxolfK1dEEshLq45Wj4xvGUTxe17thm1XtdWaC0Tj02t\n7r+EF81q/KfSOzKQuabu7Zl7EeCU0vpxXX7tsAi+71dansE8ZAfpmRglfTG6Tpa7\naPmMS0llAgMBAAECggEBALKLFV9dUm/LDjgfWm9fr8yr3OoFv2drwcbuaeM85auX\nuSvZPEp1SpqvYTo+5ajW5RjTg9gUjitmN54VO0BwC8lqrHS7Vqos4wPnkN84bzaU\nePDdReJRij2HR+g2h9i8YfdH6ZdHF8cfSwWUugTsamE/6HA31fIooSx33btdW0du\ngXWJG2azvSlUQyWPDmpAFKK/ERrzYjy7iu7ik9E59uLUE6gs2xzs4MwqreXr6Xs0\nQbEwLmhVS5Eo1QbdkjpiOwYcOVWTP7snd+iXzOA0sJ8/cVk5HEuqc7OfOMUx49/R\nrAB6qIGIj/60VGnPeziIGr3mg/O0+7cDMOqQqke8oFECgYEA+RqGt6utc9zT6I3q\nL9b8X1FeACHwqGkFjR2ZMdQqNCGp7pZSSkVJ7mPmZe2AYvFLHR6ckGN/ozU+ADOf\ngMPi6OnRBwxctasbRNG6TkE4rle1LcFd8qbYYbXC7o+PJPLxFCVEuHLQLZrxxxP9\nR+hyY0M2acNg5lT+BetkUYFz/PMCgYEAzyw7d39SVf5YBw9wNsLB24T1HwZA/0nm\nbVpk4RtkWRkV/d45XTVRNuV2XijOOwqOami+ZjMgm8T0oycF+gLoCXhXSQoStiGy\nETjcXj5LoeOy8q4KsC65R31tcKo5bTUCFDobqgpiu9RjqRalQyrk+sSwQvhhEJP7\naLkBnkjf1kcCgYBv9gw24WLEgKx+CcsIVYh5DwlA5gBUsV9dXcBNNR8C716Bbe7u\nktX3387eYTEjR3CLVgbons/vey6yyIEYTvLd3LmmgVfqD03iUKF8KrRfJ+y29AJV\n3cfDov5KWxvrb4YLl/SbMn9+//VLlSByAXfoRX1fbAFRhUHnRzV/rL+FIQKBgFn9\n6Mb7s5RPK4XFmwTujK8Cjkevu8QpIcMWpQNzlp9tWjQwt9JZOrIR8tzr9MmIyFxI\nq4xRYTTI1UuZw+raIFkcwS2lBoO/F06L2I3Hmar08eKg31uwsCLxxPxPtSpPAFww\n8Ztnb4QPukrU32zR0S1tCvPMWL2OyoKu+pj7JuA5AoGBAKr/HMiiJDf9ZtN/dYsp\niw0fVwecghMVY2BLDIdJdpgxF2ZdybLNlEsGfrOLcTmbJZ0YToCfGrlE6anEY8Po\nLQzaEJFihGWSFgTQX58X7jIEnJJNiosuDirt4M7uLKiRw5j/XgX7h1Mvz6Gy+V4l\nO9cUFjieeVwcjSy/g3P6oSHI\n-----END PRIVATE KEY-----\n",
+  "client_email": "training-vms@swisscom-bigdata.iam.gserviceaccount.com",
+  "client_id": "108951480255764284390",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://accounts.google.com/o/oauth2/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/training-vms%40swisscom-bigdata.iam.gserviceaccount.com"
+}
