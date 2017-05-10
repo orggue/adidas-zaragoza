@@ -4,7 +4,7 @@ We'll use a mixture of a cloud VM and your laptop for these exercises. You'll
 also need a GitHub account (_https://github.com_) and a Docker Hub account
 (_https://hub.docker.com_).
 
-Start by forking the repository `ContainerSoltuions/go-example-webserver`. You can
+Start by forking the repository `ContainerSolutions/go-example-webserver`. You can
 do this by browsing to
 _https://github.com/ContainerSolutions/go-example-webserver_ and clicking the fork
 button in the top right corner. Once you've done this, checkout the code on your
