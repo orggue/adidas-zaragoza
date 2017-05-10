@@ -117,7 +117,7 @@ pipeline:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     commands:
-      - docker build -t <username>/example-webserver .
+      - docker build -t <username>/go-example-webserver .
 ```
 
 Replace `<username>` with your username on the Docker Hub. Now commit and push
