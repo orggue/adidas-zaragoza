@@ -1,6 +1,6 @@
 # Outline
 
-* Docker für Entwickler und Systemadministratoren
+* Docker Basics
 * Container Images
 * Docker Registry
 * Docker Networking
