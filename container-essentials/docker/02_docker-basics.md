@@ -45,7 +45,7 @@ CONTAINER ID        IMAGE               COMMAND             CREATED             
 ## Our first container!
 
 * We used one of the smallest, simplest images available: busybox.
-* We ran a single process and echo'ed hello world.
+* We ran a single process and echoed hello world.
 
 Though, it's not a very useful container 
 
@@ -75,8 +75,9 @@ filget is missing in the container, so let's install it using Debian's package m
 ```bash
 apt-get update && apt-get install -y figlet
 ```
-`apt-get update` is updating the "catalogue"  
-`apt-get install -y figlet` is installing figlet `-y` is without prompting for permissions to install the package
+`apt-get update` will update the "catalogue"  
+`apt-get install -y figlet` will install figlet  
+`-y` will not prompt and assume Yes to all queries 
 
 ----
 
@@ -120,7 +121,7 @@ Make an image out of it and give it a tag
 ```
 docker commit 0c4e70768ab0 <DOCKERHUB_ID>/figlet:latest
 ```
-<DOCKERHUB_ID> isn't needed, but when the image needs to be pushed into Dockerhub, you need to tag it that way.
+`<DOCKERHUB_ID>` isn't needed, but when the image needs to be pushed into Dockerhub, you need to tag it that way.
 Image is local on your machine, if you want to have it in your Docker Hub repo you need to push it.
 
 ----
@@ -174,10 +175,10 @@ Mon Aug 15 13:14:48 UTC 2016
 Mon Aug 15 13:14:49 UTC 2016
 ```
 This container will run forever.
-* To stop it, press ^C.
+* To stop it, press `^C`.
 * Docker has automatically downloaded the image jpetazzo/clock.
 * This image is a user image, created by jpetazzo.
-* I’ll tell more about user images (and other types of images) later
+* I'll tell more about user images (and other types of images) later.
 
 ----
 
@@ -188,13 +189,13 @@ Containers can be started in the background, with the `-d` flag (daemon mode):
 docker run -d jpetazzo/clock
 ```
 We don't see the output of the container.  
-All output sent to STDOUT and STDLOG will be loged by Docker.
+All output sent to STDOUT and STDERR will be logged by Docker.
 
 ----
 
 ### List running containers
 
-`docker ps` lists running container, just like the UNIX `ps` command, lists running processes
+`docker ps` lists running containers, just like the UNIX `ps` command, lists running processes
 
 run:
 ```bash
@@ -204,7 +205,7 @@ Output shows:
 * The (truncated) ID of our container.
 * The image used to start the container.
 * The status.
-* Other information (COMMAND, PORTS, NAMES) that I’ll explain later.
+* Other information (COMMAND, PORTS, NAMES) that I'll explain later.
 
 ----
 
@@ -226,15 +227,15 @@ As an example `docker rm -f $(docker ps -ql)`, which will forcibly delete the la
 
 ----
 
-### Viewing logs of a containers
+### Viewing logs of a container
 View the logs of the jpetazzo/clock container  
 `docker ps` to see the CONTAINER ID
 ```bash
 docker logs <CONTAINER ID>
 ```
 
-* The logs command will output the entire logs of the container.
-(Sometimes, that will be too much. Let's see how to address that.)
+* The logs command will output the entire logs of the container.  
+  (Sometimes, that will be too much. Let's see how to address that.)
 
 ```bash
 docker logs --tail 3 <CONTAINER ID>
@@ -287,7 +288,7 @@ We have started containers in the foreground, and in the background.
 Now we will see how to:
 * Put a container in the background.
 * Attach to a background container to bring it to the foreground.
-* Restart a stopped container
+* Restart a stopped container.
 
 ----
 
@@ -328,11 +329,10 @@ You can attach to a container:
 $ docker attach <containerID>
 ```
 * The container must be running.
-* There can be multiple clients attached to the same container.
+* Multiple clients can be attached to the same container.
 * Warning: if the container was started without -it…
     * You won't be able to detach with ^P^Q.
-    * If you hit ^C, the signal will be proxied to the container.
-
+    * If you hit ^C, the signal will be proxied to the container.  
 Remember: you can always detach by killing the Docker client (e.g. close the bash window).
 
 ----
