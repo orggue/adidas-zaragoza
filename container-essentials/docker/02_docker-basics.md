@@ -145,7 +145,8 @@ root@e308ac27a746:/#
 
 * Start a container from bitnami/minideb:latest
 * Install fortune on the container
-* Commit you change
+* Commit your change
+
 Hint:
 ```
 ln -s /usr/games/fortune /usr/bin/fortune
