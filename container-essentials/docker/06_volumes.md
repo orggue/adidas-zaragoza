@@ -1,31 +1,31 @@
 ## Working with Volumes
 
 At the end of this lesson, you will be able to:
-* Explain what volumes are and what they are used for
-* Learn the different methods of mounting a volume in a container
-* Mount volumes during the docker run command and also in a Dockerfile
-* Explain how data containers work
-* Create some data containers
+* Explain what volumes are and what they are used for.
+* Learn the different methods of mounting a volume in a container.
+* Mount volumes during the `docker run` command and also in a Dockerfile.
+* Explain how data containers work.
+* Create some data containers.
 
 ----
 
 ### What is a Volume
 
-* Docker takes the read-only image and adds a read-write layer on top
-* If the running container modifies an existing file, the file is copied out to read-write layer where the changes are applied. 
+* Running a container adds a read-write layer on top of a read-only image.
+* If a file is modified inside a container, the file is firsrt copied to the read-write layer. 
 * The version in the read-write layer hides the underlying file, but does not destroy it. 
-* When a Docker container is deleted, relaunching the image will start a fresh container without any of the changes made in the previously running container
-* In order to be able to save (persist) data and also to share data between containers
+* When a new container is launched, a new read-write layer is created without any of the changes made in the previous container.
+* A volume allows you to save (persist) data and to share data between containers.
 
 ----
 
 ### Volumes
-A Volume is a designated directory in a container, which is designed to persist data, independent of the container's life cycle
+A Volume is a designated directory in a container, which is designed to persist data, independent of the container's life cycle.
 
-* Volume changes are excluded when updating an image
-* Persist when a container is deleted
-* Can be mapped to a host folder
-* Can be shared between containers
+* Volume changes are excluded when updating an image.
+* Volumes persist when a container is deleted.
+* Volumes can be mapped to a host folder.
+* Volumes can be shared between containers.
 
 ----
 
@@ -55,7 +55,7 @@ docker volume rm
 
 ### Creating a volume
 
-There are several ways to initialise volumes, with some subtle differences that are important to understand. The most direct way is declare a volume at run-time with the -v flag:
+There are several ways to initialise volumes, with some subtle differences that are important to understand. The most direct way is declare a volume at run-time with the `-v` flag:
 
 ```
 docker run -it --name vol-test -h CONTAINER -v /data bitnami/minideb /bin/bash
@@ -91,7 +91,7 @@ docker inspect -f "{{json .Mounts}}" vol-test | jq .
 
 ### Docker volume inspect
 
-Now that we know the name of the volume, we can also get similar information from `docker volume inspect` command:
+Now that we know the name of the volume, we can also get similar information from the `docker volume inspect` command:
 
 ```
 docker volume inspect b4a206db0715a5024f77a877e4c11a7724f9bf9c5aa6ea6ce50757078e2f5433
@@ -113,7 +113,7 @@ In both cases, the output tells us that Docker has mounted /data inside the cont
 
 ### docker volume create
 We can also use the `docker volume create` command and specify the `--name` option.
-* Specify a name so you can easily find and identify your volume later
+* Specify a name so you can easily find and identify your volume later.
 
 ```
 docker volume create --name my-vol
@@ -148,12 +148,12 @@ This example will mount the my-vol volume at /data inside the container.
 
 ----
 
-We can add files under `/var/lib/docker/volumes/<name>/_data/`
+We can add files under `/var/lib/docker/volumes/<name>/_data/`.
 ```
 sudo touch /var/lib/docker/volumes/b4a206db0715a5024f77a877e4c11a7724f9bf9c5aa6ea6ce50757078e2f5433/_data/test-file
 sudo touch /var/lib/docker/volumes/my-vol/_data/test-file
 ```
-And the file will be available in the container
+And the file will be available in the container.
 
 ```
 root@CONTAINER:/# ls /data
@@ -164,9 +164,9 @@ test-file
 
 ### Listing volumes
 
-* Use `docker volume ls` command to display a list of all volumes
-* This includes volumes that were mounted to containers using the old `docker run -v` method 
-* Volumes that were not given a name during creation will have a randomly generated name
+* Use `docker volume ls` command to display a list of all volumes.
+* This includes volumes that were mounted to containers using the old `docker run -v` method.
+* Volumes that were not given a name during creation will have a randomly generated name.
 
 ```
 DRIVER              VOLUME NAME
