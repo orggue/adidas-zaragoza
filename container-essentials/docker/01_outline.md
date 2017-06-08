@@ -1,5 +1,4 @@
 # Outline
-<p>
 * Docker Basics
 * Container Images
 * Docker Registry
