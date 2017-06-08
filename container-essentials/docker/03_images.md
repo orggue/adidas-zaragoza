@@ -3,8 +3,8 @@ In this lesson, I’ll explain:
 * What is an image.
 * What is a layer.
 * The various image namespaces.
-* How to search and download images
-* Writing a basic Dockerfile
+* How to search and download images.
+* How to write a basic Dockerfile.
 
 ----
 
@@ -47,7 +47,8 @@ If an image is read-only, how do we change it?
 
 ----
 
-Confusion (chicken-and-egg):
+### Confusion 
+Chicken-and-egg:
 * The only way to create an image is by "freezing" a container.
 * The only way to create a container is by instanciating an image.
 
@@ -69,7 +70,8 @@ Note: you will probably never have to do this yourself.
 
 `docker commit`
 * Saves all the changes made to a container into a new layer.
-* Creates a new image (effectively a copy of the container).
+* Creates a new image (effectively a copy of the container).  
+
 `docker build`
 * Performs a repeatable build sequence.
 * This is the **preferred** method!
@@ -101,8 +103,10 @@ Those images include:
 The user namespace holds images for Docker Hub users and organizations.
 For example:
 * muellermich/nodejs-hello
+
 The Docker Hub user is:
 * muellermich
+
 The image name is:
 * nodejs-hello
 
@@ -111,14 +115,16 @@ The image name is:
 ### Self-hosted namespace
 
 This namespace holds images which are not hosted on Docker Hub, but on third party registries.
-
 They contain the hostname (or IP address), and optionally the port, of the registry server.
-For example:
-* localhost:5000/wordpress
-The remote host and port is:
-* localhost:5000
-The image name is:
-* wordpress
+
+For example:  
+* `localhost:5000/wordpress`  
+
+The remote host and port is:  
+* `localhost:5000`  
+
+The image name is:  
+* `wordpress`
 
 ----
 
@@ -209,11 +215,12 @@ Don't specify tags:
 * When doing rapid testing and prototyping.
 * When experimenting.
 * When you want the latest version.
+
 Do specify tags:
 * When recording a procedure into a script.
 * When going to production.
 * To ensure that the same version will be used everywhere.
-* To ensure repeatability later
+* To ensure repeatability later.
 
 ----
 
@@ -253,9 +260,9 @@ C /usr/share
 
 ### Small security excursus
 
-* With `diff` it's poosible to see what files an attacker changed, if you got hacked
-* With `commit` you can save the state for later analysis
-* If a hacker changed a file, you can revert this change by a restart of a container
+* With `diff` it's possible to see what files an attacker changed, if you got hacked.
+* With `commit` you can save the state for later analysis.
+* If a hacker changed a file, you can revert this change by a restart of a container.
 
 ----
 
@@ -272,15 +279,15 @@ At the end of this lesson, you will be able to:
 
 A Dockerfile is a build recipe for a Docker image.
 * It contains a series of instructions telling Docker how an image is constructed.
-* The docker build command builds an image from a Dockerfile.
+* The `docker build` command builds an image from a Dockerfile.
 
 ----
 
 ### Why do we need to use Dockerfile?
 
 * Dockerfile is not yet-another shell. Dockerfile has its special mission: automation of Docker image creation.
-* Once, you write build instructions into Dockerfile, you can build the same image just with docker build command.
-* Dockerfile is also useful and acts as a kind of documentation what a container does.
+* Once you write build instructions into a Dockerfile, you can build the same image just with the `docker build` command.
+* Dockerfile is also useful and acts as a kind of documentation of what a container does.
 
 ----
 
@@ -294,10 +301,11 @@ For this you can use ADD and/or COPY
 
 ### Difference of ADD and COPY
 
-The ADD instruction copies new files, directories or remote file URLs from <src> and adds them to the filesystem of the image at the path <dest>:
-* `ADD` allows <src> to be an URL
-* If the <src> parameter of ADD is an archive in a recognised compression format, it will be unpacked
-The `COPY` instruction copies new files or directories from <src> and adds them to the filesystem of the container at the path <dest>:
+The ADD instruction copies new files, directories or remote file URLs from `<src>` and adds them to the filesystem of the image at the path `<dest>`:
+* `ADD` allows `<src>` to be a URL.
+* If the `<src>` parameter of ADD is an archive in a recognised compression format, it will be unpacked.
+
+The `COPY` instruction copies new files or directories from `<src>` and adds them to the filesystem of the container at the path `<dest>`.
 
 ----
 
@@ -326,7 +334,7 @@ RUN apt-get install -y figlet
 ```
 * `FROM` indicates the base image for our build.
 * Each `RUN` line will be executed by Docker during the build.
-* Our RUN commands must be non-interactive.  
+* Our `RUN` commands must be non-interactive.  
 (No input can be provided to Docker during the build that’s why we will add the -y flag to apt-get.)
 
 ----
@@ -358,7 +366,12 @@ Step 3 : RUN apt-get install -y figlet
  ---> ccd7cf351f38
 Successfully built ccd7cf351f38
 ```
-The output of the run commands has been omitted
+The output of the run commands has been omitted.
+
+----
+
+### What happens when we build the image?
+
 * A container (42118e3df429) is created from the base image.
 * The RUN command is executed in this container.
 * The container is committed into an image (48fb734e0326).
@@ -373,10 +386,10 @@ The output of the run commands has been omitted
 ```
 Sending build context to Docker daemon 84.48 kB
 ```
-* The build context is the . directory given to docker build.
+* The build context is the `.` directory given to `docker build`.
 * It is sent (as an archive) by the Docker client to the Docker daemon.
 * This allows to use a remote machine to build using local files.
-* Be careful (or patient) if that directory is big and your link is slow
+* Be careful (or patient) if that directory is big and your link is slow.
 
 ----
 
@@ -391,12 +404,11 @@ Sending build context to Docker daemon 84.48 kB
 ### The caching system
 
 If you run the same build again, it will be instantaneous.  
-Why?
 * After each build step, Docker takes a snapshot.
-* Before executing a step, Docker checks if it has already built the same sequence.
-* Docker uses the exact strings defined in your Dockerfile:
-    * `RUN apt-get install figlet cowsay` is different from
-    * `RUN apt-get install cowsay figlet`
+* Before executing a step, Docker checks if it has already built the same sequence, using the exact strings defined in your Dockerfile:
+    * `RUN apt-get install figlet cowsay`  
+    is different from  
+    `RUN apt-get install cowsay figlet`
     * `RUN apt-get update` is not re-executed when the mirrors are updated
 
 You can force a rebuild with docker build --no-cache ....
@@ -405,16 +417,16 @@ You can force a rebuild with docker build --no-cache ....
 
 ### Cache invalidation
 
-* If you cause cache invalidation at one instruction, subsequent instructions doesn’t use cache.
-* Cache is invalid even when adding commands that don’t do anything like adding `&& true``
-* Cache is invalid when you add spaces between command and arguments inside instruction
+* If you cause cache invalidation at one instruction, subsequent instructions don’t use the cache.
+* Cache is invalid even when adding commands that don’t do anything like adding `&& true``.
+* Cache is invalid when you add spaces between command and arguments inside instruction.
 
 ----
 
 ### Cache used
 
-* Cache is used when you add spaces around commands inside instruction
-* Cache is used for non-idempotent instructions e.g.: apt-get update
+* Cache is used when you add spaces around commands inside instruction.
+* Cache is used for non-idempotent instructions e.g.: `apt-get update`
 * For the ADD and COPY instructions, the contents of the file(s) in the image are examined and a checksum is calculated
 
 ----
@@ -459,21 +471,21 @@ IMAGE               CREATED             CREATED BY                              
 ### Do it youself
 
 * Create a Dockerfile
-    * Install cowsay
-    * make the symbolic link `ln -s /usr/games/cowsay /usr/bin/cowsay` static in the Dockerfile
+  * Install cowsay
+  * make the symbolic link `ln -s /usr/games/cowsay /usr/bin/cowsay` static in the Dockerfile
 * Build the image
 * Run the container from that image
 * Run cowsay
 
 ----
 
-### Do it yourself
-
+### Do it yourself  
 * Create a Dockerfile
-    * Install fotunr
+  * Install fortune
 * Build the image
-* Commit you change
-Hint:
+* Commit your change
+
+Hint:  
 ```
 ln -s /usr/games/fortune /usr/bin/fortune
 ```
@@ -516,7 +528,7 @@ figlet -f script hello
 ----
 
 ### Adding CMD to our Dockerfile
-To run a commanf `CMD`is used
+To run a command we use `CMD`.  
 Our new Dockerfile will look like this:
 ```bash
 FROM bitnami/minideb:latest
@@ -627,6 +639,8 @@ RUN apt-get install figlet
 ENTRYPOINT ["figlet", "-f", "script"]
 ```
 
+----
+
 ### Using ENTRYPOINT
 * `ENTRYPOINT` defines a base command (and its parameters) for the container.
 * The command line arguments are appended to those parameters.
@@ -673,7 +687,6 @@ docker run -ti figlet salut
 ----
 
 ### What if we want to use CMD and Entrypoint together?
-Then we will use `ENTRYPOINT` and `CMD` together.
 * `ENTRYPOINT` will define the base command for our container.
 * `CMD` will define the default parameter(s) for this command.
 
@@ -721,7 +734,11 @@ docker run -ti figlet salut
 
 ### Overriding ENTRYPOINT
 What if we want to run a shell in our container? 
-We cannot just do `docker run -ti figlet /bin/bash` because that would just tell figlet to display the word "/bin/bash." 
+We cannot just do 
+```
+docker run -ti figlet /bin/bash
+```
+because that would just tell figlet to display the string "/bin/bash." 
 
 We use the `--entrypoint` parameter:
 
@@ -760,9 +777,9 @@ Remember: the build context is the directory containing the Dockerfile.
 
 ----
 
-Build some C code
+### Build some C code
 
-We want to build a container that compiles a basic "Hello world" program in C.
+We want to build a container that compiles a basic "Hello world" program in C.  
 Here is the program, hello.c:
 ```c
 int main () {
@@ -803,7 +820,7 @@ Run it
 ```bash
 docker run ubuntu_c
 Hello, world!
-````
+```
 
 ----
 
@@ -832,52 +849,65 @@ that label-values can span multiple lines."
 ### Using Expose
 
 * The EXPOSE instruction informs Docker that the container listens on the specified network ports at runtime. 
-* EXPOSE does not make the ports of the container accessible to the host. To do that, you must use either the -p flag to publish a range of ports or the -P flag to publish all of the exposed ports.
+* EXPOSE does not make the ports of the container accessible to the host. To do that, you must use either the `-p` flag to publish a range of ports or the `-P` flag to publish all of the exposed ports.
 
 ----
 
 ### The Dockerfile with EXPOSE
-
+```
 FROM bitnami/minideb:latest
 RUN apt-get update && apt-get install -y nginx
 CMD ["nginx", "-g", "daemon off;"]
 EXPOSE 80
+```
 
 * We'll build an image that will run nginx
 * We are using the EXPOSE command here to inform what port the container will be listening on.
 
-If we use the -P command, then the EXPOSE port will be used by default and ampped to a random high port on the host.
+If we use the `-P` flag, then the EXPOSE port will be used by default and mapped to a random high port on the host.
 
 ----
 
-### Testing EXPOSE
+### Testing EXPOSE<p/>
 
 * Create the Dockerfile
-* Build that image
-* run the container
+* Build the image
+* run the container  
+
 Version1:
-```
-docker run -d -p 80:80 mynginx
+```bash
+docker run -d -p 80:80 mynginx 
 ```
 Version2:
-```
+```bash
 docker run -d -P mynginx
 ```
 
 The difference can be checked using `docker ps`
-To validate that it's working you can use your browser or curl
+Validate that it's working using your browser or curl.
 
 ----
 
 ### Using ENV
 
-The ENV instruction sets the environment variable <key> to the value <value>. This value will be in the environment of all “descendant” Dockerfile commands and can be replaced inline in many as well.
+The ENV instruction sets the environment variable `<key>` to the value `<value>`. This value will be in the environment of all “descendant” Dockerfile commands and can be replaced inline in many as well.
 
 ----
 
 ### Dockerfile with ENV
+Create a Dockerfile with the following content:
+```bash
+FROM bitnami/minideb:latest
+ENV key1 value1
+ENV key2=value2
+ENV key3="value 3" key4=value\ 4
+```
+The ENV instruction has two forms.  
+The first form, ENV `<key> <value>`, will set a single variable to a value. The entire string after the first space will be treated as the `<value>` - including characters such as spaces and quotes.
 
-Create a Dockerfile with this content
+----
+
+### Dockerfile with ENV
 
 ```bash
 FROM bitnami/minideb:latest
@@ -885,20 +915,18 @@ ENV key1 value1
 ENV key2=value2
 ENV key3="value 3" key4=value\ 4
 ```
-The ENV instruction has two forms. The first form, ENV <key> <value>, will set a single variable to a value. The entire string after the first space will be treated as the <value> - including characters such as spaces and quotes.
-
-The second form, ENV <key>=<value> ..., allows for multiple variables to be set at one time. Notice that the second form uses the equals sign (=) in the syntax, while the first form does not. Like command line parsing, quotes and backslashes can be used to include spaces within values.
+The second form, ENV `<key>=<value>` ..., allows for multiple variables to be set at one time. Notice that the second form uses the equals sign (=) in the syntax, while the first form does not. Like command line parsing, quotes and backslashes can be used to include spaces within values.
 
 ----
 
 ### Validating ENV
 
-The environment variables set using ENV will persist when a container is run from the resulting image. You can view the values using `docker inspect`, and change them using docker run --env <key>=<value>. Or view them in the container.
+The environment variables set using ENV will persist when a container is run from the resulting image. You can view the values using `docker inspect`, and change them using docker run --env `<key>`=`<value>`. Or view them in the container.
 
 ```
 docker build -t environment .
-docker inspect
-...
+docker inspect environment
+(...)
  "Config": {
             "Hostname": "7cbef47bbbe4",
             "Domainname": "",
@@ -917,14 +945,17 @@ docker inspect
                 "key3=value3",
                 "key4=key 4"
             ],
-...
+(...)
 ````
 
 ----
 
 ### Changing a value
 
+```bash
 docker run --env key1=value\ 1 environment env
+```
+```
 PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 HOSTNAME=2230c6cc84e8
 key1=value 1
@@ -933,6 +964,7 @@ key2=value2
 key3=value3
 key4=key 4
 HOME=/root
+```
 
 ----
 
@@ -952,21 +984,25 @@ key4=value 4
 HOME=/root
 ```
 
+----
 
+### Uploading images to the Docker Hub
+We have built our first images.  
+If we were so inclined, we could share those images through the Docker Hub.  
+We won't do it since we don't want to force everyone to create a Docker Hub account (although it's free, yay!) but the steps would be:
 
 ----
 
-### Uploading our images to the Docker Hub
-We have built our first images.
-If we were so inclined, we could share those images through the Docker Hub.
-We won't do it since we don't want to force everyone to create a Docker Hub account (although it's free, yay!) but the steps would be:
-* have an account on the Docker Hub
-* tag our image accordingly (i.e. username/imagename)
-* docker push username/imagename
+### Uploading images to the Docker Hub<p>
+* Create an account on the Docker Hub
+* `docker tag imagename username/imagename`
+* `docker push username/imagename`
 
-Anybody can now docker run username/imagename from any Docker host.
+Anybody can now execute  
+`docker run username/imagename`  
+from any Docker host.
 
-Images can be set to be private as well
+Images can be set to be private as well.
 
 ----
 
@@ -991,4 +1027,3 @@ In this lesson, I’ll explain:
 * Ways to secure it.
 
 ----
-
