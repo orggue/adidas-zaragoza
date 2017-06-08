@@ -20,7 +20,7 @@ At the end of this lesson, you will be able to:
 ----
 
 ### Volumes
-A Volume is a designated directory in a container, which is designed to persist data, independent of the container’s life cycle
+A Volume is a designated directory in a container, which is designed to persist data, independent of the container's life cycle
 
 * Volume changes are excluded when updating an image
 * Persist when a container is deleted
@@ -30,19 +30,19 @@ A Volume is a designated directory in a container, which is designed to persist 
 ----
 
 ### Working with Volumes
-Docker volumes can be used:
-* De-couple the data that is stored, from the container which created the data
-* Bypassing the copy-on-write system to obtain native disk I/O performance.
-* Bypassing copy-on-write to leave some files out of docker commit.
-* Sharing a directory between multiple containers.
-* Sharing a directory between the host and a container.
-* Sharing a single file between the host and a container
+Docker volumes can be used to:
+* De-couple the data that is stored, from the container which created the data.
+* Bypass the copy-on-write system to obtain native disk I/O performance.
+* Bypass copy-on-write to leave some files out of docker commit.
+* Share a directory between multiple containers.
+* Share a directory between the host and a container.
+* Share a single file between the host and a container.
 
 ----
 
 ### Docker volume command
 
-The `docker volume` command contains a number of sub commands used to create and manage volumes
+The `docker volume` command contains a number of sub commands used to create and manage volumes.  
 Commands are 
 ```
 docker volume create
@@ -68,7 +68,7 @@ root@CONTAINER:/#
 
 ----
 
-We can find out where the volume lives on the host by using the docker inspect command on the host (open a new terminal and leave the previous container running if you’re following along):
+We can find out where the volume lives on the host by using the `docker inspect` command on the host (open a new terminal and leave the previous container running if you're following along):
 
 ```
 docker inspect -f "{{json .Mounts}}" vol-test | jq .
@@ -89,9 +89,9 @@ docker inspect -f "{{json .Mounts}}" vol-test | jq .
 
 ----
 
-### Docker network inspect
+### Docker volume inspect
 
-Now that we know the name of the volume, we can also get similar information from docker volume inspect command:
+Now that we know the name of the volume, we can also get similar information from `docker volume inspect` command:
 
 ```
 docker volume inspect b4a206db0715a5024f77a877e4c11a7724f9bf9c5aa6ea6ce50757078e2f5433
@@ -112,7 +112,7 @@ In both cases, the output tells us that Docker has mounted /data inside the cont
 ----
 
 ### docker volume create
-We can also use the `docker volume create` command and specify the `--name` option
+We can also use the `docker volume create` command and specify the `--name` option.
 * Specify a name so you can easily find and identify your volume later
 
 ```
@@ -181,16 +181,16 @@ local               https
 
 ### Mount a Volume
 
-* Volumes can be mounted when running a container
-* Use the `-v` option on `docker run` command and specify the name of the volume and the mount path syntax: `docker run -v <name>:<path> …`
-* Path is the container folder where you want to mount the volume
-* Can mount multiple volumes by using the `-v` option multiple times
+* Volumes can be mounted when running a container.  
+* Use the `-v` option on `docker run` command and specify the name of the volume and the mount path syntax: `docker run -v <name>:<path> ...`
+* Path is the container folder where you want to mount the volume.
+* You can mount multiple volumes by using the `-v` option multiple times.
 
 ----
 
 ### Sharing Data
 
-To give another container access to a container’s volumes, we can provide the `–volumes-from` argument to docker run. For example:
+To give another container access to a container's volumes, we can provide the `--volumes-from` argument to `docker run`. For example:
 
 ```
 docker run -it -h NEWCONTAINER --volumes-from vol-test bitnami/minideb /bin/bash
@@ -203,7 +203,7 @@ This works whether container-test is running or not. A volume will never be dele
 
 ----
 
-We could also have mounted the volume by giving its name to the -v flag i.e:
+We could also have mounted the volume by giving its name to the `-v` flag i.e:
 ```
 
 
@@ -215,22 +215,24 @@ test-file
 ----
 
 ### Data containers
-Prior to the introduction of the docker volume commands, it was common to use “data containers” for storing persistent and shared data such as databases or configuration data. This approach meant that the container essentially became a “namespace” for the data – a handle for managing it and sharing with other containers. However, in modern versions of Docker, this approach should be never be used – simply create named volumes using docker volume create –name instead.
+Prior to the introduction of the docker volume commands, it was common to use "data containers" for storing persistent and shared data such as databases or configuration data. This approach meant that the container essentially became a "namespace" for the data - a handle for managing it and sharing with other containers. However, in modern versions of Docker, this approach should be never be used - simply create named volumes using `docker volume create --name` instead.
 
 ----
 
 ### Permissions and Ownership
 
-Often you will need to set the permissions and ownership on a volume, or initialise the volume with some default data or configuration files. A key point to be aware of here is that anything after the VOLUME instruction in a Dockerfile will not be able to make changes to that volume e.g:
-```FROM debian:wheezy
+You cannot alter file attributes after a VOLUME instruction in a Dockerfile.
+```
+FROM debian:wheezy
 RUN useradd foo
 VOLUME /data
 RUN touch /data/x
 RUN chown -R foo:foo /data
 ```
-Will not work as expected. We want the touch command to run in the image’s filesystem but it is actually running in the volume of a temporary container.
+Will not work as expected. The touch command is actually running in the volume of a temporary container.
 
 ----
+
 The following will work:
 ```
 FROM debian:wheezy
@@ -239,24 +241,24 @@ RUN mkdir /data && touch /data/x
 RUN chown -R foo:foo /data
 VOLUME /data
 ```
-Docker is clever enough to copy any files that exist in the image under the volume mount into the volume and set the ownership correctly.
+Any files that exist in the image under the volume mounti will be copied into the volume with the proper attributes.
 
 ----
 
 ### Deleting Volumes
 
-Chances are, if you’ve been using docker rm to delete your containers, you probably have lots of orphan volumes lying about taking up space.
+If you use `docker rm` to delete your containers, you probably have lots of orphan volumes on your system taking up space.
 
-* Volumes are only automatically deleted if the parent container is removed with the docker rm -v command 
+* Volumes are only automatically deleted if the parent container is removed with the `docker rm -v` command. 
 * A volume will only be deleted if no other container links to it. 
-* Volumes linked to user specified host directories are never deleted by docker.
+* Volumes linked to user specified host directories are never deleted by Docker.
 
 ----
 
 ### Module summary
-
-* Volumes are created with the docker volume create command
-* Volumes can be mounted when we run a container during the docker run command or in a Dockerfile
-* We can map a host directory to a volume in a container
+<p>
+* Create volumes with `docker volume create`.
+* Mount volumes at runtime with `docker run -v` or at buildtime in a Dockerfile with `VOLUME`.
+* Host directories can be mapped to a volume inside a container.
 
 ----
