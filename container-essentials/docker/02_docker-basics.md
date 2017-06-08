@@ -306,7 +306,7 @@ If you have started an interactive container (with option -it), you can detach f
 * The "detach" sequence is `^P^Q`.
 * Or you can detach by killing the Docker client.
 
-Don’t hit `^C`, as this would deliver SIGINT to the container
+Don't hit `^C`, as this would deliver SIGINT to the container
 
 What does -it stand for?
 * `-t` means "allocate a terminal."

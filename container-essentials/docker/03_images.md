@@ -1,5 +1,5 @@
 ## Understanding Docker images
-In this lesson, I’ll explain:
+In this lesson, I'll explain:
 * What is an image.
 * What is a layer.
 * The various image namespaces.
@@ -335,7 +335,7 @@ RUN apt-get install -y figlet
 * `FROM` indicates the base image for our build.
 * Each `RUN` line will be executed by Docker during the build.
 * Our `RUN` commands must be non-interactive.  
-(No input can be provided to Docker during the build that’s why we will add the -y flag to apt-get.)
+(No input can be provided to Docker during the build that's why we will add the -y flag to apt-get.)
 
 ----
 
@@ -417,8 +417,8 @@ You can force a rebuild with docker build --no-cache ....
 
 ### Cache invalidation
 
-* If you cause cache invalidation at one instruction, subsequent instructions don’t use the cache.
-* Cache is invalid even when adding commands that don’t do anything like adding `&& true``.
+* If you cause cache invalidation at one instruction, subsequent instructions don't use the cache.
+* Cache is invalid even when adding commands that don't do anything like adding `&& true``.
 * Cache is invalid when you add spaces between command and arguments inside instruction.
 
 ----
@@ -1022,7 +1022,7 @@ We've learned:
 
 ## Setting up a private registry
 
-In this lesson, I’ll explain:
+In this lesson, I'll explain:
 * How to setup a private registry.
 * Ways to secure it.
 

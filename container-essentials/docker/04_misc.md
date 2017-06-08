@@ -1,9 +1,9 @@
 ## Naming and inspecting containers
-In this lesson, we will learn about some important Docker concept: 
-* container naming which allows to:
-    * Reference easily a container.
+In this lesson, we will learn about some important Docker concepts:
+* Container naming which allows to:
+    * Reference a container easily.
     * Ensure unicity of a specific container.
-* the inspect command:
+* The inspect command:
     * Gathering details about a container.
 * Misc:
     * Cleanup methods
@@ -11,10 +11,10 @@ In this lesson, we will learn about some important Docker concept:
 ----
 
 ### Naming our containers
-So far, we have referenced containers with their ID.
-We have copy-pasted the ID, or used a shortened prefix.
-But each container can also be referenced by its name.
-If a container is named prod-db, I can do:
+So far, we have referenced containers with their ID.  
+We have copy-pasted the ID, or used a shortened prefix.  
+But each container can also be referenced by its name.  
+If a container is named prod-db, I can do:  
 ```bash
 docker logs prod-db
 docker stop prod-db
@@ -27,15 +27,14 @@ etc.
 
 When we create a container, if we don't give a specific name, Docker will pick one for us.
 It will be the concatenation of:
-* A mood (furious, goofy, suspicious, boring...)
-* The name of a famous inventor (tesla, darwin, wozniak...)
+* An adjective representing a mood (furious, goofy, suspicious, boring...)
+* The name of a famous scientist (tesla, darwin, wozniak...)
 
 Examples: happy_curie, clever_hopper, jovial_lovelace ...
 
 ----
 
 ### Specifying a name
-Specifying a name
 You can set the name of the container when you create it.
 ```bash
 docker run --name ticktock jpetazzo/clock
@@ -48,7 +47,7 @@ This enforces unicity of a given name.
 ----
 
 ### Renaming containers
-Since Docker 1.5 (released February 2015), you can rename containers with docker rename.   
+Since Docker 1.5 (released February 2015), you can rename containers with `docker rename`.   
 This allows you to "free up" a name without destroying the associated container, for instance.
 
 ----
@@ -88,7 +87,7 @@ The `docker inspect` command will output a very detailed JSON map.
 
 You could grep and cut or awk the output of docker inspect.
 * But it`s a PITA
-* If you really must parse JSON from the Shell, use JQ!
+* If you really must parse JSON from the Shell, use `jq`!
 ```bash
 docker inspect <containerID> | jq .
 ```
@@ -102,18 +101,16 @@ You can specify a format string, which will be parsed by Go's text/template pack
 ```bash
 docker inspect --format '{{ json .Created }}' 7cbef47bbbe4 
 "2017-01-14T23:12:08.949247863Z"
-
 docker inspect --format '{{ json .NetworkSettings.IPAddress }}' 7cbef47bbbe4 
 "172.17.0.3"
-
 docker inspect --format '{{ json .Config.Env }}' 7cbef47bbbe4 
 ["no_proxy=*.local, 169.254/16","PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin","key1=value1","key2=value2","key3=value3","key4=key 4"]
 ```
 
-* The generic syntax is to wrap the expression with double curly braces.
-* The expression starts with a dot representing the JSON object.
-* Then each field or member can be accessed in dotted notation syntax.
-* The optional json keyword asks for valid JSON output.  
+* Wrap the expression with double curly braces.
+* Start with a dot representing the JSON object.
+* Specify fields or members with dotted notation.
+* The optional json function formats the output in valid JSON.  
 (e.g. here it adds the surrounding double-quotes.)
 
 ----
@@ -128,7 +125,7 @@ One command to rule them all:
 docker system prune
 ```
 
-`prune` is a very useful command (also works for `volume` and `network` sub-commands), but it is only available for Docker 1.13. So if you’re using older Docker versions, the following commands can help you to replace the prune command.
+`prune` is a very useful command (also works for `volume` and `network` sub-commands), but it is only available for Docker 1.13. So if you're using older Docker versions, the following commands can help you to replace the prune command.
 
 ----
 
@@ -144,7 +141,7 @@ docker rm $(docker volume ls -q -f "dangling=true")
 
 ### Remove Exited containers
 
-The same principle works here too. First, list the containers (only IDs) you want to remove (with filter) and then remove them (consider rm -f to force remove).
+The same principle works here too. First, list the containers (only IDs) you want to remove (with filter) and then remove them (use `rm -f` to force remove).
 
 ```
 docker rm $(docker ps -q -f "status=exited")
