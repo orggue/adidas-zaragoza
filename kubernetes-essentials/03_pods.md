@@ -17,7 +17,7 @@ We'll create a Pod named `hello-world` and interact with it using the kubectl.
 When developing with Docker containers, we often do not wish to publish them before testing them in minikube. We'll now setup minikube and Docker to work smoothly together.
 
 ```
-minikube delte
+minikube delete
 minikube start --insecure-registry localhost:5000
 ```
 This will create a VM and configure a single-node Kubernetes cluster inside it.
