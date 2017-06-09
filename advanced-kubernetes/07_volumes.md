@@ -1,17 +1,17 @@
-### Volumes
+### Storage
 
-A Pod is made of one or several containers plus some data volumes that can be mounted inside the containers. In this section you will learn how to: * define volume in Pods
-* define a persistent volume
-* define a persistent volume claim 
+A Pod is made up of one or several containers plus some data volumes that can be mounted inside the containers. In this section you will learn how to: 
+* define a deployment backed by a emptyDir
+* define a deployment backed by a emptyDir(memory backed storage)
+* define a deployment backed by a hostPath 
+* define a deployment backed by a persistent volume and persistent volume claim 
+* define a deployment backed by a persistent volume and persistent volume claim using a StorageClass
 
-----
+Before going further, you can spend time on these little exercises. They will clarify how volumes are defined in Pods.
 
-### Do it yourselfe
+### emptyDir
 
-Before going further, you can spend time on this little exercise. It will clarify how volumes are defined in Pods.
-
-* Create a Pod with two containers and one volume shared. 
-* You can experiment with `emptyDir` and `hostPath` since those two volume types do not require any additional setup and will work in your Kubernetes cluster. 
+* For this exercise we'll create a Pod with two containers and one shared volume.
 
 ----
 The volume is of type `emptyDir`. The kubelet will create an empty directory on the node when the Pod is scheduled. Once the Pod is destroyed, the kubelet will delete the directory. This is the simplest type of volumes used in Kubernetes.
@@ -56,6 +56,51 @@ total 0
 ```
 
 ----
+
+
+### emptyDir - memory backed storage
+
+* This excerise is similar to the above but with a slight twist, this time instead of just an emptyDir we'll demonstrate an emptyDir backed by a memory backed storage.
+
+
+
+
+
+### hostPath
+
+* In this excerise we will demonstrate the usefullness of a hostPath by mounting the docker socket and running a few docker commands to demonstrate that it's working.
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: alpine
+spec:
+  containers:
+  - name: alp
+    image: alpine
+    volumeMounts:
+    - name: test
+      mountPath: /busy
+    command:
+      - sleep
+      - "3600"
+  - name: box
+    image: busybox
+    volumeMounts:
+    - name: test
+      mountPath: /box
+    command:
+      - sleep
+      - "3600"
+  volumes:
+  - name: test
+    emptyDir: {}
+```
+
+### PV and PVC
+
+### PV and PVC using StorageClass
 
 ### Persistent Volumes and Claims
 
