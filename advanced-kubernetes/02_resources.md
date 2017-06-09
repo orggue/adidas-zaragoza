@@ -14,8 +14,10 @@ CPU & Memory
 * Accounted
 * Scheduled
 * Isolated
+
 Local Storage (Disk or SSD)
 * Accounted (restriction to single partition /)
+
 Nvidia GPU
 * Alpha support (1 GPU per-node)
 
@@ -25,25 +27,36 @@ Nvidia GPU
 
 Request: (soft limit)
 
-How much of a resource a container is asking to use with a strong guarantee of availability
+How much of a resource a container is asking to use with a strong guarantee of availability.
 * CPU (millicores, 1/1000 of one core)
 * RAM (bytes)
-Scheduler will not over-commit requests
+
+Scheduler will not over-commit requests.  
+
+----
+
+### Requests and Limits
+
 Limit: (hard limit)
-* max amount of a resource a container can access
-* scheduler ignores limits
+* max amount of a resource a container can access.
+* scheduler ignores limits.
+
+----
+
+### Requests and Limits
+
 Repercussions:
-* Usage > Request: resources might be available
-* Usage > Limit: killed or throttled
+* Usage > Request: resources might be available.
+* Usage > Limit: killed or throttled.
 
 ----
 
 ### Setting resource limits
 
 
-* If a pod is successfully scheduled, the container is guaranteed the amount of resources requested. Scheduling is based on requests and not limits
-* Set resource request that Kubernetes can scheduling containers on different instances. 
-* Set resource limit that in the case you have a application trying eating up all ressources (java :-)), it can be prevented.
+* If a pod is scheduled successfully, the container is guaranteed the amount of resources requested. Scheduling is based on requests, not limits.
+* Set resource requests so Kubernetes can schedule containers on different nodes.
+* Set resource limits to prevent an application from taking up all resources.
 
 This is why you should ALWAYS set both resource requests and resource limits.
 
@@ -51,39 +64,38 @@ This is why you should ALWAYS set both resource requests and resource limits.
 
 ### Compressible Resource Guarantees
 
-Kubernetes only supports CPU at the moment
+Kubernetes only supports CPU at the moment.
 
-* Pods are guaranteed to get the amount of CPU they request
-* This isn't fully guaranteed today because cpu isolation is at the container level. Pod level cgroups will be introduced soon to achieve this goal.
-* Excess CPU resources will be distributed based on the amount of CPU requested. 
+* Pods are guaranteed to get the amount of CPU they request.
+* This isn't fully guaranteed today because CPU isolation is at the container level. Pod level cgroups will be introduced soon to achieve this goal.
+* Excess CPU resources will be distributed based on the amount of CPU requested.
 
 ----
 
 ### Compressible Resource Guarantees
 
-Example (1 vCPU available): 
-* Container A requests 600 milli CPUs
-* Container B requests for 300 milli CPUs
-* Both containers trying to use as much CPU as they can. Then the extra 100 milli CPUs will be distributed to A and B in a 2:1 ratio
+Example (1 vCPU available):
+* Container A requests 600 milli CPUs.
+* Container B requests for 300 milli CPUs.
+* Both containers trying to use as much CPU as they can. Then the extra 100 milli CPUs will be distributed to A and B in a 2:1 ratio.
 
-Pods will be throttled if they exceed their limit. If limit is unspecified, then the pods can use excess CPU when available.
+Pods will be throttled if they exceed their limit. If limit is unspecified, pods can use excess CPU when available.
 
 ----
 
 ### Incompressible Resource Guarantees
 
-Kubernetes only supports memory at the moment
+Kubernetes only supports memory at the moment.
 
-* Pods will get the amount of memory they request, if they exceed their memory request, they could be killed (if some other pod needs memory)
-* If pods consume less memory than requested, they will not be killed (except in cases where system tasks or daemons need more memory)
+* Pods will get the amount of memory they request, if they exceed their memory request, they could be killed (if some other pod needs memory).
+* If pods consume less memory than requested, they will not be killed (except in cases where system tasks or daemons need more memory).
 
 When Pods use more memory than their limit, will be killed by the kernel.
-
 
 ----
 
 ### Quality of Service Classes
-Guaranteed: highest protection
+Guaranteed: highest protection.
 
 * request > 0 && limit == request
 
@@ -158,7 +170,7 @@ containers:
 
 ----
 
-Container `bar` has not resources specified.
+Container `bar` has no resources specified.
 
 ```yaml
 containers:
@@ -176,7 +188,7 @@ containers:
 
 ----
 
-Container `foo` and `bar` have limits set for different resources.
+Containers `foo` and `bar` have limits set for different resources.
 
 ```yaml
 containers:
@@ -209,29 +221,31 @@ containers:
 ----
 
 How is “protection” implemented?
-* CPU: some Best Effort/Burstable container using more than its request is throttled
-    * CPU shares + CPU quota
-* Memory: some Best Effort/Burstable container using more than its request is killed
-    * OOM score + user-space evictions
+* CPU: some Best Effort/Burstable container using more than its request is throttled.
+    * CPU shares + CPU quota.
+* Memory: some Best Effort/Burstable container using more than its request is killed.
+    * OOM score + user-space evictions.
 
 ----
 
 ### Examples
 
-Each container in a pod may specify the amount of CPU it requests on a node. 
+Each container in a pod may specify the amount of CPU it requests on a node.
 
 CPU requests are used at schedule time, and represent a minimum amount of CPU that should be reserved for your container to run.
 
+----
+
 Let's demonstrate this concept using a simple container that will consume as much CPU as possible.
 ```
-kubectl run cpustress --image=busybox --requests=cpu=100m \ 
+kubectl run cpustress --image=busybox --requests=cpu=100m \
 -- md5sum /dev/urandom
 ```
 This will create a single pod on your node that requests 1/10 of a CPU, but it has no limit on how much CPU it may actually consume on the node.
 
 ----
 
-To demonstrate this, you can use `kubectl top pod <PODNAME>` to view the the used CPU shares
+To demonstrate this, you can use `kubectl top pod <PODNAME>` to view the the used CPU shares.
 
 ```
 kubectl top pod cpustress-4101692926-zqw2p
@@ -239,7 +253,7 @@ NAME                         CPU(cores)   MEMORY(bytes)
 cpustress-4101692926-zqw2p   924m         0Mi             
 ```
 
-As you can see it uses 924m of a 1vCPU machine
+As you can see it uses 924m of a 1vCPU machine.
 
 ----
 
@@ -279,7 +293,7 @@ kubectl run cpustress --image=busybox --requests=cpu=100m \
 --limits=cpu=200m -- md5sum /dev/urandom
 ```
 
-You can verify that by using `kubectl top`
+You can verify that by using `kubectl top`:
 ```
 kubectl top pod
 NAME                         CPU(cores)   MEMORY(bytes)   
@@ -318,7 +332,7 @@ kubectl run memhog --image=derekwaynecarr/memhog --requests=memory=100Mi \
 
 ----
 
-Verify the usage with `kubectl top pod``
+Verify the usage with `kubectl top pod`
 ````
 kubectl top pod
 NAME                     CPU(cores)   MEMORY(bytes)   
@@ -333,7 +347,7 @@ We request 100Mi, but have burst our memory usage to a greater value. That's cal
 
 If you specify a memory limit, you can constrain the amount of memory your container can use.
 
-For example, let's limit our container to 200Mi of memory, and just consume 100MB
+For example, let's limit our container to 200Mi of memory, and just consume 100MB.
 
 ```
 kubectl run memhog --image=derekwaynecarr/memhog --limits=memory=200Mi \
@@ -381,29 +395,29 @@ kubectl describe po memhog-oom-3179143800-gmdbc |grep -C 3 "Terminated"
 
 ### What if my node runs out of memory?
 
-With Guaranteed resources you are not in major danger of causing an OOM event on your node
+With Guaranteed resources you are not in major danger of causing an OOM event on your node.
 
-If any individual container consumes more than their specified limit, it will be killed
+If any individual container consumes more than their specified limit, it will be killed.
 
 ----
 
 With BestEffort and Burstable resources it is possible that a container will request more memory than what is actually available on the node.
 
-If this happens: 
-* the system will attempt to prioritize the containers that are killed based on their quality of service. 
+If this happens:
+* the system will attempt to prioritize the containers that are killed based on their quality of service.
 * This is done by using the OOMScoreAdjust feature in the Linux kernel
-* Processes with lower values are preserved in favor of processes with higher values. 
+* Processes with lower values are preserved in favor of processes with higher values.
 * The system daemons (kubelet, kube-proxy, docker) all run with low OOMScoreAdjust values.
 
 ----
 
-Containers with Guaranteed memory are given a lower value than Burstable containers which has a lower value than BestEffort containers. As a consequence, containers with BestEffort should be killed before the other tier
+Containers with Guaranteed memory are given a lower value than Burstable containers which have a lower value than BestEffort containers. As a consequence, containers with BestEffort should be killed before the other tier.
 
 ----
 
 ### Example
 
-Dpn't do that on your minikube. It will crash the VM
+Don't do this on your minikube. It will crash the VM!
 
 ```
 kubectl run mem-guaranteed --image=derekwaynecarr/memhog --replicas=2 \
@@ -414,7 +428,10 @@ kubectl run mem-burstable --image=derekwaynecarr/memhog --replicas=2 \
 kubectl run mem-besteffort --replicas=10 --image=derekwaynecarr/memhog \
 	--requests=cpu=10m --command -- memhog -r10000 500m
 ```
-This will force a SystemOOM
+
+----
+
+This will force a SystemOOM.
 ```
 kubectl get events | grep OOM
 {kubelet gke-cluster-1-default-pool-312d7520-c4db}      System OOM encountered
@@ -426,16 +443,16 @@ The process relies on the Kernel to react to system OOM events. Depending on how
 
 ### Resource Quota
 
-Quotas can be set per-namespace
-* maximum request and limit across all pods
-* applies to each type of resource (CPU, mem)
-* user must specify request or limit
-* maximum number of a particular kind of object
-Ensure no user/app/department abuses the cluster
+Quotas can be set per-namespace.
+* maximum request and limit across all pods.
+* applies to each type of resource (CPU, mem).
+* user must specify request or limit.
+* maximum number of a particular kind of object.
+Ensure no user/app/department abuses the cluster.
 
-Applied at admission time
+Applied at admission time.
 
-Pods which specify explicitly resource limits and requests will not pick up the namespace default values.
+Pods which explicitly specify resource limits and requests will not pick up the namespace default values.
 
 ----
 

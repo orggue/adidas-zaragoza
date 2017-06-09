@@ -1,12 +1,14 @@
 ConfigMaps are similar to Secrets, only that they are designed to more conveniently support working with strings that do not contain sensitive information. They can be used to store individual properties in form of key-value pairs. However, the values can also be entire config files or JSON blobs to store more information.
-In this section you will learn how to: 
+In this section you will learn how to:
 * use ConfigMaps
 
 ----
 
 ### ConfigMaps
 
-ConfigMap hold both fine- and/or coarse-grained data. Applications read configuration settings from both environment variables and files containing configuration data, ConfigMap support both methods. 
+ConfigMaps hold both fine- and/or coarse-grained data. Applications read configuration settings from both environment variables and files containing configuration data, ConfigMaps support both methods.
+
+----
 
 Example ConfigMap that contains both types of configuration:
 
@@ -34,9 +36,12 @@ apiVersion: v1
     allow.textmode=true
     how.nice.to.look=fairlyNice
 ```
-To create this config map you can issue ```kubectl create -f <filename>```
+
+----
 
 The property-like keys of the ConfigMap are used as environment variables to the single container in the Deployment template, and the file-like keys populate a volume.
+
+----
 
 ### Consuming in Environment Variables
 
@@ -79,6 +84,9 @@ spec:
               key: special.type
   restartPolicy: Never
 ```
+
+----
+
 When this pod is run, its output will include the following lines:
 ```
 SPECIAL_LEVEL_KEY=very
@@ -94,9 +102,11 @@ A ConfigMap can also be used to set the value of the command or arguments in a c
 
 ### Consuming in Volumes
 
-A ConfigMap can also be consumed in volumes. Returning again to the above ConfigMap
+A ConfigMap can also be consumed in volumes. Returning again to the above ConfigMap.
 
 You have a couple different options for consuming this ConfigMap in a volume. The most basic way is to populate the volume with files where the key is the file name and the content of the file is the value of the key.
+
+----
 
 ```
 apiVersion: v1
@@ -155,17 +165,20 @@ very
 
 ----
 
-### Do it yourselfe
+### Do it yourself
 
-For a real-world example, you can configure Redis using a ConfigMap. To inject Redis with the recommended configuration for using Redis as a cache, the Redis configuration file(called redis-config) should contain the following:
+For a real-world example, you can configure Redis using a ConfigMap. To inject Redis with the recommended configuration for using Redis as a cache, the Redis configuration file (called redis-config) should contain the following:
 ```
 maxmemory 2mb
 maxmemory-policy allkeys-lru
 ```
-* Create a configfile containing the values
-* Create a ConfigMap called `example-redis-config` from that file
-* Validate the results
-* Create a Pod whith
+
+----
+
+* Create a configfile containing the values.
+* Create a ConfigMap called `example-redis-config` from that file.
+* Validate the results.
+* Create a Pod with:
 ```
       configMap:
         name: example-redis-config

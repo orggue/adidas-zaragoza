@@ -1,24 +1,27 @@
 ## Creating and Managing Services
 
-In this section you will create the `hello-node` service and "expose" the `hello-node` Pod. You will learn how to:
+In this section you will create a `hello-node` service and "expose" the `hello-node` Pod. You will learn how to:
 
-* Create a service
-* Use label and selectors to expose a limited set of Pods externally
+* Create a service.
+* Use label and selectors to expose a limited set of Pods externally.
 
 ----
 
 ### Introduction to services
-Services provide stable endpoints for Pods based on a set of labels and selectors.
-Some of the service types are :
-`ClusterIP` Your service is only expose internally to the cluster on the internal cluster IP. A example would be to deploy Hasicorp’s vault and expose it only internally.
+* Stable endpoints for Pods.
+* Based on labels and selectors.
 
-`NodePort` Expose the service on the instances on the specified or random assigned port.
+----
 
-`LoadBalancer` Supported on e.g. Amazon and Google cloud, this creates load balancer VIP
+### Service types
 
-`ExternalName` Create a CNAME dns record to a external domain.
+* `ClusterIP` Exposes the service on a cluster-internal IP.
 
-For more information about Services look at https://kubernetes.io/docs/user-guide/services/
+* `NodePort` Expose the service on a specific port on each node.
+
+* `LoadBalancer` Use a loadbalancer from a Cloud Provider. Creates `NodePort` and `ClusterIP`.
+
+* `ExternalName` Connect an external service (CNAME) to the cluster.
 
 ----
 
@@ -42,7 +45,9 @@ spec:
   selector:
     app: hello-node
 ```
-type: NodePort is needed as we don't have a integrated loadbalancer like at GKE/AWS and we assign a static high-port for having consistency in this doc. If not statically set, a random port between 30000-32000 will be allocated.
+
+Setting nodePort is optional. If not set, a random high port is assigned.
+
 ----
 
 Create the hello-node service using kubectl:
@@ -53,7 +58,7 @@ kubectl create -f service.yaml
 
 ----
 
-### Interact with the hello-node Service Remotely
+### Query the Service
 
 ```
 curl -i 0.0.0.0:30080
@@ -63,25 +68,25 @@ curl -i 0.0.0.0:30080
 
 ### Explore the hello-node Service
 
-```
+```bash
 kubectl get services hello-node
 ```
 
-```
+```bash
 kubectl describe services hello-node
 ```
 
 ----
 
-### Using and adding labels to Pods
+### Using labels
 
-One way to troubleshoot an issue is to use the `kubectl get pods` command with a label query.
+Use `kubectl get pods` with a label query, e.g. for troubleshooting.
 
 ```
 kubectl get pods -l "app=hello-node"
 ```
 
-With the `kubectl label` command you can add labels like `secure=disabled` to a Pod.
+Use `kubectl label` to add labels.
 
 ```
 kubectl label pods hello-node 'secure=disabled'
@@ -89,7 +94,7 @@ kubectl label pods hello-node 'secure=disabled'
 
 ----
 
-View the list of endpoints on the `hello-node` service:
+View the endpoints of the `hello-node` service:
 
 ```
 kubectl describe services hello-node
@@ -98,6 +103,7 @@ kubectl describe services hello-node
 ----
 
 ### Do it yourself
-* Create a service for the nginx pods
-* Expose port 80 to a static nodePort 31000
-* Access the service on port 31000 using `curl`or your browser
+
+* Create a service for the nginx pods.
+* Expose port 80 to a static nodePort 31000.
+* Access the service using `curl` or a browser.
