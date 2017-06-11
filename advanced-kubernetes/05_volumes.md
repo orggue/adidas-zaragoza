@@ -15,7 +15,8 @@ Before going further, you can spend time on these little exercises. They will cl
 * In this exercise we will demonstrate the use of an emptyDir as a volume.
 
 ----
-The volume is of type `emptyDir`. The kubelet will create an empty directory on the node when the Pod is scheduled. Once the Pod is destroyed, the kubelet will delete the directory. This is the simplest type of volumes used in Kubernetes.
+
+The volume is of type `emptyDir`. The kubelet will create an empty directory on the node when the Pod is scheduled. Once the Pod is destroyed, the kubelet will delete the directory.
 
 ```
 apiVersion: v1
@@ -46,6 +47,7 @@ spec:
 ``` 
 
 Once the pods are deployed we can exec into one pod, create a file, then verify the existence of that file in the other pod.
+----------------------------------------------------------------------------------------------------------------------------
 
 ```
 $ kubectl exec -ti busybox -c box -- touch /box/foobar
@@ -199,6 +201,7 @@ kubectl get pods
 kubectl describe pods
 ```
 
+
 ### PV and PVC using StorageClass
 
 
@@ -206,9 +209,13 @@ kubectl describe pods
 
 While handling volumes with a persistent volume definition and abstracting the storage provider using a claim is powerful, an administrator of the cluster still needs to create those volumes in the first place.
 
-Since Kubernetes 1.4 it is possible to use dynamic provisioning of persistent volumes (beta)
+Since Kubernetes 1.4 it is possible to use dynamic provisioning of persistent volumes (beta).
+
+----
 
 A new API resource has been introduced in Kubernetes 1.2 called StorageClass. If configured and a user requests a claim, this claim will be created even if an existing pv does not exist. The volume provisioner defined in the StorageClass will dynamically create the volume.
+
+----
 
 Here is an example of a StorageClass on AWS:
 
@@ -226,11 +233,11 @@ You might be interested to test this using this [example](https://github.com/kub
 
 ----
 
-### Do it yourselfe
+### Do it yourself
 
-* Create a PV and PVC using HostPath /somepath/log01
-* Use the PVC in the nginx POD (Deployment) and map it to /var/log
-* Validate the existence
+* Create a PV and PVC using HostPath `/somepath/log01`.
+* Use the PVC in the nginx POD (Deployment) and map it to `/var/log`.
+* Validate the existence.
 
 As the host-folder will be empty, there are no logs. Also not in the container.
 
@@ -238,6 +245,7 @@ As the host-folder will be empty, there are no logs. Also not in the container.
 
 ### Cheat
 
+```
 apiVersion: v1
 kind: PersistentVolume
 metadata:
@@ -251,9 +259,11 @@ spec:
     - ReadWriteOnce
   hostPath:
     path: "/somepath/log01"
+```
 
----
+----
 
+```
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
@@ -264,9 +274,11 @@ spec:
   resources:
     requests:
       storage: 8Gi
+```
 
----
+----
 
+```
 apiVersion: v1
 kind: Pod
 metadata:
@@ -285,3 +297,4 @@ spec:
     - name: logs
       persistentVolumeClaim:
         claimName: logclaim
+```

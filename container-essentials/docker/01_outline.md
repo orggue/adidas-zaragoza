@@ -1,5 +1,4 @@
 # Outline
-
 * Docker Basics
 * Container Images
 * Docker Registry
