@@ -100,7 +100,7 @@ kubectl create -f https://raw.githubusercontent.com/kubernetes/ingress/master/ex
 ### Deploy the loadbalancer
 
 ```
-kubectl create -f configs/ingress-daemonset.yaml
+kubectl create -f configs/ingress/ingress-daemonset.yaml
 ```
 
 This will create a nginx-ingress-controller on each available node.
@@ -129,7 +129,7 @@ kubectl expose deployment echoheaders --port=80 --target-port=8080 \
 Explore and create some Ingress rules
 
 ```
-kubectl create -f configs/ingress.yaml
+kubectl create -f configs/ingress/ingress.yaml
 ```
 
 ```
@@ -163,9 +163,9 @@ We can use curl or a browser. If you want to access the applications you need ei
 Here we'll use `curl`.
 
 ```
-curl -H "Host: foo.bar.com" http://$(minikube ip)/bar
-curl -H "Host: bar.baz.com" http://$(minikube ip)/bar
-curl -H "Host: bar.baz.com" http://$(minikube ip)/foo
+curl -H "Host: foo.bar.com" http://<HOST_IP>/bar
+curl -H "Host: bar.baz.com" http://<HOST_IP>/bar
+curl -H "Host: bar.baz.com" http://<HOST_IP>/foo
 ```
 
 ----
@@ -221,8 +221,8 @@ spec:
 ```
 
 ```
-kubectl create -f configs/ingress-ssl.yaml
-curl -H "Host: foo.bar.com" https://$(minikube ip)/ssl --insecure
+kubectl create -f configs/ingress/ingress-ssl.yaml
+curl -H "Host: foo.bar.com" https://<HOST_IP>/ssl --insecure
 ```
 
 ----
@@ -356,19 +356,115 @@ spec:
 
 Ingress does not support TCP services (yet). For this you can use the flag `--tcp-services-configmap` to point to a ConfigMap where the key is the external port to use and the value is `<namespace/service name>:<service port>`. You can either use a number or the name of the port.
 
+----
+
+### Cleanup
+
+```
+kubectl delete -f configs/ingress/ingress-daemonset.yaml
+```
+
+----
+
+### Create the controller and configmap
+
+```
+kubectl create -f configs/ingress/ingress-daemonset-tcp.yaml
+kubectl create -f configs/ingress/ingress-tcp.yaml 
+```
 
 ```
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: tcp-configmap-example
+  name: nginx-tcp-ingress-configmap
+  namespace: kube-system
 data:
-  9000: "default/example-go:8080"
+  9000: "default/http-svc:80"
 ```
 
 ----
 
 ### Test your TCP service
+
+```
+kubectl -n kube-system get po -o wide
+NAME                                                  READY     STATUS    RESTARTS   AGE       IP           NODE
+default-http-backend-2198840601-hvcw9                 1/1       Running   0          24m       10.60.2.3    gke-cluster-1-default-pool-fddbe43a-wcpc
+heapster-v1.3.0-1768742904-lwzg9                      2/2       Running   0          24m       10.60.0.6    gke-cluster-1-default-pool-fddbe43a-dpw0
+kube-dns-3263495268-1mgxc                             3/3       Running   0          25m       10.60.1.2    gke-cluster-1-default-pool-fddbe43a-f622
+kube-dns-3263495268-wlsxs                             3/3       Running   0          25m       10.60.0.3    gke-cluster-1-default-pool-fddbe43a-dpw0
+kube-dns-autoscaler-2362253537-s5nwh                  1/1       Running   0          25m       10.60.0.2    gke-cluster-1-default-pool-fddbe43a-dpw0
+kube-proxy-gke-cluster-1-default-pool-fddbe43a-dpw0   1/1       Running   0          25m       10.132.0.4   gke-cluster-1-default-pool-fddbe43a-dpw0
+kube-proxy-gke-cluster-1-default-pool-fddbe43a-f622   1/1       Running   0          25m       10.132.0.3   gke-cluster-1-default-pool-fddbe43a-f622
+kube-proxy-gke-cluster-1-default-pool-fddbe43a-wcpc   1/1       Running   0          25m       10.132.0.2   gke-cluster-1-default-pool-fddbe43a-wcpc
+kubernetes-dashboard-490794276-hf8c0                  1/1       Running   0          25m       10.60.1.3    gke-cluster-1-default-pool-fddbe43a-f622
+l7-default-backend-3574702981-x4wpk                   1/1       Running   0          25m       10.60.0.5    gke-cluster-1-default-pool-fddbe43a-dpw0
+nginx-ingress-lb-c8xwd                                1/1       Running   0          14m       10.60.0.8    gke-cluster-1-default-pool-fddbe43a-dpw0
+nginx-ingress-lb-f53wn                                1/1       Running   0          14m       10.60.1.5    gke-cluster-1-default-pool-fddbe43a-f622
+nginx-ingress-lb-m7g3q                                1/1       Running   0          14m       10.60.2.6    gke-cluster-1-default-pool-fddbe43a-wcpc
+```
+
+----
+(sleep 1; echo "GET / HTTP/1.1"; echo "Host: <nginx-ingress-lb-XXXX_IP>:9000"; echo;echo;sleep 2) | telnet <nginx-ingress-lb-XXXX_IP> 9000
+
+Trying 10.60.0.8...
+Connected to 10.60.0.8.
+Escape character is '^]'.
+HTTP/1.1 200 OK
+Server: nginx/1.9.11
+Date: Thu, 20 Apr 2017 07:53:30 GMT
+Content-Type: text/plain
+Transfer-Encoding: chunked
+Connection: keep-alive
+
+f
+CLIENT VALUES:
+
+1b
+client_address=10.60.0.8
+
+c
+command=GET
+
+c
+real path=/
+
+a
+query=nil
+
+14
+request_version=1.1
+
+25
+request_uri=http://10.60.0.8:8080/
+
+1
+
+
+f
+SERVER VALUES:
+
+2a
+server_version=nginx: 1.9.11 - lua: 10001
+
+1
+
+
+12
+HEADERS RECEIVED:
+
+16
+host=10.60.0.8:9000
+
+6
+BODY:
+
+14
+-no body in request-
+0
+
+Connection closed by foreign host.
 
 ----
 
@@ -386,26 +482,77 @@ data:
   53: "kube-system/kube-dns:53"
 ```
 
-You also need to tell the ingress controller where the service is deployed. In our example `--udp-services-configmap=$(POD_NAMESPACE)/udp-configmap-example`.
-
-----
-
-### Deploy UDP ingress resource
-
-```
-kubectl replace -f configs/ingress-daemonset-udp.yaml
-kubectl create -f configs/udp-configmap-example.yaml
-```
-
-----
-
-### Test our UDP service
+You also need to tell the ingress controller where the service is deployed via an annotation. It's working in the same way as our TCP example.
 
 ----
 
 ### External Auth
+### Example 1:
+
+Use an external service (Basic Auth) located in `https://httpbin.org` 
+
+```
+kubectl create -f configs/ingress/ingress-auth.yaml
+ingress "external-auth" created
+
+kubectl get ing external-auth
+NAME            HOSTS                         ADDRESS       PORTS     AGE
+external-auth   external-auth-01.sample.com   172.17.4.99   80        13s
+```
 
 ----
 
-### Sticky Session
-https://github.com/kubernetes/ingress/tree/master/examples/affinity/cookie/nginx
+Test 1: no username/password (expect code 401)
+```
+curl -H "Host: external-auth-01.sample.com" http://104.155.113.47/
+<html>
+<head><title>401 Authorization Required</title></head>
+<body bgcolor="white">
+<center><h1>401 Authorization Required</h1></center>
+<hr><center>nginx/1.13.0</center>
+</body>
+</html>
+```
+
+Test 2: valid username/password (expect code 200)
+```
+curl -H "Host: external-auth-01.sample.com" http://104.155.113.47/ -u 'user:passwd'
+CLIENT VALUES:
+client_address=10.60.2.8
+command=GET
+real path=/
+query=nil
+request_version=1.1
+request_uri=http://external-auth-01.sample.com:8080/
+
+SERVER VALUES:
+server_version=nginx: 1.10.0 - lua: 10001
+
+HEADERS RECEIVED:
+accept=*/*
+authorization=Basic dXNlcjpwYXNzd2Q=
+connection=close
+host=external-auth-01.sample.com
+user-agent=curl/7.51.0
+x-forwarded-for=85.195.227.234
+x-forwarded-host=external-auth-01.sample.com
+x-forwarded-port=80
+x-forwarded-proto=http
+x-original-uri=/
+x-real-ip=85.195.227.23485.195.227.234
+x-scheme=http
+BODY:
+-no body in request-
+```
+
+Test 3: invalid username/password (expect code 401)
+```
+curl -H "Host: external-auth-01.sample.com" http://104.155.113.47/ -u 'user:password'
+<html>
+<head><title>401 Authorization Required</title></head>
+<body bgcolor="white">
+<center><h1>401 Authorization Required</h1></center>
+<hr><center>nginx/1.13.0</center>
+</body>
+</html>
+```
