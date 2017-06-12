@@ -47,7 +47,6 @@ spec:
 ``` 
 
 Once the pods are deployed we can exec into one pod, create a file, then verify the existence of that file in the other pod.
-----------------------------------------------------------------------------------------------------------------------------
 
 ```
 $ kubectl exec -ti busybox -c box -- touch /box/foobar
@@ -92,7 +91,6 @@ spec:
 ```
 
 Once the pods are deployed we can exec into one pod, create a file, then verify the existence of that file in the other pod.
-----------------------------------------------------------------------------------------------------------------------------
 
 ```
 $ kubectl exec -ti busybox -c box -- touch /box/foobar
