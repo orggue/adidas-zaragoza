@@ -1,0 +1,42 @@
+#!/usr/bin/env ruby
+require "yaml"
+require "json"
+require "open3"
+require "tempfile"
+
+require_relative "lib"
+
+file = ARGV.first
+
+if file.nil?
+  puts "USAGE: ./make-it-so config.yaml"
+  exit 1
+end
+
+config = Configuration.from_file(file)
+
+# Make sure settings are OK
+ensure_gcloud_settings!(config)
+
+# Check if project exists
+ensure_project_exists!(config)
+
+# Checking number of clusters
+ensure_nr_clusters!(config)
+
+# gcloud IAM service accounts instead of proper accounts.
+ensure_service_accounts!(config)
+ensure_service_account_keys!(config)
+
+# Ensure viewer policy on all clusters
+ensure_global_policies!(config)
+
+wait_until_all_clusters_ready!(config)
+
+# Add kubectl admins
+ensure_k8s_admins!(config)
+
+# Finally, genereate instructions
+gen_instructions!(config)
+
+system("chmod -R +r participant-instructions")

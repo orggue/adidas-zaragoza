@@ -1,0 +1,1 @@
+kubectl --token="$(gcloud auth print-access-token --account=ALICE_ACCOUNT)" $@

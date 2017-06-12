@@ -1,0 +1,65 @@
+digraph g {
+  rankdir = LR;
+
+  subgraph cluster_users {
+    label="Users";
+    node[shape="square" style="filled" fillcolor="green"];
+
+    Alice;
+    Bob;
+    Monkey[fillcolor="purple" fontcolor="white"];
+  }
+
+
+  subgraph cluster_role_bindings {
+    label="RoleBinding"
+    node[style="filled" fillcolor="red" shape="egg"];
+    TeamLeadB;
+    DeveloperB;
+    ChaosMonkeyB;
+  }
+
+  {
+    edge[color=red,dir=back];
+    Alice   -> TeamLeadB;
+    Alice   -> DeveloperB; 
+    Bob     -> DeveloperB;
+    Monkey   -> ChaosMonkeyB;
+  }
+  subgraph cluster_roles {
+    label="Roles"
+    node[style="filled" fontcolor="white" fillcolor=blue shape="egg"];
+    AppAdmin;
+    Developer;
+    ChaosMonkey;
+  }
+
+  {
+    edge[color=red];
+    TeamLeadB -> AppAdmin;
+    DeveloperB -> Developer;
+    ChaosMonkeyB -> ChaosMonkey;
+  }
+
+  {
+    edge[color=blue];
+    node[style="filled" fillcolor=yellow];
+    AppAdmin -> production_depl:w[label="create"];
+    Developer -> production_depl:sw[label="update"];
+    Developer -> test_all:w[label="admin"];
+    ChaosMonkey -> test_pods[label="delete"];
+  }
+
+  subgraph cluster_k8s {
+    label="Kubernetes Cluster";
+    subgraph cluster_prod {
+      label="production";
+      production_depl[shape=rect label=Deployments];
+    }
+    subgraph cluster_test{
+      label=""
+      test_all[shape=none label="test" fillcolor=white];
+      test_pods[shape=rect label=Pods];
+    }
+  };
+}
