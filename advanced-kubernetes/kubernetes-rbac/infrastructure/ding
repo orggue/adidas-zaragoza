@@ -1,0 +1,26 @@
+apiVersion: v1
+clusters:
+- cluster:
+    certificate-authority-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURDekNDQWZPZ0F3SUJBZ0lRQnNIZXpobjlzTjlYdE53eW9GUEg3ekFOQmdrcWhraUc5dzBCQVFzRkFEQXYKTVMwd0t3WURWUVFERXlRME9XVmxZMkl4Tnkxa09UZzRMVFEyTVRNdFltTXhZaTFtT0RjNE56bGpaak0wWldZdwpIaGNOTVRjd05qQTVNRGN5TURVeVdoY05Nakl3TmpBNE1EY3lNRFV5V2pBdk1TMHdLd1lEVlFRREV5UTBPV1ZsClkySXhOeTFrT1RnNExUUTJNVE10WW1NeFlpMW1PRGM0TnpsalpqTTBaV1l3Z2dFaU1BMEdDU3FHU0liM0RRRUIKQVFVQUE0SUJEd0F3Z2dFS0FvSUJBUURHWmVmOVRySElsYjdETllBZTY4c1Uvall4NndQNzhsVG1FdTRHMWFGaQpPbDhEWjcxUm9QQ29FVUNjSmdkY1RBaktyNzlOUmlpM3BucHJVNGt3aThpSVdpUnpiWjR1clM5Y2VYSW9rNlZRCjk1QTFVeTBnS3VJNldndmdrZVk1QmtZREYzNmJZSTNDQktlVEhJZFZTWlZVc3JYUHdYNkpmZHdoZ0Rpc2k2ZncKTlBaV1JwZkdmM2FQazVkOWVGWnhVVlZEWkVFYlNLRG9OVEkraUxNY0xQV2lnZjc0bk9YQTY3S2VwUEpQTUZhUgp0MnhHb2VrU055aUluVG5STEZxZElGeTRibGl0WXh1OHNHTWN4TU1Ud09wcHQ4bzNyZFV4czhpYVlRRTNpekVTClJBaFhSNkcrSHJEQUk2NElkME8vQWZUUUZrSVhKaWthOFZlUjZhUDNXa3Q3QWdNQkFBR2pJekFoTUE0R0ExVWQKRHdFQi93UUVBd0lDQkRBUEJnTlZIUk1CQWY4RUJUQURBUUgvTUEwR0NTcUdTSWIzRFFFQkN3VUFBNElCQVFDdQpmQ3BHSlFkQTVhUTliZXhSVVdsRG1JZDUxN0xqV0hUKyt3S3FVcXNuYmpyWmdQQTNCdXI0a3R5dmZ3T1lib1ltCmJOeVBTS0NNc09SSXkzRndNczZCbTZGK3QzTzRoZXkyd09QSmdhbnpkRmZ2S1h4SEp5Z2pwcGZvNE14WlBHaloKRGt6cllYaEk3VkdxWmtZOEh4QXR1Rm92NVZxK2JBOEhTYWsweFhPaHZkNXh0YXNNYnZuQmF6ZWlKSGVlVmw0RApVdk5PZWpHbUpLMWVWVnBVbGFmK0hyVVdrQUFmcnpvTmVlTmlSRW1pdW96VGUyR3Y0YUtPeVZQRFp5eWJqRUdCClduUU1qZ0NGRWY0aEExYWxuZWtrSWUzTUQ4QjZLTHhxSzA2a2QrTktqUzdoS3Zsd0ZIMGtRbVcwVHA2L0F2TXkKSkd0Y0IvUFFuMG5pUTJiSW1qeHQKLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=
+    server: https://104.155.75.140
+  name: gke_rbac-workshop-test-maarten_europe-west1-d_c1
+contexts:
+- context:
+    cluster: gke_rbac-workshop-test-maarten_europe-west1-d_c1
+    user: gke_rbac-workshop-test-maarten_europe-west1-d_c1
+  name: gke_rbac-workshop-test-maarten_europe-west1-d_c1
+current-context: gke_rbac-workshop-test-maarten_europe-west1-d_c1
+kind: Config
+preferences: {}
+users:
+- name: gke_rbac-workshop-test-maarten_europe-west1-d_c1
+  user:
+    auth-provider:
+      config:
+        access-token: ya29.Gl1lBFdz9VfzPvyxWSCVH_MsUSztLyrP9VW196Diiv-7qhYmUNbxwYXwF7J9x83fvg2hTX-3vnzWULXA_VYEDwJORVBIm84Qiz3vhhVlDHadv1i8qw8bBO5jrK4sdOk
+        cmd-args: config config-helper --format=json
+        cmd-path: /nix/store/d1svhffmxf8sy4dbiaz4b37zyfg2f722-google-cloud-sdk-150.0.0/google-cloud-sdk/bin/gcloud
+        expiry: 2017-06-10T16:42:15Z
+        expiry-key: '{.credential.token_expiry}'
+        token-key: '{.credential.access_token}'
+      name: gcp
