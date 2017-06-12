@@ -1,10 +1,10 @@
 ### Step 1 kubectl basics
 
-* The format of a kubectl command is: 
+* The format of a kubectl command is:
 ```
 kubectl [action] [resource]
 ```
-* This performs the specified action  (like `create`, `describe`) on the specified resource (like `node`, `container`). 
+* This performs the specified action  (like `create`, `describe`) on the specified resource (like `node`, `container`).
 * Use `--help` after the command to get additional info about possible parameters
 ```
 kubectl get nodes --help
@@ -31,7 +31,7 @@ You can see both the client and the server versions.
 ----
 
 To view the nodes in the cluster, run the `kubectl get nodes` command:
-```bash	
+```bash
 kubectl get nodes
 NAME        STATUS    AGE
 127.0.0.1   Ready     48m
@@ -41,12 +41,14 @@ Here we see the available nodes, just one in our case. Kubernetes will choose wh
 
 ----
 
-### Step 2 deploy a simple application 
+### Step 2 deploy a simple application
 
 Let’s run our first app on Kubernetes with the kubectl run command. The `run` command creates a new deployment for the specified container. This is the simpliest way of deploying a container.
 
 ```bash
-kubectl run hello-minikube --image=gcr.io/google_containers/echoserver:1.4 --port=8080
+kubectl run hello-minikube \  
+ --image=gcr.io/google_containers/echoserver:1.4 \
+ --port=8080
 
 deployment "hello-minikube" created
 ```
@@ -68,7 +70,7 @@ NAME        DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
 hellonode   1         1         1            1           31s
 ```
 
-We see that there is 1 deployment running a single instance of your app. 
+We see that there is 1 deployment running a single instance of your app.
 
 ----
 
@@ -81,7 +83,7 @@ kubectl get pod
 ```
 Create the proxy:
 ```bash
-kubectl port-forward hello-minikube-3015430129-g95j6 8080 8080 
+kubectl port-forward hello-minikube-3015430129-g95j6 8080:8080
 ```
 We now have a connection between our host and the Kubernetes cluster.
 
@@ -89,11 +91,11 @@ We now have a connection between our host and the Kubernetes cluster.
 
 ### Inspect your application
 
-With 
+With
 ```
 kubectl get <obejct>
 ```
-and 
+and
 ```
 kubectl describe <object>
 ```
@@ -140,7 +142,10 @@ kubectl delete deployment hello-minikube
 
 Create a new deployment and a service
 ```
-kubectl run hello-minikube --image=gcr.io/google_containers/echoserver:1.4 --port=8080 --expose --service-overrides='{ "spec": { "type": "NodePort" } }'
+kubectl run hello-minikube \
+ --image=gcr.io/google_containers/echoserver:1.4 \
+  --port=8080 --expose --service-overrides='{ "spec": { \
+     "type": "NodePort" } }'
 service "hello-minikube" created
 deployment "hello-minikube" created
 ```

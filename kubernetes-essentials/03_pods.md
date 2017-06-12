@@ -65,7 +65,7 @@ Save as `server.js`
 
 Create the `Dockerfile` for hello-node (note port 8080 in `EXPOSE` command):
 ```
-FROM node:6.9
+FROM node:6-alpine
 EXPOSE 8080
 COPY server.js /
 ENTRYPOINT ["node", "/server.js"]
@@ -78,7 +78,7 @@ ENTRYPOINT ["node", "/server.js"]
 Build the container on Minikube.
 
 ```
-docker build -t hello-node:v1 .
+docker build -t hello-node:v1 -f Dockerfile_node .
 ```
 
 ----
@@ -173,7 +173,7 @@ Use two terminals.
 * Terminal 1
 
 ```
-kubectl port-forward hello-node 8080 8080
+kubectl port-forward hello-node 8080:8080
 ```
 
 * Terminal 2

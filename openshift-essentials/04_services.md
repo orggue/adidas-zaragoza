@@ -2,23 +2,21 @@
 
 In this section you will create the `hello-node` service and "expose" the `hello-node` Pod. You will learn how to:
 
-* Create a service
-* Use label and selectors to expose a limited set of Pods externally
+* Create a service.
+* Use label and selectors to expose a limited set of Pods externally.
 
 ----
 
 ### Introduction to services
-Services provide stable endpoints for Pods based on a set of labels and selectors.
-Some of the service types are :
-`ClusterIP` Your service is only expose internally to the cluster on the internal cluster IP. A example would be to deploy Hasicorp’s vault and expose it only internally.
+Services provide stable endpoints for Pods based on a set of labels and selectors. Service types are:
+
+`ClusterIP` Your service is only expose internally to the cluster on the internal cluster IP.
 
 `NodePort` Expose the service on the instances on the specified or random assigned port.
 
-`LoadBalancer` Supported on e.g. Amazon and Google cloud, this creates load balancer VIP
+`LoadBalancer` Supported on e.g. Amazon and Google cloud, this creates load balancer VIP.
 
 `ExternalName` Create a CNAME dns record to a external domain.
-
-For more information about Services look at https://kubernetes.io/docs/user-guide/services/
 
 ----
 
@@ -41,7 +39,8 @@ spec:
   selector:
     app: hello-node
 ```
-type: NodePort is needed as we don't have a integrated loadbalancer like at GKE/AWS
+type: NodePort is needed as we don't have a integrated loadbalancer like at GKE/AWS.
+
 ----
 
 Create the hello-node service using oc:
@@ -68,6 +67,7 @@ NodePort:		<unset>	30080/TCP
 Endpoints:		10.128.0.23:8080
 Session Affinity:	None
 No events.
+```
 ```
 curl -i 0.0.0.0:30080
 ```
@@ -111,6 +111,6 @@ oc describe services hello-node
 ----
 
 ### Do it yourself
-* Create a service for the nginx pods
-* Expose it using NodePort
-* Access the service on that port using `curl`or your browser
+* Create a service for the nginx pods.
+* Expose it using NodePort.
+* Access the service on that port using `curl`or your browser.

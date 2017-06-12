@@ -2,16 +2,16 @@
 
 Deployments sit on top of ReplicaSets and add the ability to define how updates to Pods should be rolled out.
 
-In this section we will combine everything we learned about Pods and Services and create a Deplyoment manifest for our hello-node application. 
-* Create a deployment manifest
-* Scale our Deployment / ReplicaSet
-* Update our application (Rolling Update | Recreate)
+In this section we will combine everything we learned about Pods and Services and create a Deplyoment manifest for our hello-node application.
+* Create a deployment manifest.
+* Scale our Deployment / ReplicaSet.
+* Update our application (Rolling Update | Recreate).
 
 ----
 
 ### Creating Deployments
 
-An example of a deployment is the frontend service of the sock Shops
+An example of a deployment:
 
 ```
 apiVersion: extensions/v1beta1
@@ -49,6 +49,7 @@ oc get rs
 NAME                   DESIRED   CURRENT   READY     AGE
 hello-node-364036756   1         1         1         16s
 ```
+
 ----
 
 ### Scaling Deployments
@@ -82,15 +83,12 @@ oc get pods
 
 ### Updating Deployments ( RollingUpdate )
 
-We need to make some changes to our node.js application and create a new image with a new Version. Default update strategy is RollingUpdate and we will test that out first.
+* RollingUpdate is the default strategy.
+* Updates Pods one (or a few) at a time.
+* Update the text of the application, creating a new version of the image.
+* Build a new image and tag it with v2.
+* Update the Deployment:
 
-Update the text `Hello World!` to something different like `Verion 2`
-
-Build a new Dockerimage and tag it with v2
-
-Push the image to the registry
-
-Update the Deployment
 ```
 oc set image deployments hello-node hello-node=hello-node:v2
 ```
@@ -98,21 +96,21 @@ oc set image deployments hello-node hello-node=hello-node:v2
 ----
 
 ### Validate that it works
-We will use curl in a loop to validate that the update will not affect the application.ly` we'll see updates of the pods.
+We will use curl in a loop to validate that the update will not affect the application.
 
 In one terminal
 ```
 for ((i=1;i<=10000;i++)); do curl -s -o /dev/null -I -w "%{http_code}" "0.0.0.0:30080"; done
 ```
-If you want to watch what happens to the pods, open another terminal window and issue:
+Watch what happens to the pods in another terminal:
 ```
 oc get pod --watch-only
 ```
-In another terminal Do a update to the "old" version v1
+In a third terminal update to the "old" version v1:
 ```
 oc set image deployments hello-node hello-node=hello-node:v1
 ```
-You'll see that during the update traffic will get served and no `404` or `500` happend. You also saw the rolling update in the window where you've watched the pod. 
+During the update the service will continue to serve requests. You'll also witness the rolling update.
 
 ----
 
@@ -121,14 +119,17 @@ You'll see that during the update traffic will get served and no `404` or `500` 
 ```
 oc delete -f configs/deployment-v1.yaml
 ```
-If there were a large number of pods, this may take a while to complete. If you want to leave the pods running instead, specify `--cascade=false`
-If you try to delete the pods before deleting the Deployments, it will just replace them, as it is supposed to do.
+* If the number of Pods is large, this may take a while to complete.
+* To leave the Pods running instead,  
+use `--cascade=false`.
+* If you try to delete the Pods before deleting the Deployment, the ReplicaSet will just replace them.
 
 ----
 
 ### Updating Deployments ( Recreate )
 
-We'll see how to do an update to our application using the recreate strategy. First we need to create a deploment with the Recreate strategy.
+* Recreate is the alternative update strategy.
+* All existing Pods are killed before new ones are created.
 ```
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -149,12 +150,15 @@ spec:
         ports:
         - containerPort: 8080
 ```
-Create the new Deployment
+
+----
+
+Create the new Deployment:
 ```
 oc create -f configs/deplyoment-v2.yaml
 ```
 
-Update the Deployment
+Update the Deployment:
 ```
 oc set image deployments hello-node hello-node=hello-node:v2
 ```
@@ -162,21 +166,24 @@ oc set image deployments hello-node hello-node=hello-node:v2
 ----
 
 ### Validate that it works
-We will use curl in a loop to validate that the update will not affect the application.ly` we'll see updates of the pods.
+We will use curl in a loop to validate that the update will not affect the application.
 
-In one terminal
+In one terminal:
 ```
 for ((i=1;i<=10000;i++)); do curl -s -o /dev/null -I -w "%{http_code}" "0.0.0.0:30080"; done
 ```
-If you want to watch what happens to the pods, open another terminal window and issue:
+Watch what happens to the pods in another terminal:
 ```
 oc get pod --watch-only
 ```
-In another terminal Do a update to the "old" version v1
+In a third terminal update to the "old" version v1:
 ```
 oc set image deployments hello-node hello-node=hello-node:v1
 ```
-You'll see that curl will stop or even a timeout will occur. You also saw that first all pods are getting terminated befor the new ones are getting started, in the window where you've watched the pod. 
+
+----
+
+You'll see that curl will stop or even a timeout will occur. You also saw that first all pods are getting terminated before the new ones are getting started, in the window where you've watched the pod.
 
 ----
 
@@ -190,9 +197,9 @@ oc delete -f configs/deployment-v2.yaml
 
 ### Do it yourself
 
-* Create a deployment manifest for a nginx:1.10 containers with a defined number of replicas=1
-* Create a serivce manifest to expose the nginx
-* Scale the deployment up to 3
-* Validate the scaling was successful
-* Update the deployment to use nginx:1.11
-* Cleanup
+* Create a deployment manifest for one nginx:1.12 container.
+* Create a service manifest to expose Nginx.
+* Scale the deployment up to 3.
+* Validate the scaling was successful.
+* Update the deployment to use nginx:1.13.
+* Cleanup.

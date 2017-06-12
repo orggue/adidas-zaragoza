@@ -41,7 +41,7 @@ spec:
 ### Deploy to Minikube
 
 ```
-kubectl create -f configs/service.yaml
+kubectl create -f configs/deployment-v1.yaml
 ```
 
 ----
@@ -194,9 +194,9 @@ kubectl delete -f configs/deployment-v2.yaml
 
 ### Do it yourself
 
-* Create a deployment for one nginx:1.12 container.
+* Create a deployment for one nginx:1.12-alpine container.
 * Create a service manifest to expose Nginx.
 * Scale the deployment up to 3.
 * Validate the scaling was successful.
-* Update the deployment to use nginx:1.13
+* Update the deployment to use nginx:1.13-alpine.
 * Cleanup
