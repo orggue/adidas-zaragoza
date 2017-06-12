@@ -60,10 +60,47 @@ total 0
 
 ### emptyDir - memory backed storage
 
-* This excerise is similar to the above but with a slight twist, this time instead of just an emptyDir we'll demonstrate an emptyDir backed by a memory backed storage.
+* This excerise is similar to the one above but with a slight twist, this time instead of a disk based emptyDir we'll demonstrate an emptyDir with a memory backed storage.
 
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: busybox
+spec:
+  containers:
+  - name: busy
+    image: busybox
+    volumeMounts:
+    - name: test
+      mountPath: /busy
+    command:
+      - sleep
+      - "3600"
+  - name: box
+    image: busybox
+    volumeMounts:
+    - name: test
+      mountPath: /box
+    command:
+      - sleep
+      - "3600"
+  volumes:
+  - name: test
+    emptyDir:
+        medium: "Memory"
+```
 
+Once the pods are deployed we can exec into one pod, create a file, then verify the existence of that file in the other pod.
+----------------------------------------------------------------------------------------------------------------------------
 
+```
+$ kubectl exec -ti busybox -c box -- touch /box/foobar
+$ kubectl exec -ti busybox -c busy -- ls -l /busy
+total 0
+-rw-r--r--    1 root     root             0 Nov 19 16:26 foobar
+```
+----
 
 
 ### hostPath
