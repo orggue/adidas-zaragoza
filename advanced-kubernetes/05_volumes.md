@@ -1,18 +1,18 @@
-### Volumes
+### Storage
 
-A Pod is made of one or several containers plus some data volumes that can be mounted inside the containers. In this section you will learn how to:
-* define volume in Pods.
-* define a persistent volume.
-* define a persistent volume claim.
+A Pod is made up of one or several containers plus some data volumes that can be mounted inside the containers. In this section you will learn how to: 
 
-----
+* define a deployment backed by a emptyDir
+* define a deployment backed by a emptyDir(memory backed storage)
+* define a deployment backed by a hostPath 
+* define a deployment backed by a persistent volume and persistent volume claim 
+* define a deployment backed by a persistent volume and persistent volume claim using a StorageClass
 
-### Do it yourself
+Before going further, you can spend time on these little exercises. They will clarify how volumes are defined in Pods.
 
-Before going further, you can spend time on this little exercise. It will clarify how volumes are defined in Pods.
+### emptyDir
 
-* Create a Pod with two containers and one volume shared.
-* You can experiment with `emptyDir` and `hostPath` since those two volume types do not require any additional setup and will work in your Kubernetes cluster.
+* In this exercise we will demonstrate the use of an emptyDir as a volume.
 
 ----
 
@@ -43,12 +43,11 @@ spec:
       - "3600"
   volumes:
   - name: test
-    emptyDir: {}
-```
+    emptyDir: {} 
+``` 
 
-----
-
-Then exec into each container and check the existence of the directories. Write a file and check that it is available in the other container:
+Once the pods are deployed we can exec into one pod, create a file, then verify the existence of that file in the other pod.
+----------------------------------------------------------------------------------------------------------------------------
 
 ```
 $ kubectl exec -ti busybox -c box -- touch /box/foobar
@@ -56,12 +55,55 @@ $ kubectl exec -ti busybox -c busy -- ls -l /busy
 total 0
 -rw-r--r--    1 root     root             0 Nov 19 16:26 foobar
 ```
-
 ----
+
+
+### emptyDir - memory backed storage
+
+* This excerise is similar to the above but with a slight twist, this time instead of just an emptyDir we'll demonstrate an emptyDir backed by a memory backed storage.
+
+
+
+
+
+### hostPath
+
+* In this excecise we'll demonstrate the usefulness of having a hostPath by mounting a directory and writing to it.
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: alpine
+spec:
+  containers:
+  - name: alp
+    image: alpine
+    volumeMounts:
+    - name: test
+      mountPath: /tmp
+    command:
+      - sleep
+      - "3600"
+  volumes:
+  - name: test
+    hostPath:
+        path: /tmp
+```
+
+Once the pod has been deployed we can echo a word into a file in that directory and verify it's existence from the host. Since we're running this in minikube the host isn't our host but 
+minikube therefore we'll need to run the command through minikube.
+
+```
+$ kubectl -it alpine -- /bin/sh -c "echo 'test' >> /tmp/test.txt" 
+$ minikube ssh cat /tmp/test.txt
+```
 
 ### Persistent Volumes and Claims
 
-We can use HostPath for single node testing (e.g minikube) like in the example below. HostPath volumes survive Pod deletion.
+* In this exercise we'll demonstrate the use of Persistent Volumes(PV) and Persistent Volume Claims(PVC).
+
+First we need to create a PV, otherwise we won't have anything to claim, for the sake of this exercise we'll be using a hostPath volume. The definition of this is given below.
 
 ```
 kind: PersistentVolume
@@ -72,7 +114,7 @@ metadata:
     type: local
 spec:
   capacity:
-    storage: 10Gi
+    storage: 5Gi
   accessModes:
     - ReadWriteOnce
   hostPath:
@@ -81,7 +123,7 @@ spec:
 
 ----
 
-Create the Persistent Volume and check the status with get and describe.
+Create the PV and check it's status with the `get` and `describe` command.
 
 ```
 kubectl create -f pv.yaml
@@ -91,9 +133,7 @@ kubectl describe pv
 
 ----
 
-### Defining a Volume Claim
-
-With a persistent volume created in your cluster, you then write a manifest for a claim and use that claim in your Pod definition:
+Next we need to create a PVC which takes a slice of the PV defined above. The definition of this is given below.
 
 ```
 kind: PersistentVolumeClaim
@@ -110,7 +150,8 @@ spec:
 
 ----
 
-Create the claim and check the status.
+Create the PVC and check it's status with the `get` and `describe` command.
+
 ```
 kubectl create -f pvc.yaml
 kubectl get pvc
@@ -119,7 +160,7 @@ kubectl describe pvc
 
 ----
 
-And in the Pod, the volume type is now persistentVolumeClaim:
+Lastly we'll create a Pod which will use the previously described PVC to claim some storage for use. The definition for this is given below.
 
 ```
 apiVersion: v1
@@ -152,13 +193,17 @@ spec:
 
 ----
 
-```
-kubectl delete -f pod_volume.yaml
-kubectl create -f pod_pvc.yaml
-```
-Check the output of `get` and `describe` on pod, pv and pvc.
+Create the pod and check it's status via the `get`and `describe` command. 
 
-----
+```
+kubectl create -f pod_pvc.yaml
+kubectl get pods
+kubectl describe pods
+```
+
+
+### PV and PVC using StorageClass
+
 
 ### Dynamic Provisioning
 
