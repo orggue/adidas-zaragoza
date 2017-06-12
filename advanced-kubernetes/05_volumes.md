@@ -201,6 +201,7 @@ kubectl get pods
 kubectl describe pods
 ```
 
+----
 
 ### PV and PVC using StorageClass
 
@@ -232,6 +233,47 @@ parameters:
 You might be interested to test this using this [example](https://github.com/kubernetes/kubernetes/tree/master/examples/experimental/persistent-volume-provisioning).
 
 ----
+
+Let's create a storage class on our (minikube) cluster and create a claim on it.
+
+First check and remove any existing persitent volumes
+
+`kubectl get pv`
+
+----
+
+Next create a storage class.
+
+
+`kubectl apply -f configs/storage-class.yaml`
+
+----
+
+Next we create a persistent volume claim including that storage class.
+
+`kubectl create -f configs/pvc-storage.yaml`
+
+
+----
+
+Now let's check that a persistent volume is created automatically. It should be bound to the claim requesting storage.
+
+```
+kubectl get pv
+kubectl get pvc
+```
+
+----
+
+Finally, if we delete the persistent volume claim, we can see the volume gets released and is automatiically deleted
+
+```
+kubectl delete pvc mystorageclaim
+kubectl get pv
+```
+
+----
+
 
 ### Do it yourself
 
