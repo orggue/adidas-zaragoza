@@ -30,7 +30,7 @@ spec:
     volumeMounts:
     - name: test
       mountPath: /busy
-    command:
+    command:  
       - sleep
       - "3600"
   - name: box
@@ -238,27 +238,70 @@ Let's create a storage class on our (minikube) cluster and create a claim on it.
 
 First check and remove any existing persitent volumes
 
-`kubectl get pv`
+```
+kubectl get pv
+NAME      CAPACITY   ACCESSMODES   RECLAIMPOLICY   STATUS      CLAIM     STORAGECLASS   REASON    AGE
+pv0001    10Gi       RWO           Retain          Available                                      3s
+
+kubectl delete pv pv001
+persistentvolume "pv0001" deleted
+```
+
 
 ----
 
 Next create a storage class.
 
+```
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  namespace: kube-system
+  name: ministorage
+  annotations:
+    storageclass.beta.kubernetes.io/is-default-class: "true"
+  labels:
+    addonmanager.kubernetes.io/mode: Reconcile
 
-`kubectl apply -f configs/storage-class.yaml`
+provisioner: k8s.io/minikube-hostpath
+```
+
+----
+
+Create the storage class and verify via `get` command
+
+```
+kubectl apply -f storage-class.yaml
+kubectl get sc
+```
 
 ----
 
 Next we create a persistent volume claim including that storage class.
 
-`kubectl create -f configs/pvc-storage.yaml`
 
+```
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: mystorageclaim
+  annotations:
+    volume.beta.kubernetes.io/storage-class: "ministorage"
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+
+```
 
 ----
 
-Now let's check that a persistent volume is created automatically. It should be bound to the claim requesting storage.
+Let's create the claim and then verify that a persistent volume is created automatically. It should be bound to the claim requesting storage.
 
 ```
+kubectl create -f pvc-storage.yaml
 kubectl get pv
 kubectl get pvc
 ```
