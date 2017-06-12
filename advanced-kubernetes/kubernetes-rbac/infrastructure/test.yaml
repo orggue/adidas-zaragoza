@@ -1,0 +1,3 @@
+project: "rbac-workshop-test-maarten"
+zone: "europe-west1-d"
+nr_clusters: 10

@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>Kubernetes RBAC lab</title>
+  <style type="text/css">code{white-space: pre;}</style>
+</head>
+<body>
+<h1 id="kubernetes-rbac-lab">Kubernetes RBAC lab</h1>
+<p>This lab is about Role Based Access Control; the mechanism of how we can control permissions granted to humans or service accounts.</p>
+<h2 id="before-you-start">Before you start</h2>
+<h3 id="setting-up">Setting up</h3>
+<ol style="list-style-type: decimal">
+<li>Download the provided files</li>
+<li>Start your container with <code>./start_container.sh</code></li>
+</ol>
+<h3 id="kubectl-accounts">Kubectl + accounts</h3>
+<p>There are three four different kubectl commands available</p>
+<ul>
+<li><code>admin-kubectl</code></li>
+<li><code>alice-kubectl</code></li>
+<li><code>bobby-kubectl</code></li>
+<li><code>monkey-kubectl</code></li>
+</ul>
+<p>Each of these corresponds to a different kubernetes user. Initially, we'll only use <code>admin-kubectl</code></p>
+<h3 id="editing-files">Editing files</h3>
+<p>The ./start-container.sh mounts your current working directory. Edit your files outside of the container; no editor is installed by default.</p>
+<h2 id="inspecting-the-default-roles">Inspecting the default roles</h2>
+<p><code>$ admin-kubectl get clusterroles</code></p>
+<h3 id="details">Details</h3>
+<p>You can inspect a cluster role by asking kubectl to output yaml; pretty printing is not yet supported in the beta release of RBAC.</p>
+<p>For example, let's see what the 'admin' cluster role is about:</p>
+<p><code>$ admin-kubectl get clusterrole admin --output yaml</code></p>
+<h2 id="checking-that-the-other-accounts-do-not-have-access">Checking that the other accounts do not have access</h2>
+<p>Before we're going in</p>
+<h2 id="implementing-the-example">Implementing the example</h2>
+<p>We're going to implement the situation is as shown in <img src="imgs/what-is-rbac.png"></p>
+<h3 id="step-1-creating-namespaces">Step 1: creating namespaces</h3>
+</body>
+</html>

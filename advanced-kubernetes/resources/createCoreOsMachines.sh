@@ -1,0 +1,1 @@
+gcloud compute instances create core1 core2 --image-project coreos-cloud --image-family coreos-stable --zone europe-west1-d --machine-type n1-standard-1 --metadata-from-file user-data=config.ign
