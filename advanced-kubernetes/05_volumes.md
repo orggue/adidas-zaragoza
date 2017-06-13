@@ -10,6 +10,8 @@ A Pod is made up of one or several containers plus some data volumes that can be
 
 Before going further, you can spend time on these little exercises. They will clarify how volumes are defined in Pods.
 
+----
+
 ### emptyDir
 
 * In this exercise we will demonstrate the use of an emptyDir as a volume.
@@ -46,6 +48,8 @@ spec:
     emptyDir: {} 
 ``` 
 
+----
+
 Once the pods are deployed we can exec into one pod, create a file, then verify the existence of that file in the other pod.
 
 ```
@@ -54,8 +58,8 @@ $ kubectl exec -ti busybox -c busy -- ls -l /busy
 total 0
 -rw-r--r--    1 root     root             0 Nov 19 16:26 foobar
 ```
-----
 
+----
 
 ### emptyDir - memory backed storage
 
@@ -90,6 +94,8 @@ spec:
         medium: "Memory"
 ```
 
+----
+
 Once the pods are deployed we can exec into one pod, create a file, then verify the existence of that file in the other pod.
 
 ```
@@ -98,8 +104,8 @@ $ kubectl exec -ti busybox -c busy -- ls -l /busy
 total 0
 -rw-r--r--    1 root     root             0 Nov 19 16:26 foobar
 ```
-----
 
+----
 
 ### hostPath
 
@@ -126,6 +132,8 @@ spec:
         path: /tmp
 ```
 
+----
+
 Once the pod has been deployed we can echo a word into a file in that directory and verify it's existence from the host. Since we're running this in minikube the host isn't our host but 
 minikube therefore we'll need to run the command through minikube.
 
@@ -133,6 +141,8 @@ minikube therefore we'll need to run the command through minikube.
 $ kubectl -it alpine -- /bin/sh -c "echo 'test' >> /tmp/test.txt" 
 $ minikube ssh cat /tmp/test.txt
 ```
+
+----
 
 ### Persistent Volumes and Claims
 
@@ -228,7 +238,7 @@ spec:
 
 ----
 
-Create the pod and check it's status via the `get`and `describe` command. 
+Create the pod and check it's status via the `get` and `describe` command. 
 
 ```
 kubectl create -f pod_pvc.yaml
