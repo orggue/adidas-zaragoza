@@ -390,16 +390,8 @@ data:
 ```
 kubectl -n kube-system get po -o wide
 NAME                                                  READY     STATUS    RESTARTS   AGE       IP           NODE
-default-http-backend-2198840601-hvcw9                 1/1       Running   0          24m       10.60.2.3    gke-cluster-1-default-pool-fddbe43a-wcpc
-heapster-v1.3.0-1768742904-lwzg9                      2/2       Running   0          24m       10.60.0.6    gke-cluster-1-default-pool-fddbe43a-dpw0
-kube-dns-3263495268-1mgxc                             3/3       Running   0          25m       10.60.1.2    gke-cluster-1-default-pool-fddbe43a-f622
-kube-dns-3263495268-wlsxs                             3/3       Running   0          25m       10.60.0.3    gke-cluster-1-default-pool-fddbe43a-dpw0
-kube-dns-autoscaler-2362253537-s5nwh                  1/1       Running   0          25m       10.60.0.2    gke-cluster-1-default-pool-fddbe43a-dpw0
-kube-proxy-gke-cluster-1-default-pool-fddbe43a-dpw0   1/1       Running   0          25m       10.132.0.4   gke-cluster-1-default-pool-fddbe43a-dpw0
-kube-proxy-gke-cluster-1-default-pool-fddbe43a-f622   1/1       Running   0          25m       10.132.0.3   gke-cluster-1-default-pool-fddbe43a-f622
-kube-proxy-gke-cluster-1-default-pool-fddbe43a-wcpc   1/1       Running   0          25m       10.132.0.2   gke-cluster-1-default-pool-fddbe43a-wcpc
-kubernetes-dashboard-490794276-hf8c0                  1/1       Running   0          25m       10.60.1.3    gke-cluster-1-default-pool-fddbe43a-f622
-l7-default-backend-3574702981-x4wpk                   1/1       Running   0          25m       10.60.0.5    gke-cluster-1-default-pool-fddbe43a-dpw0
+...
+gke-cluster-1-default-pool-fddbe43a-dpw0
 nginx-ingress-lb-c8xwd                                1/1       Running   0          14m       10.60.0.8    gke-cluster-1-default-pool-fddbe43a-dpw0
 nginx-ingress-lb-f53wn                                1/1       Running   0          14m       10.60.1.5    gke-cluster-1-default-pool-fddbe43a-f622
 nginx-ingress-lb-m7g3q                                1/1       Running   0          14m       10.60.2.6    gke-cluster-1-default-pool-fddbe43a-wcpc
