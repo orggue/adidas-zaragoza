@@ -7,6 +7,6 @@ metadata:
 spec:
   containers:
     - name: hello-node
-      image: hello-node:v1
+      image: shiftreg:5000/myproject/hello-node:v1
       ports:
         - containerPort: 8080

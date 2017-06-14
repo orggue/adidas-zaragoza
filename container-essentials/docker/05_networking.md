@@ -1,7 +1,7 @@
 ## Container networking basics
 We will now run network services (accepting requests) in containers.
 
-At the end of this lesson, you will be able to: 
+At the end of this lesson, you will be able to:
 * Run a network service in a container.
 * Manipulate container networking basics.
 * Find a container's IP address.
@@ -41,7 +41,7 @@ $ ip a
 ### The docker0 bridge
 
 * The docker0 interface is a virtual Ethernet bridge interface.
-* It passes packets between two connected devices just like a physical bridge 
+* It passes packets between two connected devices just like a physical bridge
     * Host to container
     * Container to container
 * Each container gets an interface which is automatically attached to the docker0 bridge.
@@ -81,26 +81,26 @@ docker0    8000.02421a4c0c64  no    veth37ec123
 ```
 $ docker exec -ti 55a6b1d032fd sh
 / # ip a
-1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN 
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN
     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
     inet 127.0.0.1/8 scope host lo
        valid_lft forever preferred_lft forever
-    inet6 ::1/128 scope host 
+    inet6 ::1/128 scope host
        valid_lft forever preferred_lft forever
-15: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP 
+15: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP
     link/ether 02:42:ac:12:00:03 brd ff:ff:ff:ff:ff:ff
     inet 172.18.0.3/16 scope global eth0
        valid_lft forever preferred_lft forever
-    inet6 fe80::42:acff:fe12:3/64 scope link 
+    inet6 fe80::42:acff:fe12:3/64 scope link
        valid_lft forever preferred_lft forever
-/ # 
+/ #
 ```
 
 ----
 
 ### Check container networking properties
 
-* Use docker inspect command and look for the NetworkSettings field 
+* Use docker inspect command and look for the NetworkSettings field
 
 ```
    "NetworkSettings": {
@@ -210,7 +210,7 @@ docker stop $(docker ps -aq)
 ```
 * Launch a  container called container01 in detached mode.
 ```
-docker run --name=container01 -d –it bitnami:minideb
+docker run --name=container01 -d –it bitnami/minideb
 ```
 * Inspect the bridge network and note the container IP address.
 ```
@@ -257,7 +257,7 @@ NETWORK ID          NAME                DRIVER              SCOPE
 69f3f12bba57        bridge              bridge              local               
 6e1c02c2cdbc        host                host                local               
 4b59706850b5        my_bridge           bridge              local               
-6d52ecd47b9b        none                null                local 
+6d52ecd47b9b        none                null                local
 ```
 
 ----
@@ -298,7 +298,7 @@ $ docker inspect 309536c231c2311823fafe74081f6445806fa9d2fcdbcc7ead478386b9bbdb6
 
 ### Connecting to multiple networks
 
-Containers can be connected to multiple networks with 
+Containers can be connected to multiple networks with
 `docker network connect`.
 
 Command syntax:
@@ -387,7 +387,7 @@ round-trip min/avg/max = 0.104/0.104/0.104 ms
 
 ### Exposing a container in a bridge network
 * Containers running in a bridge network can only be accessed by the host in which that network resides.
-* To make a container accessible to the outside we must expose the container ports and map them to a port on the host. 
+* To make a container accessible to the outside we must expose the container ports and map them to a port on the host.
 * The container can be accessed via the mapped host port.
 
 ----
@@ -455,4 +455,3 @@ EXPOSE
 ```
 
 ----
-

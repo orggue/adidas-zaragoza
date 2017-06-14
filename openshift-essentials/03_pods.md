@@ -1,20 +1,18 @@
 ## Creating and managing pods
 
-At the core of OpenShift is the Pod. Pods represent a logical application and hold a collection of one or more containers and volumes. In this lab you will:
+At the core of OpenShift is the Pod. A Pod represents a logical application and holds a collection of one or more containers and volumes. In this lab you will:
 
-* Create a simple Hello World node.js application
-* Create a docker container image
-* Write a Pod configuration file
-* Create and inspect Pods
-* Interact with Pods remotely using oc
-
-We'll create a Pod named `hello-world` and interact with it using the oc.
+* Create a simple Hello World node.js application.
+* Create a Docker container image.
+* Write a Pod configuration file.
+* Create and inspect Pods.
+* Interact with Pods remotely using `oc`.
 
 ----
 
 ### Create your node.js app
 
-A simple “hello world”: server.js (note the port number argument to www.listen):
+A simple “hello world” server.js (note the port number argument to www.listen):
 ```
 var http = require('http');
 var handleRequest = function(request, response) {
@@ -24,7 +22,9 @@ var handleRequest = function(request, response) {
 var www = http.createServer(handleRequest);
 www.listen(8080);
 ```
-Save that to a file called `server.js`
+
+Save that to a file called `server.js`.
+
 ----
 
 ### Create a docker container image
@@ -44,7 +44,7 @@ ENTRYPOINT ["node", "/server.js"]
 ```
 oc logout
 oc login -u system:admin
-oc get svc
+oc project default
 oc get svc
 NAME               CLUSTER-IP      EXTERNAL-IP   PORT(S)                   AGE
 docker-registry    172.30.6.185    <none>        5000/TCP                  2h
@@ -54,7 +54,7 @@ docker-registry    172.30.6.185    <none>        5000/TCP                  2h
 
 ### Build the container
 
-Use the IP of the registry as usernamespace for the image
+Use the IP of the registry as usernamespace for the image.
 
 ```
 docker build -t 172.30.6.185:5000/<LASTNAME>/hello-node:v1 .
@@ -75,7 +75,7 @@ docker login -u <USER$> -e test@what.com -p AF1oHmFQa9EQ483SXYBe6XRnfZuGftbkRDId
 
 ### Push the image to the registry
 
-The docker client is now configured to push the image to the OpenShift registry
+The docker client is now configured to push the image to the OpenShift registry.
 
 ```
 docker push 172.30.6.185:5000/<USER$>/hello-node:v1
@@ -145,7 +145,7 @@ oc create -f configs/pod.yaml
 
 ### View Pod details
 
-Use the `oc get` and `kubect describe` commands to view details for the `hello-node` Pod:
+Use the `oc get` and `kubectl describe` commands to view details for the `hello-node` Pod:
 
 ```
 oc get pods
@@ -159,11 +159,12 @@ oc describe pods <pod-name>
 
 ### Interact with a Pod remotely
 
-Pods are allocated a private IP address by default and cannot be reached outside of the cluster. Use the `oc port-forward`, as allreday done in the previous section, to map a local port to a port inside the `hello-node` pod.
+Pods are allocated a private IP address by default and cannot be reached outside of the cluster. Use the `oc port-forward`, as already done in the previous section, to map a local port to a port inside the `hello-node` pod.
 
 Use two terminals. One to run the `oc port-forward` command, and the other to issue `curl` commands.
 
 ----
+
 Terminal 1
 ```
 oc port-forward hello-node 8080 8080
@@ -172,17 +173,17 @@ Terminal 2
 ```
 curl 0.0.0.0:8080
 Hello World!
-````
+```
 
 ----
 
 ### Do it yourself
-* Create a `nginx.conf` which returns a 200 "From zero to hero"
-* Create a Docker container based on nginx and copy the `nginx.conf` file in that container
-* Create a Pod manifest using the new container
-* Get output of the application using `curl`or your browser
-* Access the pod on port 80 using port-forward
-* View the logs of the nginx container
+* Create a `nginx.conf` which returns a 200 "From zero to hero".
+* Create a Docker container based on nginx and copy the `nginx.conf` file in that container.
+* Create a Pod manifest using the new container.
+* Get output of the application using `curl` or your browser.
+* Access the pod on port 80 using port-forward.
+* View the logs of the nginx container.
 
 ----
 
@@ -207,6 +208,3 @@ Like with Docker you can establish an interactive shell to a pod with almost the
 ```
 oc exec -ti <PODNAME> /bin/sh
 ```
-
-----
-
