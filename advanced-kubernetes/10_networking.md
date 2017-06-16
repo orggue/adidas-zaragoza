@@ -1,7 +1,29 @@
-### Networking with Flannel
+### Networking with flannel
 
 
-In this section we'll look at running Flannel as the pod network within Kubernetes.
+In this section we'll look at running flannel as the pod network within Kubernetes.
+
+----
+
+### What is flannel?
+
+- Developed by CoreOS
+- A virtual network that gives a subnet to each host for use with container runtimes
+- Offers several backend mechanisms for packet forwarding.
+
+
+----
+
+### Architecture
+
+![Architecture](./flannel-arch.png)
+
+----
+
+### flannel on Kubernetes
+
+flannel runs an agent on each host with the Kubernetes cluster. The agent allocates a subnet lease out of a preconfigured address space.
+flannel will make use of the existing Kubernetes etcd cluster (either directly or via the Kubernetes API) for storing network configuration.
 
 ----
 
@@ -45,10 +67,10 @@ $ kubectl cluster-info
 
 ----
 
-Several Flannel resources were created on our cluster. Let's take a look at each of them.
+Several flannel resources were created on our cluster. Let's take a look at each of them.
 
 
-First there is a Flannel Service Account
+First there is a flannel Service Account
 
 ```
 $ kubectl describe sa flannel --namespace=kube-system
@@ -67,7 +89,7 @@ Tokens:                	flannel-token-0vwgw
 
 ----
 
-We also created a Config Map. This contains two sets of Configuration. The CNI configuration and the Flannel configuration.
+We also created a Config Map. This contains two sets of Configuration. The CNI configuration and the flannel configuration.
 
 
 ```
@@ -102,7 +124,7 @@ net-conf.json:
 
 ----
 
-The network in the Flannel configuration should (as seen above) should match the POD network CIDR. Let's verify this...
+The network in the flannel configuration should (as seen above) should match the POD network CIDR. Let's verify this...
 
 ```
 $ kubectl get nodes -o json | grep CIDR
@@ -111,7 +133,7 @@ $ kubectl get nodes -o json | grep CIDR
 
 ----
 
-The last resource we deploye is a Daemon Set. This ensures that a Flannel pod will be deployed on every node.
+The last resource we deploye is a Daemon Set. This ensures that a flannel pod will be deployed on every node.
 We can see that the pod has two containers. The flannel daemon (kube-flannel) and a container for installing the cni (install-cni).
 
 ```
@@ -337,7 +359,7 @@ kubectl describe svc frontend
 ----
 
 
-Let's try switching the Flannel backend to UDP
+Let's try switching the flannel backend to UDP
 
 
 ```
