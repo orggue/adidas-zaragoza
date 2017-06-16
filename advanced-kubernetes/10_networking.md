@@ -15,13 +15,15 @@ Create (ubuntu) instance on Google Cloud (>= 2 CPU)
 
 ```
 gcloud compute instances create kube-test --image-project ubuntu-os-cloud --image-family ubuntu-1604-lts --zone europe-west1-d --machine-type n1-standard-2
+
+gcloud compute ssh --zone "europe-west1-d" "kube-test"
 ```
 
 ----
 
 Install kubernetes via kubeadm
 
-Copy script from `./resources/installK8sWithFlannel.sh`
+Copy script from `./resources/installK8sWithFlannel.sh` and run as `sudo`
 
 ----
 
@@ -31,7 +33,7 @@ Some follow up steps...
 sudo cp /etc/kubernetes/admin.conf $HOME/
 sudo chown $(id -u):$(id -g) $HOME/admin.conf
 export KUBECONFIG=$HOME/admin.conf
-````
+```
 
 ----
 
@@ -39,16 +41,6 @@ Verify cluster is up:
 
 ```
 $ kubectl cluster-info
-```
-
-----
-
-##REMOVE THIS##
-
-Add RBAC role for Flannel
-
-```
-kubectl create -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel-rbac.yml --validate=false
 ```
 
 ----
@@ -186,15 +178,161 @@ Events:
 
 Now that everything seems to be up and running. Let's try launching an app and see if pods can communicate....
 
-The famous guestbook
+The famous guestbook.
 
 ```
-kubectl create -f https://raw.githubusercontent.com/kubernetes/kubernetes/master/examples/guestbook/all-in-one/guestbook-all-in-one.yaml --validate=false
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-master
+  labels:
+    app: redis
+    tier: backend
+    role: master
+spec:
+  ports:
+  - port: 6379
+    targetPort: 6379
+  selector:
+    app: redis
+    tier: backend
+    role: master
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: redis-master
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: redis
+        role: master
+        tier: backend
+    spec:
+      containers:
+      - name: master
+        image: gcr.io/google_containers/redis:e2e  # or just image: redis
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        ports:
+        - containerPort: 6379
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-slave
+  labels:
+    app: redis
+    tier: backend
+    role: slave
+spec:
+  ports:
+  - port: 6379
+  selector:
+    app: redis
+    tier: backend
+    role: slave
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: redis-slave
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: redis
+        role: slave
+        tier: backend
+    spec:
+      containers:
+      - name: slave
+        image: gcr.io/google_samples/gb-redisslave:v1
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        env:
+        - name: GET_HOSTS_FROM
+          value: dns
+          # If your cluster config does not include a dns service, then to
+          # instead access an environment variable to find the master
+          # service's host, comment out the 'value: dns' line above, and
+          # uncomment the line below:
+          # value: env
+        ports:
+        - containerPort: 6379
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  labels:
+    app: guestbook
+    tier: frontend
+spec:
+  # if your cluster supports it, uncomment the following to automatically create
+  # an external load-balanced IP for the frontend service.
+  type: NodePort
+  ports:
+  - port: 80
+  selector:
+    app: guestbook
+    tier: frontend
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: guestbook
+        tier: frontend
+    spec:
+      containers:
+      - name: php-redis
+        image: gcr.io/google-samples/gb-frontend:v4
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        env:
+        - name: GET_HOSTS_FROM
+          value: dns
+          # If your cluster config does not include a dns service, then to
+          # instead access environment variables to find service host
+          # info, comment out the 'value: dns' line above, and uncomment the
+          # line below:
+          # value: env
+        ports:
+        - containerPort: 80
 ```
 
 ----
 
-We can access this via the frontend service.
+We will deploy the whole application
+
+```
+kubectl create guestbook.yml --validate=false
+```
+
+And access this via the frontend service (Ensure the port is open on your VM)
+
+```
+kubectl describe svc frontend
+```
+
+----
+
+![Guestbook](./guestbook.png)
 
 ----
 
@@ -206,7 +344,13 @@ Let's try switching the Flannel backend to UDP
 kubectl edit cm kube-flannel-cfg --validate=false --namespace=kube-system
 ```
 
-We just need to restart flannel for the change to take effect.
+We just need to restart flannel for the change to take effect. Deleting the pod will handle this.
+
+```
+kubectl get pods -n kube-system
+
+kubectl delete pod kube-flannel-ds-8fs2n -n kube-system
+```
 
 ----
 
