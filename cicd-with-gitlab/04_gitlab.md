@@ -1,8 +1,15 @@
 ### Set up local GitLab for CI/CD
 
+Requirements: 
+
+- Docker
+- GitLab Account
+
 ----
 
-*** SKIP THIS ***
+### Optional - Run GitLab locally (in Docker containers)
+
+If you wish to use gitlab.com, you can skip the next few slides.
 
 Launch GitLab (Docker image) and Registry together with Docker Compose (./docker-compose.yaml)
 
@@ -37,7 +44,6 @@ services:
 
 ----
 
-*** SKIP THIS ***
 
 ```
 docker-compose up -d gitlab registry
@@ -53,15 +59,15 @@ Open localhost:8080 in browser
 
 ----
 
-*** SKIP THIS ***
-
 Enter new password (username is `root`)
 
 [Change Password](./gitlabPwd.png)
 
 ----
 
-And create a new project `nodejs-example`
+We'll create a new project in GitLab to use for this lab
+
+Create a new project called `nodejs-example`
 
 ----
 
@@ -88,18 +94,15 @@ Add ci config file
 
 ----
 
-
-
-*** SKIP THIS ***
-Refresh the Gitlab UI
+Return to the Gitlab UI and verify your project is there
 
 [Project](./gitlab-project.png)
 
 ----
 
-*** SKIP THIS ***
-
 ### Setup GitLab runner
+
+(Optional if using gitlab.com)
 
 ```
 docker-compose up -d gitlab-runner
@@ -115,7 +118,7 @@ Copy the register token
 
 ----
 
-*** SKIP THIS ***
+(Optional if using gitlab.com)
 
 Register runner with our GitLab server.
 
@@ -163,4 +166,4 @@ rm -rf ./srv
 
 ----
 
-[Back...](../)
+[Fin...](../01_outline.md)
