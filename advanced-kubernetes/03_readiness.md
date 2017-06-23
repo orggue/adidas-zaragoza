@@ -144,7 +144,7 @@ livenessProbe:
 
 ### Tutorial: Creating Pods with Liveness and Readiness Probes
 
-Explore the influxdb pod configuration: `configs/healthy-monolith.yaml`
+`configs/healthy-monolith.yaml`
 
 ```
       livenessProbe:
@@ -189,7 +189,7 @@ In this tutorial you'll see how Kubernetes handles failed readiness probes. The 
 
 Use the `kubectl port-forward` command to forward a local port to the health port of the healthy-monolith Pod.
 
-````
+```
 kubectl port-forward healthy-monolith 10081:81
 ```
 You now have access to the /healthz and /readiness HTTP endpoints exposed by the monolith container.
@@ -217,7 +217,13 @@ Use the kubectl describe command to get more details about the failing readiness
 ```
 kubectl describe pods healthy-monolith
 ```
-Notice the events for the healthy-monolith Pod report details about failing readiness probe.
+
+Notice the details about failing probes.
+
+```
+Liveness:     http-get http://:81/healthz delay=5s timeout=5s period=15s #success=1 #failure=3
+Readiness:    http-get http://:81/readiness delay=5s timeout=1s period=10s #success=1 #failure=3
+```
 
 ----
 
@@ -234,4 +240,10 @@ kubectl get pods healthy-monolith
 
 ----
 
-In this lab you learned that Kubernetes supports application monitoring using liveness and readiness probes. You also learned how to add readiness and liveness probes to Pods and what happens when probes fail.
+In this lab you learned that Kubernetes supports application monitoring using liveness and readiness probes. 
+
+You also learned how to add readiness and liveness probes to Pods and what happens when probes fail.
+
+----
+
+[Next up Ingress...](../04_ingress.md)

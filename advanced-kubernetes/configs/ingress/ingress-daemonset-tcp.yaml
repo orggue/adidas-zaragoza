@@ -35,6 +35,8 @@ spec:
           hostPort: 80
         - containerPort: 443
           hostPort: 443
+        - containerPort: 9000
+          hostPort: 9000
         env:
           - name: POD_NAME
             valueFrom:

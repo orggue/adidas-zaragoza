@@ -71,3 +71,56 @@ cat /tmp/mysec/my-super-secret-key
 ----
 
 One word of warning here, in case it’s not obvious: `secret.yaml` should never ever be committed to a source control system such as Git. If you do that, you’re exposing the secret and the whole exercise would have been for nothing.
+
+### Using secrets with ENV variables
+
+To use a secret in an environment variable in a pod:
+1. Create a secret or use an existing one. Multiple pods can reference the same secret.
+2. Modify your Pod definition in each container you wish to consume it.
+3. Modify your image and/or command line so that the program looks for values in the specified environment variables
+
+----
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: secret
+spec:
+  containers:
+    - image: nginx
+      name: webserver
+      env:
+        - name: SECRET_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: mysecret
+              key: my-super-secret-key
+
+```
+
+----
+
+### Consuming Secret Values from Environment Variables
+
+```
+kubectl describe pod secret | grep SECRET_USERNAME
+```
+
+----
+
+### Using imagePullSecrets
+
+An imagePullSecret is a way to pass a secret that contains a Docker (or other) image registry password to the Kubelet so it can pull a private image on behalf of your Pod.
+
+Creating a Secret with a Docker Config
+Run the following command, substituting the appropriate uppercase values:
+
+```
+kubectl create secret docker-registry myregistrykey --docker-server=DOCKER_REGISTRY_SERVER --docker-username=DOCKER_USER --docker-password=DOCKER_PASSWORD --docker-email=DOCKER_EMAIL
+secret "myregistrykey" created.
+```
+
+----
+
+[Next up Config Maps...](../07_configmaps.md)

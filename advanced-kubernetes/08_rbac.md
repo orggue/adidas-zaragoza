@@ -558,3 +558,15 @@ a-kubectl create rolebinding bob-view \
     --clusterrole=view \
     --user=$bob \
     --namespace=production
+
+### Cleanup
+
+```
+gcloud iam service-accounts delete cluster-user-1 -q
+gcloud iam service-accounts delete cluster-user-2 -q
+gcloud container clusters delete <cluster-name>
+```
+
+----
+
+[Next up Networking...](../09_networking.md)
