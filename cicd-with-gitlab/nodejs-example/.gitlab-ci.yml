@@ -1,0 +1,5 @@
+image: node:8.1.2
+
+all_tests:
+  script:
+   - npm test
