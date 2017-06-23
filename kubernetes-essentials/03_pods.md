@@ -21,71 +21,10 @@ In this lab you will:
 
 ----
 
-### Local development with Minikube
-
-* Test application before deploying to a real cluster.  
-* Setup Minikube :
-
+### Deploy application to Kubernetes
 ```
-minikube delete
-minikube start --insecure-registry localhost:5000
-```
-* Creates a VM with a single-node cluster.
-* `--insecure-registry localhost:5000` points Docker on the node to a local registry.
-* Use this Docker daemon to build and push images and keep everything local.
+kubectl run hello-node --image=nginx:1.12 --port=80
 
-----
-
-### Use Docker daemon on Minikube
-
-Set environment variables to point to Docker deamon on the node:
-
-```
-eval $(minikube docker-env)
-```
-
-----
-
-### Create node.js app
-Note port 8080 in `www.listen` directive.
-```
-var http = require('http');
-var handleRequest = function(request, response) {
-  response.writeHead(200);
-  response.end("Hello World!");
-}
-var www = http.createServer(handleRequest);
-www.listen(8080);
-```
-Save as `server.js`
-
-----
-
-### Create Docker image
-
-Create the `Dockerfile` for hello-node (note port 8080 in `EXPOSE` command):
-```
-FROM node:6-alpine
-EXPOSE 8080
-COPY server.js /
-ENTRYPOINT ["node", "/server.js"]
-```
-
-----
-
-### Build the container
-
-Build the container on Minikube.
-
-```
-docker build -t hello-node:v1 -f Dockerfile_node .
-```
-
-----
-
-### Deploy application to Minikube
-```
-kubectl run hello-node --image=hello-node:v1 --port=8080
 deployment "hello-node" created
 ```
 
@@ -97,6 +36,7 @@ deployment "hello-node" created
 kubectl get deployment
 NAME         DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
 hello-node   1         1         1            1           49s
+
 kubectl get pod
 NAME                          READY     STATUS    RESTARTS   AGE
 hello-node-2399519400-02z6l   1/1       Running   0          54s
@@ -116,7 +56,7 @@ kubectl config view
 
 ### Creating a Pod manifest
 
-Explore the `hello-world` pod configuration file:
+Explore the `hello-node` pod configuration file:
 
 ```
 apiVersion: v1
@@ -128,9 +68,9 @@ metadata:
 spec:
   containers:
     - name: hello-node
-      image: hello-node:v1
+      image: nginx:1.12
       ports:
-        - containerPort: 8080
+        - containerPort: 80
 ```
 
 ----
@@ -187,7 +127,7 @@ Hello World!
 
 ### Do it yourself
 * Create an `nginx.conf` which returns a  
-`200 "From zero to hero"`.
+`200 "Hello Kiwi"`.
 * Create a custom Nginx image.
 * Build the container on Minikube.
 * Create a Pod manifest using the image.
@@ -220,3 +160,6 @@ kubectl exec -ti <PODNAME> /bin/sh
 ```
 
 ----
+
+[Next up Services...](../04_services.md)
+
