@@ -1,141 +1,379 @@
-### Networking
+### Networking with flannel
 
-In this section we'll cover container networking with Flannel
 
-----
-
-Pre-Reqs: Two VMs with Etcd and Flannel installed.
-(e.g. CoreOS VMs on GCE)
+In this section we'll look at running flannel as the pod network within Kubernetes.
 
 ----
 
-Log in to both hosts and start Docker, Etcd, and Flannel are running (in that order)
+### What is flannel?
+
+- Developed by CoreOS
+- A virtual network that gives a subnet to each host for use with container runtimes
+- Offers several backend mechanisms for packet forwarding.
+
+
+----
+
+### Architecture
+
+![Architecture](./flannel-arch.png)
+
+----
+
+### flannel on Kubernetes
+
+flannel runs an agent on each host with the Kubernetes cluster. The agent allocates a subnet lease out of a preconfigured address space.
+flannel will make use of the existing Kubernetes etcd cluster (either directly or via the Kubernetes API) for storing network configuration.
+
+----
+
+### Example
+
+For this hands on exercise we will set up a single node Kubernetes cluster using kubeadm.
+
+Setup - 
+
+Create (ubuntu) instance on Google Cloud (>= 2 CPU)
 
 ```
-$ sudo systemctl start docker
-$ sudo systemctl start etcd
-$ sudo systemctl start flanneld
-```
+gcloud compute instances create kube-test --image-project ubuntu-os-cloud --image-family ubuntu-1604-lts --zone europe-west1-d --machine-type n1-standard-2
 
-----
-
-Start container on host1
-
-`sudo docker run -d --name pinger busybox sh -c "while true; do sleep 3600; done"`
-
-Get the IP Address for the container
-
-`sudo docker exec pinger ifconfig`
-
-----
-
-Start a second container on host2
-
-`sudo docker run -d --name listener busybox sh -c "while true; do sleep 3600; done"`
-
-And retrieve the IP Address
-
-`sudo docker exec listener ifconfig`
-
-----
-
-Ping container on host1 from container on host2
-
-
-`sudo docker exec test1 ping [IP_ADDRESS]`
-
-----
-
-## Container Networking with WeaveNet
-
-----
-
-## Install Docker Machine (& VirtualBox)
-```bash
-sudo su -
-curl -L https://github.com/docker/machine/releases/download/v0.8.2/docker-machine-`uname -s`-`uname -m` >/usr/local/bin/docker-machine
-chmod +x /usr/local/bin/docker-machine
-sudo apt-get install virtualbox 
+gcloud compute ssh --zone "europe-west1-d" "kube-test"
 ```
 
 ----
 
-## Install Weave Net
-Let's start by fetching the weavenet binary and adjusting the permissions
-```bash
-sudo curl -L git.io/weave -o /usr/local/bin/weave
-sudo chmod +x /usr/local/bin/weave
+Install kubernetes via kubeadm
+
+Copy script from `./resources/installK8sWithFlannel.sh` and run as `sudo`
+
+----
+
+Some follow up steps...
+
+```
+sudo cp /etc/kubernetes/admin.conf $HOME/
+sudo chown $(id -u):$(id -g) $HOME/admin.conf
+export KUBECONFIG=$HOME/admin.conf
 ```
 
 ----
 
-## Launch Weave Net
-For this scenario we will use Docker Machine as this allows to create multiple hosts.
-Let's create our first host (VM) and launch weave net on it
+Verify cluster is up:
 
-```bash
-docker-machine create -d virtualbox host1
-eval $(docker-machine env host1)
-weave launch
 ```
-
-This has launched the weave router and the plugin.
+$ kubectl cluster-info
+```
 
 ----
 
-## Ping my container
-As a basic first setup, we'll launch a small (alpine) container and test that we can connect to it from a second container.
-Using the --net option we specify that we want to use the weave docker plugin
+Several flannel resources were created on our cluster. Let's take a look at each of them.
 
-```bash
-docker run -dit $(weave dns-args) --net=weave -h pingme.weave.local alpine sh
-docker run -it $(weave dns-args) --net=weave -h pinger.weave.local amouat/network-utils ping -c 1 pingme
+
+First there is a flannel Service Account
+
 ```
+$ kubectl describe sa flannel --namespace=kube-system
+Name:  		flannel
+Namespace:     	kube-system
+Labels:		<none>
+Annotations:   	kubectl.kubernetes.io/last-applied-configuration={"apiVersion":"v1","kind":"ServiceAccount","metadata":{"annotations":{},"name":"flannel","namespace":"kube-system"}}
 
-Notice that we are able to find the first container simply using the hostname.
+
+Image pull secrets:    	<none>
+
+Mountable secrets:     	flannel-token-0vwgw
+
+Tokens:                	flannel-token-0vwgw
+```
 
 ----
 
-## Multihost setup
-Let's setup a second host (VM) again using Docker Machine.
-When we launch weave on the second host we are pointing it to the first host's IP. If we continue to add more hosts, we only ever need to point weave to one other host. The hosts will discover each other via the Gossip protocol.
+We also created a Config Map. This contains two sets of Configuration. The CNI configuration and the flannel configuration.
 
-```bash
-docker-machine create -d virtualbox host2
-eval $(docker-machine env host2)
-weave launch $(docker-machine ip host1)
-docker run -it $(weave dns-args) --net=weave -h pinger.weave.local amouat/network-utils ping -c 1 pingme
+
 ```
+$ kubectl describe cm kube-flannel-cfg --namespace=kube-system
+Name:  		kube-flannel-cfg
+Namespace:     	kube-system
+Labels:		app=flannel
+       		tier=node
+Annotations:   	kubectl.kubernetes.io/last-applied-configuration={"apiVersion":"v1","data":{"cni-conf.json":"{\n  \"name\": \"cbr0\",\n  \"type\": \"flannel\",\n  \"delegate\": {\n    \"isDefaultGateway\": true\n  }\...
 
-Voila! Multi host networking! These two VMs on our local laptop could just as easily be physical servers on opposite sides of the world.
+Data
+====
+cni-conf.json:
+----
+{
+  "name": "cbr0",
+  "type": "flannel",
+  "delegate": {
+    "isDefaultGateway": true
+  }
+}
+
+net-conf.json:
+----
+{
+  "Network": "10.244.0.0/16",
+  "Backend": {
+    "Type": "vxlan"
+  }
+}
+```
 
 ----
 
-## One step further
-Now let's add another instance of our 'pingme' service on host1. We then return to host2 and once more try to ping our service.
+The network in the flannel configuration should (as seen above) should match the POD network CIDR. Let's verify this...
 
-```bash
-eval $(docker-machine env host1)
-docker run -dit $(weave dns-args) --net=weave -h pingme.weave.local alpine sh
-eval $(docker-machine env host2)        
-docker run -it $(weave dns-args) --net=weave -h pinger.weave.local amouat/network-utils ping -c 1 pingme
-docker run -it $(weave dns-args) --net=weave -h pinger.weave.local amouat/network-utils ping -c 1 pingme
-...
 ```
-As you run the ping service a few times, we can see that we get responses from both instances. Built-in load balancing!
+$ kubectl get nodes -o json | grep CIDR
+                "podCIDR": "10.244.0.0/24",
+```
+
+----
+
+The last resource we deploye is a Daemon Set. This ensures that a flannel pod will be deployed on every node.
+We can see that the pod has two containers. The flannel daemon (kube-flannel) and a container for installing the cni (install-cni).
+
+```
+$ kubectl describe ds kube-flannel-ds --namespace=kube-system
+Name:  		kube-flannel-ds
+Selector:      	app=flannel,tier=node
+Node-Selector: 	beta.kubernetes.io/arch=amd64
+Labels:		app=flannel
+       		tier=node
+Annotations:   	kubectl.kubernetes.io/last-applied-configuration={"apiVersion":"extensions/v1beta1","kind":"DaemonSet","metadata":{"annotations":{},"labels":{"app":"flannel","tier":"node"},"name":"kube-flannel-ds","n...
+Desired Number of Nodes Scheduled: 1
+Current Number of Nodes Scheduled: 1
+Number of Nodes Scheduled with Up-to-date Pods: 1
+Number of Nodes Scheduled with Available Pods: 0
+Number of Nodes Misscheduled: 0
+Pods Status:   	1 Running / 0 Waiting / 0 Succeeded / 0 Failed
+Pod Template:
+  Labels:      		app=flannel
+       			tier=node
+  Service Account:     	flannel
+  Containers:
+   kube-flannel:
+    Image:     	quay.io/coreos/flannel:v0.7.1-amd64
+    Port:
+    Command:
+      /opt/bin/flanneld
+      --ip-masq
+      --kube-subnet-mgr
+    Environment:
+      POD_NAME:		 (v1:metadata.name)
+      POD_NAMESPACE:   	 (v1:metadata.namespace)
+    Mounts:
+      /etc/kube-flannel/ from flannel-cfg (rw)
+      /run from run (rw)
+   install-cni:
+    Image:     	quay.io/coreos/flannel:v0.7.1-amd64
+    Port:
+    Command:
+      /bin/sh
+      -c
+      set -e -x; cp -f /etc/kube-flannel/cni-conf.json /etc/cni/net.d/10-flannel.conf; while true; do sleep 3600; done
+    Environment:       	<none>
+    Mounts:
+      /etc/cni/net.d from cni (rw)
+      /etc/kube-flannel/ from flannel-cfg (rw)
+  Volumes:
+   run:
+    Type:      	HostPath (bare host directory volume)
+    Path:      	/run
+   cni:
+    Type:      	HostPath (bare host directory volume)
+    Path:      	/etc/cni/net.d
+   flannel-cfg:
+    Type:      	ConfigMap (a volume populated by a ConfigMap)
+    Name:      	kube-flannel-cfg
+    Optional:  	false
+Events:
+  FirstSeen    	LastSeen       	Count  	From   		SubObjectPath  	Type   		Reason 			Message
+  ---------    	--------       	-----  	----   		-------------  	--------       	------ 			-------
+  27m  		27m    		1      	daemon-set     			Normal 		SuccessfulCreate       	Created pod: kube-flannel-ds-fqnh5
+ ```
+
+----
+
+Now that everything seems to be up and running. Let's try launching an app and see if pods can communicate....
+
+The famous guestbook.
+
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-master
+  labels:
+    app: redis
+    tier: backend
+    role: master
+spec:
+  ports:
+  - port: 6379
+    targetPort: 6379
+  selector:
+    app: redis
+    tier: backend
+    role: master
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: redis-master
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: redis
+        role: master
+        tier: backend
+    spec:
+      containers:
+      - name: master
+        image: gcr.io/google_containers/redis:e2e  # or just image: redis
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        ports:
+        - containerPort: 6379
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-slave
+  labels:
+    app: redis
+    tier: backend
+    role: slave
+spec:
+  ports:
+  - port: 6379
+  selector:
+    app: redis
+    tier: backend
+    role: slave
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: redis-slave
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: redis
+        role: slave
+        tier: backend
+    spec:
+      containers:
+      - name: slave
+        image: gcr.io/google_samples/gb-redisslave:v1
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        env:
+        - name: GET_HOSTS_FROM
+          value: dns
+          # If your cluster config does not include a dns service, then to
+          # instead access an environment variable to find the master
+          # service's host, comment out the 'value: dns' line above, and
+          # uncomment the line below:
+          # value: env
+        ports:
+        - containerPort: 6379
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  labels:
+    app: guestbook
+    tier: frontend
+spec:
+  # if your cluster supports it, uncomment the following to automatically create
+  # an external load-balanced IP for the frontend service.
+  type: NodePort
+  ports:
+  - port: 80
+  selector:
+    app: guestbook
+    tier: frontend
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: guestbook
+        tier: frontend
+    spec:
+      containers:
+      - name: php-redis
+        image: gcr.io/google-samples/gb-frontend:v4
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        env:
+        - name: GET_HOSTS_FROM
+          value: dns
+          # If your cluster config does not include a dns service, then to
+          # instead access environment variables to find service host
+          # info, comment out the 'value: dns' line above, and uncomment the
+          # line below:
+          # value: env
+        ports:
+        - containerPort: 80
+```
+
+----
+
+We will deploy the whole application
+
+```
+kubectl create guestbook.yml --validate=false
+```
+
+And access this via the frontend service (Ensure the port is open on your VM)
+
+```
+kubectl describe svc frontend
+```
+
+----
+
+![Guestbook](./guestbook.png)
 
 ----
 
 
-## Example using Docker Compose
-Sock Shop - Docker single
-```bash
-git clone https://github.com/microservices-demo/microservices-demo.git
-cd microservices-demo/deploy/docker-single
-weave launch
-docker-compose up -d
+Let's try switching the flannel backend to UDP
+
+
 ```
-This will launch the full Sock Shop demo locally. Container communicatin provided by Weave Net plugin.
+kubectl edit cm kube-flannel-cfg --validate=false --namespace=kube-system
+```
+
+We just need to restart flannel for the change to take effect. Deleting the pod will handle this.
+
+```
+kubectl get pods -n kube-system
+
+kubectl delete pod kube-flannel-ds-8fs2n -n kube-system
+```
 
 ----
+
 

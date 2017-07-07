@@ -1,0 +1,169 @@
+## Networking back-up
+
+Pre-Reqs: Two VMs with Etcd and Flannel installed.
+(e.g. CoreOS VMs on GCE)
+
+```
+gcloud compute instances create core1 core2 --image-project coreos-cloud --image-family coreos-stable --zone europe-west1-d --machine-type n1-standard-1 --metadata-from-file user-data=config.ign
+```
+
+Where `config.ign` looks like:
+
+```
+{
+  "ignition": {
+    "version": "2.0.0",
+    "config": {}
+  },
+  "storage": {},
+  "systemd": {
+    "units": [
+      {
+        "name": "etcd-member.service",
+        "enable": true,
+        "dropins": [
+          {
+            "name": "20-clct-etcd-member.conf",
+            "contents": "[Unit]\nRequires=coreos-metadata.service\nAfter=coreos-metadata.service\n\n[Service]\nEnvironmentFile=/run/metadata/coreos\nExecStart=\nExecStart=/usr/lib/coreos/etcd-wrapper $ETCD_OPTS \\\n  --listen-peer-urls=\"http://${COREOS_GCE_IP_EXTERNAL_0}:2380\" \\\n  --listen-client-urls=\"http://0.0.0.0:2379\" \\\n  --initial-advertise-peer-urls=\"http://${COREOS_GCE_IP_EXTERNAL_0}:2380\" \\\n  --advertise-client-urls=\"http://${COREOS_GCE_IP_EXTERNAL_0}:2379\" \\\n  --discovery=\"https://discovery.etcd.io/\u003ctoken\u003e\""
+          }
+        ]
+      }
+    ]
+  },
+  "networkd": {},
+  "passwd": {}
+}
+```
+
+----
+
+Log in to both hosts and start Docker, Etcd, and Flannel are running (in that order)
+
+```
+$ sudo systemctl start docker
+$ sudo systemctl start etcd
+$ sudo systemctl start flanneld
+```
+
+----
+
+Start container on host1
+
+`sudo docker run -d --name pinger busybox sh -c "while true; do sleep 3600; done"`
+
+Get the IP Address for the container
+
+`sudo docker exec pinger ifconfig`
+
+----
+
+Start a second container on host2
+
+`sudo docker run -d --name listener busybox sh -c "while true; do sleep 3600; done"`
+
+And retrieve the IP Address
+
+`sudo docker exec listener ifconfig`
+
+----
+
+Ping container on host1 from container on host2
+
+
+`sudo docker exec test1 ping [IP_ADDRESS]`
+
+----
+
+## Container Networking with WeaveNet
+
+----
+
+## Install Docker Machine (& VirtualBox)
+```bash
+sudo su -
+curl -L https://github.com/docker/machine/releases/download/v0.8.2/docker-machine-`uname -s`-`uname -m` >/usr/local/bin/docker-machine
+chmod +x /usr/local/bin/docker-machine
+sudo apt-get install virtualbox 
+```
+
+----
+
+## Install Weave Net
+Let's start by fetching the weavenet binary and adjusting the permissions
+```bash
+sudo curl -L git.io/weave -o /usr/local/bin/weave
+sudo chmod +x /usr/local/bin/weave
+```
+
+----
+
+## Launch Weave Net
+For this scenario we will use Docker Machine as this allows to create multiple hosts.
+Let's create our first host (VM) and launch weave net on it
+
+```bash
+docker-machine create -d virtualbox host1
+eval $(docker-machine env host1)
+weave launch
+```
+
+This has launched the weave router and the plugin.
+
+----
+
+## Ping my container
+As a basic first setup, we'll launch a small (alpine) container and test that we can connect to it from a second container.
+Using the --net option we specify that we want to use the weave docker plugin
+
+```bash
+docker run -dit $(weave dns-args) --net=weave -h pingme.weave.local alpine sh
+docker run -it $(weave dns-args) --net=weave -h pinger.weave.local amouat/network-utils ping -c 1 pingme
+```
+
+Notice that we are able to find the first container simply using the hostname.
+
+----
+
+## Multihost setup
+Let's setup a second host (VM) again using Docker Machine.
+When we launch weave on the second host we are pointing it to the first host's IP. If we continue to add more hosts, we only ever need to point weave to one other host. The hosts will discover each other via the Gossip protocol.
+
+```bash
+docker-machine create -d virtualbox host2
+eval $(docker-machine env host2)
+weave launch $(docker-machine ip host1)
+docker run -it $(weave dns-args) --net=weave -h pinger.weave.local amouat/network-utils ping -c 1 pingme
+```
+
+Voila! Multi host networking! These two VMs on our local laptop could just as easily be physical servers on opposite sides of the world.
+
+----
+
+## One step further
+Now let's add another instance of our 'pingme' service on host1. We then return to host2 and once more try to ping our service.
+
+```bash
+eval $(docker-machine env host1)
+docker run -dit $(weave dns-args) --net=weave -h pingme.weave.local alpine sh
+eval $(docker-machine env host2)        
+docker run -it $(weave dns-args) --net=weave -h pinger.weave.local amouat/network-utils ping -c 1 pingme
+docker run -it $(weave dns-args) --net=weave -h pinger.weave.local amouat/network-utils ping -c 1 pingme
+...
+```
+As you run the ping service a few times, we can see that we get responses from both instances. Built-in load balancing!
+
+----
+
+
+## Example using Docker Compose
+Sock Shop - Docker single
+```bash
+git clone https://github.com/microservices-demo/microservices-demo.git
+cd microservices-demo/deploy/docker-single
+weave launch
+docker-compose up -d
+```
+This will launch the full Sock Shop demo locally. Container communicatin provided by Weave Net plugin.
+
+----
+
