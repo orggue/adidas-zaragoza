@@ -19,10 +19,10 @@ An Ingress is a collection of rules that allow inbound connections to reach the 
 ----
 
 It can be configured to:
-* give services externally-reachable urls.
-* loadbalance traffic.
-* terminate SSL.
-* offer name based virtual hosting .
+* Give services externally-reachable urls
+* Loadbalance traffic
+* Terminate SSL
+* Offer name based virtual hosting
 
 An Ingress controller is responsible for fulfilling the Ingress, usually with a loadbalancer, though it may also configure your edge router or additional frontends to help handle the traffic in an HA manner.
 
@@ -30,11 +30,14 @@ An Ingress controller is responsible for fulfilling the Ingress, usually with a 
 
 ### Ingress controller
 
-In order for the Ingress resource to work, the cluster must have an Ingress controller running.
+In order for the Ingress resource to work, the cluster must have an `Ingress Controller` running.
 
-An Ingress Controller is a daemon, deployed as a Kubernetes Pod, that watches the ApiServer's /ingresses endpoint for updates to the Ingress resource. Its job is to satisfy requests for ingress.
+An `Ingress Controller` is a daemon, deployed as a Kubernetes Pod, that watches the ApiServer's /ingresses endpoint for updates to the Ingress resource. Its job is to satisfy requests for ingress.
 
-Workflow:
+----
+
+### Ingress Workflow
+
 * Poll until apiserver reports a new Ingress.
 * Write the LB config file based on a go text/template.
 * Reload LB config.
@@ -64,13 +67,22 @@ spec:
 
 ----
 
-This section will focus on the nginx-ingress-controller. There are others like HAProxy or Traefik available. They can easily be exchanged. To check which one is best suited for you, please check the documentation of the loadbalancers if they meet your requirements.
+### Ingress Controllers
+
+This section will focus on the nginx-ingress-controller. There are others available, suchs as HAProxy or Traefik. 
+
+They can easily be exchanged. To check which one is best suited for you, please check the documentation of the loadbalancers if they meet your requirements.
+
 There are also implementations for hardware loadbalancers like F5 available, but I haven't seen them used out in the wild.
 
 ----
 
 ### Specialities of the NGINX ingress controller
-The NGINX ingress controller does not use Services to route traffic to the pods. Instead it uses the Endpoints API in order to bypass kube-proxy to allow NGINX features like session affinity and custom load balancing algorithms. It also removes some overhead, such as conntrack entries for iptables DNAT.
+The NGINX ingress controller does not use Services to route traffic to the pods. 
+
+Instead it uses the Endpoints API in order to bypass kube-proxy to allow NGINX features like session affinity and custom load balancing algorithms. 
+
+It also removes some overhead, such as conntrack entries for iptables DNAT.
 
 ----
 
@@ -78,9 +90,9 @@ The NGINX ingress controller does not use Services to route traffic to the pods.
 
 For the controller, the first thing we need to do is setup a default backend service for nginx.
 
-The default backend is the default fall-back service if the controller cannot route a request to a service. The default backend needs to satisfy the following two requirements :
-* serves a 404 page at /
-* serves 200 on a /healthz
+This is the default fall-back service if the controller cannot route a request to a service. The default backend needs to satisfy the following two requirements :
+* Serve a 404 page at /
+* Serve 200 on a /healthz
 
 Infos about the default backend can be found [here](https://github.com/kubernetes/contrib/tree/master/404-server).
 
@@ -91,7 +103,8 @@ Infos about the default backend can be found [here](https://github.com/kubernete
 Let’s use the example default backend of the official kubernetes nginx ingress project:
 
 ```
-kubectl create -f https://raw.githubusercontent.com/kubernetes/ingress/master/examples/deployment/nginx/default-backend.yaml
+kubectl create -f \
+https://raw.githubusercontent.com/kubernetes/ingress/master/examples/deployment/nginx/default-backend.yaml
 
 ```
 
@@ -158,7 +171,7 @@ kubectl create -f configs/ingress/ingress.yaml
 
 ### Accessing the application
 
-We can use curl or a browser. If you want to access the applications you need either to edit your `/etc/hosts` file with the domains `foo.bar.com` and `bar.baz.com` pointing to the IP of Minikube. Or having a browser plugin installed to manipulate the host header.
+To access the applications via a browser you need either to edit your `/etc/hosts` file with the domains `foo.bar.com` and `bar.baz.com` pointing to the IP of your k8s cluster. Or use a browser plugin to manipulate the host header.
 
 Here we'll use `curl`.
 
@@ -177,6 +190,7 @@ We want to have SSL for our services enabled. So let's create first the needed c
 ```
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /work/tls.key \
 -out /work/tls.crt -subj "/CN=foo.bar.com"
+openssl dhparam -out dhparam.pem 4096
 ```
 No openssl installed? No Problem.
 ```
@@ -239,7 +253,14 @@ curl -H "Host: foo.bar.com" https://<HOST_IP>/ssl --insecure
 ### Whitelist
 
 If you are using Ingress on your Kubernetes cluster it is possible to restrict access to your application based on dedicated IP addresses.
-IP whitelisting to restrict access can be used .This can be done with specifying the allowed client IP source ranges through the `ingress.kubernetes.io/whitelist-source-range` annotation. The value is a comma separated list of CIDR block, e.g. 10.0.0.0/24,1.1.1.1/32.
+
+IP whitelisting to restrict access can be used by specifying the allowed client IP source ranges through the `ingress.kubernetes.io/whitelist-source-range` annotation.
+
+----
+
+### Whitelist (continued)
+
+The value is a comma separated list of CIDR block, e.g. 10.0.0.0/24,1.1.1.1/32.
 
 If you want to set a default global set of IPs this needs to be set in the config of the ingress-controller.
 
@@ -267,7 +288,7 @@ spec:
 
 ----
 
-### Testing with the annotation set:
+### Testing with the annotation set
 
 ```
 curl -v -H "Host: whitelist.test.net" <HOST-IP>/graph
@@ -299,7 +320,7 @@ curl -v -H "Host: whitelist.test.net" <HOST-IP>/graph
 
 ----
 
-### Testing without the annotation set:
+###  ...Without the annotation set
 
 ```bash
 curl -v -H "Host: whitelist.test.net" <HOST-IP>/graph
@@ -322,7 +343,7 @@ curl -v -H "Host: whitelist.test.net" <HOST-IP>/graph
 * Connection #0 to host <HOST-IP> left intact
 ```
 
-Using this simple annotation, you’re able to restrict who can access the applications in your Kubernetes cluster by IP.
+Using this annotation, you’re able to restrict who can access the applications in your Kubernetes cluster by IP.
 
 ----
 
@@ -354,7 +375,11 @@ spec:
 
 ### TCP
 
-Ingress does not support TCP services (yet). For this you can use the flag `--tcp-services-configmap` to point to a ConfigMap where the key is the external port to use and the value is `<namespace/service name>:<service port>`. You can either use a number or the name of the port.
+Ingress does not support TCP services (yet). 
+
+For this you can use the flag `--tcp-services-configmap` to point to a ConfigMap where the key is the external port to use and the value is `<namespace/service name>:<service port>`. 
+
+You can either use a number or the name of the port.
 
 ----
 
@@ -390,14 +415,24 @@ data:
 ```
 kubectl -n kube-system get po -o wide
 NAME                                                  READY     STATUS    RESTARTS   AGE       IP           NODE
-...
-gke-cluster-1-default-pool-fddbe43a-dpw0
+default-http-backend-2198840601-hvcw9                 1/1       Running   0          24m       10.60.2.3    gke-cluster-1-default-pool-fddbe43a-wcpc
+heapster-v1.3.0-1768742904-lwzg9                      2/2       Running   0          24m       10.60.0.6    gke-cluster-1-default-pool-fddbe43a-dpw0
+kube-dns-3263495268-1mgxc                             3/3       Running   0          25m       10.60.1.2    gke-cluster-1-default-pool-fddbe43a-f622
+kube-dns-3263495268-wlsxs                             3/3       Running   0          25m       10.60.0.3    gke-cluster-1-default-pool-fddbe43a-dpw0
+kube-dns-autoscaler-2362253537-s5nwh                  1/1       Running   0          25m       10.60.0.2    gke-cluster-1-default-pool-fddbe43a-dpw0
+kube-proxy-gke-cluster-1-default-pool-fddbe43a-dpw0   1/1       Running   0          25m       10.132.0.4   gke-cluster-1-default-pool-fddbe43a-dpw0
+kube-proxy-gke-cluster-1-default-pool-fddbe43a-f622   1/1       Running   0          25m       10.132.0.3   gke-cluster-1-default-pool-fddbe43a-f622
+kube-proxy-gke-cluster-1-default-pool-fddbe43a-wcpc   1/1       Running   0          25m       10.132.0.2   gke-cluster-1-default-pool-fddbe43a-wcpc
+kubernetes-dashboard-490794276-hf8c0                  1/1       Running   0          25m       10.60.1.3    gke-cluster-1-default-pool-fddbe43a-f622
+l7-default-backend-3574702981-x4wpk                   1/1       Running   0          25m       10.60.0.5    gke-cluster-1-default-pool-fddbe43a-dpw0
 nginx-ingress-lb-c8xwd                                1/1       Running   0          14m       10.60.0.8    gke-cluster-1-default-pool-fddbe43a-dpw0
 nginx-ingress-lb-f53wn                                1/1       Running   0          14m       10.60.1.5    gke-cluster-1-default-pool-fddbe43a-f622
 nginx-ingress-lb-m7g3q                                1/1       Running   0          14m       10.60.2.6    gke-cluster-1-default-pool-fddbe43a-wcpc
 ```
 
 ----
+
+```
 (sleep 1; echo "GET / HTTP/1.1"; echo "Host: <nginx-ingress-lb-XXXX_IP>:9000"; echo;echo;sleep 2) | telnet <nginx-ingress-lb-XXXX_IP> 9000
 
 Trying 10.60.0.8...
@@ -457,6 +492,7 @@ BODY:
 0
 
 Connection closed by foreign host.
+```
 
 ----
 
@@ -548,3 +584,7 @@ curl -H "Host: external-auth-01.sample.com" http://104.155.113.47/ -u 'user:pass
 </body>
 </html>
 ```
+
+----
+
+[Next up Volumes...](../05_volumes.md)

@@ -18,7 +18,7 @@ The basic principle is this: instead of separately managing the permissions of e
 
 ----
 
-* An usual user only yields a limited number of actions (e.g. get, watch, list). 
+* A regular user can only perform a limited number of actions (e.g. get, watch, list). 
 * A closer look into these user actions can reveal that some actions tend to go together e.g. checking logs.
 * Roles are not necessarily related to job titles or organizational structure, but rather reflect related user actions.
 * Once roles are properly identified and assigned to each user, permissions can then be assigned to roles, instead of users. 
@@ -168,7 +168,7 @@ roleRef:
 
 ----
 
-### Refering to ressources
+### Refering to resources
 
 Most resources are represented by a string representation of their name, such as “pods”, just like in the URL for the relevant API endpoint. However, some Kubernetes APIs involve a “subresource”, such as the logs for a pod. The URL for the pods logs endpoint is:
 GET /api/v1/namespaces/{namespace}/pods/{name}/log
@@ -240,7 +240,7 @@ subjects:
 
 ### Example
 
-In order to demonstrate how permissions work, 4 separate users will be used. Some special steps will be taken to make all three different users work on the same logged in account. An alias will be created for each one so that it is easy to see who is taking the action.
+In order to demonstrate how permissions work, 3 separate users will be used. Some special steps will be taken to make all three different users work on the same logged in account. An alias will be created for each one so that it is easy to see who is taking the action.
 
 admin
 alice
@@ -463,9 +463,9 @@ admin-kubectl create rolebinding alice-pod-reader-binding \
 ----
 
 ### Verifying that Alice can list pods
-Now, alice should be able to create a deployment.
+Alice should now be able to list pods.
 ```
-alice-kubectl run my-web-app --image=nginx --namespace=production
+alice-kubectl get pods --namespace=production
 ```
 
 ----
@@ -535,6 +535,7 @@ admin-kubectl get clusterroles
 
 Make the users administrators in their own namespaces by binding the cluster role to the user
 
+```
 admin-kubectl create rolebinding alice-admin \
     --clusterrole=admin \
     --user=$alice  \
@@ -543,18 +544,33 @@ admin-kubectl create rolebinding bob-admin \
     --clusterrole=admin \
     --user=$bob  \
     --namespace=test
+```
 
 ----
 
 ### Create namespace viewers
 
-All users should be allowed to view ressources in other namespaces, this can also be achieved with default roles
+All users should be allowed to view resources in other namespaces, this can also be achieved with default roles
 
+```
 admin-kubectl create rolebinding alice-view \
     --clusterrole=view \
     --user=$alice \
     --namespace=test
-a-kubectl create rolebinding bob-view \
+admin-kubectl create rolebinding bob-view \
     --clusterrole=view \
     --user=$bob \
     --namespace=production
+```
+
+### Cleanup
+
+```
+gcloud iam service-accounts delete cluster-user-1 -q
+gcloud iam service-accounts delete cluster-user-2 -q
+gcloud container clusters delete <cluster-name>
+```
+
+----
+
+[Next up Networking...](../09_networking.md)

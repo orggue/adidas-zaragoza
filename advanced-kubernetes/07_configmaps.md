@@ -129,7 +129,7 @@ spec:
 ```
 When the pod is running, the output will be:
 ```
-very charm
+very
 ```
 
 ----
@@ -230,3 +230,7 @@ spec:
         - key: redis-config
           path: redis.conf
 ```
+
+----
+
+[Next up RBAC...](../08_rbac.md)
