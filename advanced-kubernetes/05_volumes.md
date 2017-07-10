@@ -140,8 +140,8 @@ $ minikube ssh cat /tmp/test.txt
 
 First we need to create Disk and then a PV, otherwise we won't have anything to claim.
 ```
-gcloud compute disks create [DISK_NAME] --size [DISK_SIZE] --type [DISK_TYPE]
-gcloud compute instances attach-disk [INSTANCE_NAME] --disk [DISK_NAME]
+$ gcloud compute disks create [DISK_NAME] --size [DISK_SIZE] --type [DISK_TYPE]
+$ gcloud compute instances attach-disk [INSTANCE_NAME] --disk [DISK_NAME]
 ```
 ```
 apiVersion: v1
@@ -164,14 +164,14 @@ spec:
 Create the PV and check it's status with the `get` and `describe` command.
 
 ```
-kubectl create -f pv.yaml
-kubectl get pv
-kubectl describe pv
+$ kubectl create -f pv.yaml
+$ kubectl get pv
+$ kubectl describe pv
 ```
 
 ----
 
-Next we need to create a PVC which takes a slice of the PV defined above. The definition of this is given below.
+Next we need to create a PVC which claims the PV defined above. The definition of this is given below.
 
 ```
 kind: PersistentVolumeClaim
@@ -191,14 +191,14 @@ spec:
 Create the PVC and check it's status with the `get` and `describe` command.
 
 ```
-kubectl create -f pvc.yaml
-kubectl get pvc
-kubectl describe pvc
+$ kubectl create -f pvc.yaml
+$ kubectl get pvc
+$ kubectl describe pvc
 ```
 
 ----
 
-Lastly we'll create a Pod which will use the previously described PVC to claim some storage for use. The definition for this is given below.
+Lastly we'll create a Pod and attach the PVC to it:
 
 ```
 apiVersion: v1
@@ -231,12 +231,12 @@ spec:
 
 ----
 
-Create the pod and check it's status via the `get`and `describe` command. 
+Create the pod and check its status via the `get`and `describe` command. 
 
 ```
-kubectl create -f pod_pvc.yaml
-kubectl get pods
-kubectl describe pods
+$ kubectl create -f pod_pvc.yaml
+$ kubectl get pods
+$ kubectl describe pods
 ```
 
 ----
@@ -275,11 +275,11 @@ You might be interested to test this using this [example](https://github.com/kub
 First check and remove any existing persitent volumes
 
 ```
-kubectl get pv
+$ kubectl get pv
 NAME      CAPACITY   ACCESSMODES   RECLAIMPOLICY   STATUS      CLAIM     STORAGECLASS   REASON    AGE
 pv0001    10Gi       RWO           Retain          Available                                      3s
 
-kubectl delete pv pv001
+$ kubectl delete pv pv001
 persistentvolume "pv0001" deleted
 ```
 
@@ -288,8 +288,8 @@ persistentvolume "pv0001" deleted
 Create the storage class and verify via `get` command
 
 ```
-kubectl apply -f <name>.yaml
-kubectl get sc
+$ kubectl apply -f <name>.yaml
+$ kubectl get sc
 ```
 
 ----
@@ -318,18 +318,18 @@ spec:
 Let's create the claim and then verify that a persistent volume is created automatically. It should be bound to the claim requesting storage.
 
 ```
-kubectl create -f pvc-storage.yaml
-kubectl get pv
-kubectl get pvc
+$ kubectl create -f pvc-storage.yaml
+$ kubectl get pv
+$ kubectl get pvc
 ```
 
 ----
 
-Finally, if we delete the persistent volume claim, we can see the volume gets released and is automatiically deleted
+Finally, if we delete the persistent volume claim, we can see the volume gets released and is automatically deleted
 
 ```
-kubectl delete pvc mystorageclaim
-kubectl get pv
+$ kubectl delete pvc mystorageclaim
+$ kubectl get pv
 ```
 
 ----
