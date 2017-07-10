@@ -50,7 +50,7 @@ If an image is read-only, how do we change it?
 ### Confusion 
 Chicken-and-egg:
 * The only way to create an image is by "freezing" a container.
-* The only way to create a container is by instanciating an image.
+* The only way to create a container is by instantiating an image.
 
 ----
 
