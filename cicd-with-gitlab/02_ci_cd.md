@@ -1,7 +1,7 @@
 ## Continuous Delivery with GitLab
 
-<img height="300" src="img/cs-logo-transparent-background.png">
-<img height="300" src="img/gitlab-logo.png">
+<img height="300" src="resources/cs-logo-transparent-background.png">
+<img height="300" src="resources/gitlab-logo.png">
 
 ----
 
@@ -141,7 +141,7 @@ Shorter times mean:
 
 ----
 
-<img src="img/cicd.png">
+<img src="resources/cicd.png">
 
 ----
 

@@ -61,7 +61,7 @@ Open localhost:8080 in browser
 
 Enter new password (username is `root`)
 
-[Change Password](./gitlabPwd.png)
+[Change Password](resources/gitlabPwd.png)
 
 ----
 
@@ -75,8 +75,6 @@ Push application code to GitLab
 (Copy the source code to another folder)
 ```
 cp -R nodejs-example /tmp/
-
-```
 cd /tmp/nodejs-example
 git init
 git remote add origin https://gitlab.com/[username]/nodejs-example.git
@@ -96,7 +94,7 @@ Add ci config file
 
 Return to the Gitlab UI and verify your project is there
 
-[Project](./gitlab-project.png)
+[Project](resources/gitlab-project.png)
 
 ----
 
@@ -114,7 +112,7 @@ From Gitlab UI
 
 Copy the register token
 
-[Token](./gitlab-regsiter.png)
+[Token](resources/gitlab-regsiter.png)
 
 ----
 
