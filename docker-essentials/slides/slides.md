@@ -1,20 +1,5 @@
-## Docker 101
-### An Introduction to Containerisation
-&nbsp;
-### Adrian Mouat
-<img width="400" src="slides/img/cs-logo-transparent-background.png">
----
+## Docker Essentials
 
-##Introduction
-
- - Chief Scientist @ Container Solutions
- - http://www.container-solutions.com
- - Wrote "Using Docker" for O'Reilly
- - Docker Captain
- - @adrianmouat
-
-<img width="300" src="slides/img/bookcover.png">
-<img width="300" src="slides/img/captain.png">
 ---
 
 ## Overview
