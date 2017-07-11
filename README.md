@@ -5,6 +5,7 @@ Training modules for all kind of trainings
 | ID  | Module Name Topics                 | Contents                                                                                  |
 |-----|------------------------------------|-------------------------------------------------------------------------------------------|
 | CE  | Container Essentials               | Docker theory, Docker cli, images, namespaces,...                                         |
+| DE  | Docker Essentials                  | Docker, Use cases, How it works, Images, Registries, Volumes, Deployment                  |
 | AC  | Advanced Containers                | Volumes,                                                                                  |
 | CP  | Containers in Production*          | Ops                                                                                       |
 | CSE | Container Security Essentials      |                                                                                           |
