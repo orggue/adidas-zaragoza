@@ -40,8 +40,8 @@ You can see both the client and the server versions.
 To view the nodes in the cluster, run the `kubectl get nodes` command:
 ```bash
 kubectl get nodes
-NAME        STATUS    AGE
-127.0.0.1   Ready     48m
+NAME       STATUS    AGE       VERSION
+minikube   Ready     1h        v1.5.3
 ```
 
 Here we see the available nodes, just one in our case. Kubernetes will choose where to deploy our application based on the available Node resources.
@@ -63,9 +63,9 @@ deployment "hello-minikube" created
 ---
 
 This performed a few things:
-* searched for a suitable node.
-* scheduled the application to run on that node.
-* configured the cluster to reschedule the instance on a new node when needed.
+* Searched for a suitable node.
+* Scheduled the application to run on that node.
+* Configured the cluster to reschedule the instance on a new node when needed.
 
 ---
 
