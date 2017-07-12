@@ -1,3 +1,10 @@
+---
+title: Kubernetes Essentials
+revealOptions:
+    transition: 'none'
+    slideNumber: 'true'
+---
+
 ## Creating and managing pods
 
 In this lab you will:
@@ -8,7 +15,7 @@ In this lab you will:
 * Create and inspect Pods.
 * Interact with Pods remotely using kubectl.
 
-----
+---
 
 ### What is a Pod?
 
@@ -19,7 +26,7 @@ In this lab you will:
 * Unit of deployment
 * Unit of scaling
 
-----
+---
 
 ### Local development with Minikube
 
@@ -34,7 +41,7 @@ minikube start --insecure-registry localhost:5000
 * `--insecure-registry localhost:5000` points Docker on the node to a local registry.
 * Use this Docker daemon to build and push images and keep everything local.
 
-----
+---
 
 ### Use Docker daemon on Minikube
 
@@ -44,7 +51,7 @@ Set environment variables to point to Docker deamon on the node:
 eval $(minikube docker-env)
 ```
 
-----
+---
 
 ### Create node.js app
 Note port 8080 in `www.listen` directive.
@@ -59,7 +66,7 @@ www.listen(8080);
 ```
 Save as `server.js`
 
-----
+---
 
 ### Create Docker image
 
@@ -71,7 +78,7 @@ COPY server.js /
 ENTRYPOINT ["node", "/server.js"]
 ```
 
-----
+---
 
 ### Build the container
 
@@ -81,7 +88,7 @@ Build the container on Minikube.
 docker build -t hello-node:v1 -f Dockerfile_node .
 ```
 
-----
+---
 
 ### Deploy application to Minikube
 ```
@@ -89,7 +96,7 @@ kubectl run hello-node --image=hello-node:v1 --port=8080
 deployment "hello-node" created
 ```
 
-----
+---
 
 ### Check Deployment and Pod
 
@@ -102,7 +109,7 @@ NAME                          READY     STATUS    RESTARTS   AGE
 hello-node-2399519400-02z6l   1/1       Running   0          54s
 ```
 
-----
+---
 
 ### Check metadata about the cluster, events and kubectl configuration
 
@@ -112,7 +119,7 @@ kubectl get events
 kubectl config view
 ```
 
-----
+---
 
 ### Creating a Pod manifest
 
@@ -133,7 +140,7 @@ spec:
         - containerPort: 8080
 ```
 
-----
+---
 
 ### Create the Pod using kubectl:
 
@@ -142,7 +149,7 @@ kubectl delete deployment hello-node
 kubectl create -f configs/pod.yaml
 ```
 
-----
+---
 
 ### View Pod details
 
@@ -156,7 +163,7 @@ kubectl get pods
 kubectl describe pods <pod-name>
 ```
 
-----
+---
 
 ### Interact with a Pod remotely
 
@@ -166,7 +173,7 @@ kubectl describe pods <pod-name>
 
 
 
-----
+---
 
 Use two terminals.
 
@@ -183,7 +190,7 @@ curl 0.0.0.0:8080
 Hello World!
 ```
 
-----
+---
 
 ### Do it yourself
 * Create an `nginx.conf` which returns a  
@@ -195,7 +202,7 @@ Hello World!
 * Access the pod on port 80 using port-forward.
 * View the logs of the nginx container.
 
-----
+---
 
 ### Debugging
 
@@ -209,7 +216,7 @@ kubectl logs <PODNAME>
 
 > Use the -f flag and observe what happens.
 
-----
+---
 
 ### Run an interactive shell inside a Pod
 
@@ -219,4 +226,4 @@ Execute a shell in a Pod, like in Docker:
 kubectl exec -ti <PODNAME> /bin/sh
 ```
 
-----
+---

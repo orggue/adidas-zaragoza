@@ -1,3 +1,10 @@
+---
+title: Kubernetes Essentials
+revealOptions:
+    transition: 'none'
+    slideNumber: 'true'
+---
+
 ### Step 1 kubectl basics
 
 * The format of a kubectl command is:
@@ -10,7 +17,7 @@ kubectl [action] [resource]
 kubectl get nodes --help
 ```
 
-----
+---
 
 Before we start we need to ensure that minikube is running:
 ```
@@ -28,7 +35,7 @@ kubectl version
 
 You can see both the client and the server versions.
 
-----
+---
 
 To view the nodes in the cluster, run the `kubectl get nodes` command:
 ```bash
@@ -39,7 +46,7 @@ NAME        STATUS    AGE
 
 Here we see the available nodes, just one in our case. Kubernetes will choose where to deploy our application based on the available Node resources.
 
-----
+---
 
 ### Step 2 deploy a simple application
 
@@ -53,14 +60,14 @@ kubectl run hello-minikube \
 deployment "hello-minikube" created
 ```
 
-----
+---
 
 This performed a few things:
 * searched for a suitable node.
 * scheduled the application to run on that node.
 * configured the cluster to reschedule the instance on a new node when needed.
 
-----
+---
 
 ### List your deployments
 
@@ -72,7 +79,7 @@ hellonode   1         1         1            1           31s
 
 We see that there is 1 deployment running a single instance of your app.
 
-----
+---
 
 ### Step 3 View our app
 
@@ -87,7 +94,7 @@ kubectl port-forward hello-minikube-3015430129-g95j6 8080:8080
 ```
 We now have a connection between our host and the Kubernetes cluster.
 
-----
+---
 
 ### Inspect your application
 
@@ -101,7 +108,7 @@ kubectl describe <object>
 ```
 you can gather information about the status of your objects like pods, deployments, services, etc.
 
-----
+---
 
 ### Accessing the application
 
@@ -127,7 +134,7 @@ BODY:
 -no body in request-
 ```
 
-----
+---
 
 ### Expose service while creating the deployment
 
@@ -138,7 +145,7 @@ Delete old deployment
 kubectl delete deployment hello-minikube
 ```
 
-----
+---
 
 Create a new deployment and a service
 ```
@@ -151,7 +158,7 @@ deployment "hello-minikube" created
 ```
 This creates a new deployment and a service of type:NodePort. A random high port will be allocated to which we can connect.
 
-----
+---
 
 View the service:
 ```
@@ -170,7 +177,7 @@ Or when using minikube:
 curl $(minikube service hello-minikube --url)
 ```
 
-----
+---
 
 ### Cleanup
 

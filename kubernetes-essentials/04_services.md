@@ -1,3 +1,10 @@
+---
+title: Kubernetes Essentials
+revealOptions:
+    transition: 'none'
+    slideNumber: 'true'
+---
+
 ## Creating and Managing Services
 
 In this section you will create a `hello-node` service and "expose" the `hello-node` Pod. You will learn how to:
@@ -5,13 +12,13 @@ In this section you will create a `hello-node` service and "expose" the `hello-n
 * Create a service.
 * Use label and selectors to expose a limited set of Pods externally.
 
-----
+---
 
 ### Introduction to services
 * Stable endpoints for Pods.
 * Based on labels and selectors.
 
-----
+---
 
 ### Service types
 
@@ -23,7 +30,7 @@ In this section you will create a `hello-node` service and "expose" the `hello-n
 
 * `ExternalName` Connect an external service (CNAME) to the cluster.
 
-----
+---
 
 ### Create a Service
 
@@ -48,7 +55,7 @@ spec:
 
 Setting nodePort is optional. If not set, a random high port is assigned.
 
-----
+---
 
 Create the hello-node service using kubectl:
 
@@ -56,7 +63,7 @@ Create the hello-node service using kubectl:
 kubectl create -f service.yaml
 ```
 
-----
+---
 
 ### Query the Service
 
@@ -64,7 +71,7 @@ kubectl create -f service.yaml
 curl -i 0.0.0.0:30080
 ```
 
-----
+---
 
 ### Explore the hello-node Service
 
@@ -76,7 +83,7 @@ kubectl get services hello-node
 kubectl describe services hello-node
 ```
 
-----
+---
 
 ### Using labels
 
@@ -92,7 +99,7 @@ Use `kubectl label` to add labels.
 kubectl label pods hello-node 'secure=disabled'
 ```
 
-----
+---
 
 View the endpoints of the `hello-node` service:
 
@@ -100,7 +107,7 @@ View the endpoints of the `hello-node` service:
 kubectl describe services hello-node
 ```
 
-----
+---
 
 ### Do it yourself
 

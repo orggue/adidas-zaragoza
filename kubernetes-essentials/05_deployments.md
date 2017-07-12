@@ -1,3 +1,10 @@
+---
+title: Kubernetes Essentials
+revealOptions:
+    transition: 'none'
+    slideNumber: 'true'
+---
+
 ### Creating and Managing Deployments
 In this section we will
 * Combine what we learned about Pods and Services
@@ -5,7 +12,7 @@ In this section we will
 * Scale our Deployment / ReplicaSet
 * Update our application (Rolling Update | Recreate)
 
-----
+---
 
 ### ReplicaSet
 A ReplicaSet ensures that a specified number of Pods are running at any given time.
@@ -13,7 +20,7 @@ A ReplicaSet ensures that a specified number of Pods are running at any given ti
 ### Deployment
 A Deployment manages ReplicaSets and defines how updates to Pods should be rolled out.
 
-----
+---
 
 ### Creating a Deployment
 
@@ -36,7 +43,7 @@ spec:
         - containerPort: 8080
 ```
 
-----
+---
 
 ### Deploy to Minikube
 
@@ -44,7 +51,7 @@ spec:
 kubectl create -f configs/deployment-v1.yaml
 ```
 
-----
+---
 
 ### Scaling Deployments
 
@@ -57,7 +64,7 @@ NAME                   DESIRED   CURRENT   READY     AGE
 hello-node-364036756   1         1         1         16s
 ```
 
-----
+---
 
 ### Scaling Deployments
 
@@ -69,7 +76,7 @@ kubectl scale --replicas=3 rs/hello-node-364036756
 replicaset "hello-node-364036756" scaled
 ```
 
-----
+---
 
 ### Check the status of scaling the ReplicaSet
 ```
@@ -77,7 +84,7 @@ kubectl get rs hello-node-364036756
 kubectl describe rs hello-node-364036756
 ```
 
-----
+---
 
 ### Scale down the Deployment
 
@@ -86,7 +93,7 @@ kubectl scale deployments hello-node --replicas=2
 deployment "hello-node" scaled
 ```
 
-----
+---
 
 ### Check the status of the Deployment
 
@@ -97,7 +104,7 @@ kubectl describe deployment hello-node
 kubectl get pods
 ```
 
-----
+---
 
 ### Updating Deployments ( RollingUpdate )
 
@@ -111,7 +118,7 @@ kubectl get pods
 kubectl set image deployment/hello-node hello-node=hello-node:v2
 ```
 
-----
+---
 
 ### Validate that it works
 We can use ab (Apache Benchmark) to generate traffic to our application and then watch for failures. Using `--watch-only` we'll see updates of the pods.
@@ -121,7 +128,7 @@ ab -n 50000 -c 1  $(minikube service hello-node --url)/
 kubectl get po --watch-only
 ```
 
-----
+---
 
 ### Cleanup
 
@@ -133,7 +140,7 @@ kubectl delete -f configs/deployment-v1.yaml
 use `--cascade=false`.
 * If you try to delete the Pods before deleting the Deployment, the ReplicaSet will just replace them.
 
-----
+---
 
 ### Updating Deployments ( Recreate )
 
@@ -161,7 +168,7 @@ spec:
         - containerPort: 8080
 ```
 
-----
+---
 
 ### Updating Deployments ( Recreate )
 
@@ -170,7 +177,7 @@ Update the Deployment
 kubectl set image deployment/hello-node hello-node=hello-node:v2
 ```
 
-----
+---
 
 ### Validate that it works
 Generate traffic:
@@ -182,7 +189,7 @@ kubectl get po --watch-only
 
 Notice that requests fail because the old pods are terminated before the new pods are started.
 
-----
+---
 
 ### Cleanup
 
@@ -190,7 +197,7 @@ Notice that requests fail because the old pods are terminated before the new pod
 kubectl delete -f configs/deployment-v2.yaml
 ```
 
-----
+---
 
 ### Do it yourself
 
