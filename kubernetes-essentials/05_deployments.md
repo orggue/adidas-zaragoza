@@ -5,20 +5,26 @@ revealOptions:
     slideNumber: 'true'
 ---
 
-### Creating and Managing Deployments
+### Creating and Managing `Deployment`s
+
 In this section we will
-* Combine what we learned about Pods and Services
+
+* Combine what we learned about `Pod`s and `Service`s
 * Create a deployment manifest
-* Scale our Deployment / ReplicaSet
+* Scale our `Deployment` / ReplicaSet`
 * Update our application (Rolling Update | Recreate)
 
 ---
 
 ### ReplicaSet
-A ReplicaSet ensures that a specified number of Pods are running at any given time.
+
+A `ReplicaSet` ensures that a specified number of `Pod`s are running at any given time.
+
+---
 
 ### Deployment
-A Deployment manages ReplicaSets and defines how updates to Pods should be rolled out.
+
+A `Deployment` manages `ReplicaSets` and defines how updates to `Pod`s should be rolled out.
 
 ---
 
@@ -53,11 +59,12 @@ kubectl create -f configs/deployment-v1.yaml
 
 ---
 
-### Scaling Deployments
+### Scaling `Deployment`s
 
-* Deployments manage ReplicaSets.
-* Each deployment is mapped to one active ReplicaSet.
+* `Deployment`s manage `ReplicaSet`s.
+* Each `Deployment` is mapped to one active `ReplicaSet`.
 * Use `kubectl get replicasets` to view the current set of replicas.
+
 ```
 kubectl get rs
 NAME                   DESIRED   CURRENT   READY     AGE
@@ -68,12 +75,12 @@ hello-node-364036756   1         1         1         16s
 
 ### Scaling Deployments
 
-ReplicaSets can be scaled through the Deployment or independently.  
-Use the `kubectl scale` command to scale:
+* `ReplicaSet`s can be scaled through the `Deployment` or independently.  
+* Use the `kubectl scale` command to scale:
 
 ```
-kubectl scale --replicas=3 rs/hello-node-364036756
-replicaset "hello-node-364036756" scaled
+kubectl scale --replicas=3 deployments/hello-node
+deployment "hello-node" scaled
 ```
 
 ---
