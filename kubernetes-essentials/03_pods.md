@@ -228,5 +228,3 @@ Execute a shell in a Pod, like in Docker:
 ```
 kubectl exec -ti <PODNAME> /bin/sh
 ```
-
----
