@@ -8,6 +8,6 @@ revealOptions:
 # Outline
 
 * Basics
-* Pods
-* Services
-* Deployments
+* **Pod**s
+* **Service**s
+* **Deployment**s

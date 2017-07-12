@@ -51,7 +51,7 @@ spec:
 
 ---
 
-### Deploy to Minikube
+### Deploy
 
 ```
 kubectl create -f configs/deployment-v1.yaml

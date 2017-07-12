@@ -5,26 +5,27 @@ revealOptions:
     slideNumber: 'true'
 ---
 
-## Creating and Managing Services
+## Creating and Managing **Service**s
 
-In this section you will create a `hello-node` service and "expose" the `hello-node` Pod. You will learn how to:
+In this section you will create a `hello-node` **Service** and "expose" the `hello-node` **Pod**. You will learn how to:
 
-* Create a service.
-* Use label and selectors to expose a limited set of Pods externally.
+* Create a **Service**.
+* Use label and selectors to expose a limited set of **Pod**s externally.
 
 ---
 
-### Introduction to services
-* Stable endpoints for Pods.
+### Introduction to **Service**s
+
+* Stable endpoints for **Pod**s.
 * Based on labels and selectors.
 
 ---
 
-### Service types
+### **Service** types
 
-* `ClusterIP` Exposes the service on a cluster-internal IP.
+* `ClusterIP` Exposes the **Service** on a cluster-internal IP.
 
-* `NodePort` Expose the service on a specific port on each node.
+* `NodePort` Expose the **Service** on a specific port on each node.
 
 * `LoadBalancer` Use a loadbalancer from a Cloud Provider. Creates `NodePort` and `ClusterIP`.
 
@@ -34,7 +35,7 @@ In this section you will create a `hello-node` service and "expose" the `hello-n
 
 ### Create a Service
 
-Explore the hello-node service configuration file:
+Explore the hello-node **Service** configuration file:
 
 ```
 cat service.yaml
@@ -53,11 +54,11 @@ spec:
     app: hello-node
 ```
 
-Setting nodePort is optional. If not set, a random high port is assigned.
+Setting `nodePort` is optional. If not set, a random high port is assigned.
 
 ---
 
-Create the hello-node service using kubectl:
+Create the hello-node **Service** using `kubectl`:
 
 ```
 kubectl create -f service.yaml
@@ -65,7 +66,7 @@ kubectl create -f service.yaml
 
 ---
 
-### Query the Service
+### Query the **Service**
 
 ```
 curl -i 0.0.0.0:30080
@@ -73,7 +74,7 @@ curl -i 0.0.0.0:30080
 
 ---
 
-### Explore the hello-node Service
+### Explore the hello-node **Service**
 
 ```bash
 kubectl get services hello-node
@@ -101,7 +102,7 @@ kubectl label pods hello-node 'secure=disabled'
 
 ---
 
-View the endpoints of the `hello-node` service:
+View the endpoints of the `hello-node` **Service**:
 
 ```
 kubectl describe services hello-node
@@ -111,6 +112,6 @@ kubectl describe services hello-node
 
 ### Do it yourself
 
-* Create a service for the nginx pods.
-* Expose port 80 to a static nodePort 31000.
-* Access the service using `curl` or a browser.
+* Create a **Service** for the nginx **Pod**s.
+* Expose port 80 to a static `nodePort` 31000.
+* Access the **Service** using `curl` or a browser.

@@ -8,9 +8,11 @@ revealOptions:
 ### Step 1 kubectl basics
 
 * The format of a kubectl command is:
+
 ```
 kubectl [action] [resource]
 ```
+
 * This performs the specified action  (like `create`, `describe`) on the specified resource (like `node`, `container`).
 * Use `--help` after the command to get additional info about possible parameters
 ```
@@ -69,7 +71,7 @@ This performed a few things:
 
 ---
 
-### List your deployments
+### List your **Deployment**s
 
 ```bash
 kubectl get deployments
@@ -78,14 +80,14 @@ hello-minikube   1         1         1            1           51s
 
 ```
 
-We see that there is 1 deployment running a single instance of your app.
+We see that there is 1 **Deployment** running a single instance of your app.
 
 ---
 
 ### Step 3 View our app
 
 By default applications are only visible inside the cluster. We can create a proxy to connect to our application.  
-Find out the pod name:
+Find out the **Pod** name:
 ```
 kubectl get pod
 ```
@@ -107,7 +109,7 @@ and
 ```
 kubectl describe <object>
 ```
-you can gather information about the status of your objects like pods, deployments, services, etc.
+you can gather information about the status of your objects like **Pod**s, **Deployment**s, **Service**s, etc.
 
 ---
 
@@ -137,18 +139,20 @@ BODY:
 
 ---
 
-### Expose service while creating the deployment
+### Expose service while creating the **Deployment**
 
 `kubectl proxy` is meant for testing services that are not exposed. To expose the application, use a service.
 
-Delete old deployment
+Delete old **Deployment**
+
 ```
 kubectl delete deployment hello-minikube
 ```
 
 ---
 
-Create a new deployment and a service
+Create a new **Deployment** and a **Service**
+
 ```
 kubectl run hello-minikube \
  --image=gcr.io/google_containers/echoserver:1.4 \
@@ -157,11 +161,13 @@ kubectl run hello-minikube \
 service "hello-minikube" created
 deployment "hello-minikube" created
 ```
-This creates a new deployment and a service of type:NodePort. A random high port will be allocated to which we can connect.
+
+This creates a new **Deployment** and a service of **type:NodePort**. A random high port will be allocated to which we can connect.
 
 ---
 
-View the service:
+View the **Service**:
+
 ```
 kubectl get service
 kubectl get svc
@@ -170,10 +176,13 @@ hello-minikube   10.0.0.233   <nodes>       8080:31075/TCP   24s
 kubernetes       10.0.0.1     <none>        443/TCP          28m
 ```
 Access the application with curl:
+
 ```
 curl $(minikube ip):31075
 ```
+
 Or when using minikube:
+
 ```
 curl $(minikube service hello-minikube --url)
 ```
