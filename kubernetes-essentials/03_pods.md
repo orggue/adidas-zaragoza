@@ -104,6 +104,9 @@ deployment "hello-node" created
 kubectl get deployment
 NAME         DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
 hello-node   1         1         1            1           49s
+```
+
+```
 kubectl get pod
 NAME                          READY     STATUS    RESTARTS   AGE
 hello-node-2399519400-02z6l   1/1       Running   0          54s
