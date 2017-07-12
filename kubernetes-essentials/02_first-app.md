@@ -73,8 +73,9 @@ This performed a few things:
 
 ```bash
 kubectl get deployments
-NAME        DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
-hellonode   1         1         1            1           31s
+NAME             DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+hello-minikube   1         1         1            1           51s
+
 ```
 
 We see that there is 1 deployment running a single instance of your app.
