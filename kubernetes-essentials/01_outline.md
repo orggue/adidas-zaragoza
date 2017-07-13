@@ -7,7 +7,7 @@ revealOptions:
 
 # Outline
 
-* Basics
+* Deploy your first application
 * **Pod**s
 * **Service**s
 * **Deployment**s
