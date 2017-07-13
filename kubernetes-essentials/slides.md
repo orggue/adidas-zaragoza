@@ -155,13 +155,16 @@ revealOptions:
 
 ---
 
+
 ### Master
 
 * controller-manager
 
   * TODO
 
+
 ---
+
 
 ### Master
 
@@ -169,6 +172,7 @@ revealOptions:
 
   * TODO
   
+
 ---
 
 ### Master
@@ -176,34 +180,42 @@ revealOptions:
 * etcd
 
   * TODO
-  
+
 ---
+
 
 ### Node
 
 * kubelet
 
+
 ---
+
 
 ### Node
 
 * kube-proxy
 
+
 ---
+
 
 ### Manifests
 
 * k8s uses Yaml based manifests
 
 * Every resource can be defined through a manifest	
-	
+
+
 ---
+
 
 ## Manifests
 
-* Example: **Pod**
+* **Pod**
 
-```apiVersion: v1
+```
+apiVersion: v1
    kind: Pod
    metadata:
      name: hello-node
@@ -217,14 +229,17 @@ revealOptions:
            - containerPort: 8080
 ```
 
+
 ---
+
+
 
 ### **Service** types
 
 * ClusterIP
   
-*  LoadBalancer
+* LoadBalancer
  
-*  NodePort
+* NodePort
 
-*  Headless
+* Headless
