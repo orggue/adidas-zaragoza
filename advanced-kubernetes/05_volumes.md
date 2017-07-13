@@ -152,7 +152,7 @@ spec:
   capacity:
     storage: 5Gi
   accessModes:
-    - ReadOnlyMany
+    - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
   gcePersistentDisk:
     pdName: "data"
