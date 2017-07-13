@@ -126,13 +126,15 @@ revealOptions:
 
 * Used to manage **Pod**s
 
+* `"environment" : "dev"`
+
 * Useful for monitoring and analytics
 
 ---
 
 ### **Selector**
 
-* **TODO**
+* Match **Pod**s based on their *Label*s
 
 ---
 
@@ -151,7 +153,11 @@ revealOptions:
 
 * api-server
  
-  * TODO
+ * Provides outbound Kubernetes REST API
+ 
+ * Uses etcd to store state
+ 
+ * Implements the basic logic for scheduling
 
 ---
 
@@ -160,8 +166,13 @@ revealOptions:
 
 * controller-manager
 
-  * TODO
-
+  * Implements core control loops shipped with Kubernetes
+  
+  * Regulates the state of the system
+  
+  * Watches cluster state through the apiserver
+  
+  * Changes current state towards the desired state
 
 ---
 
@@ -170,8 +181,9 @@ revealOptions:
 
 * scheduler
 
-  * TODO
+  * Workload-specific function that significantly impacts availability, performance, and capacity
   
+  * Responsible to identify the state the cluster has to be in
 
 ---
 
@@ -179,7 +191,7 @@ revealOptions:
 
 * etcd
 
-  * TODO
+Distributed, consistent key-value store for shared configuration and service discovery
 
 ---
 
@@ -188,6 +200,9 @@ revealOptions:
 
 * kubelet
 
+  * Primary agent that runs on each node
+  
+  * Takes a set of `PodSpecs` and ensures that the containers are running and healthy
 
 ---
 
@@ -196,9 +211,9 @@ revealOptions:
 
 * kube-proxy
 
-
+  * Load balancer for the services on that node
+  
 ---
-
 
 ### Manifests
 
@@ -211,8 +226,6 @@ revealOptions:
 
 
 ## Manifests
-
-* **Pod**
 
 ```
 apiVersion: v1
