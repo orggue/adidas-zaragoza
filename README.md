@@ -19,7 +19,7 @@ Content is written in Markdown designed to be shown as a revealjs presentation.
 From the root of the repo run:
 
 ```
-$ docker run -d  -p 8000:1948 -v $PWD:/usr/src/app containersol/reveal-md
+$ ./reveal.sh
 ```
 
 Then browse to localhost:8000 to and select the slide deck you want.
