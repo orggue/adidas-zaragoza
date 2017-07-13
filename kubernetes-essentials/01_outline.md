@@ -1,6 +1,13 @@
+---
+title: Kubernetes Essentials
+revealOptions:
+    transition: 'none'
+    slideNumber: 'true'
+---
+
 # Outline
 
-* Basics
-* Pods
-* Services
-* Deployments
+* Deploy your first application
+* **Pod**s
+* **Service**s
+* **Deployment**s

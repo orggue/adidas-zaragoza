@@ -5,11 +5,11 @@ Training modules for all kind of trainings
 | ID  | Module Name Topics                 | Contents                                                                                  |
 |-----|------------------------------------|-------------------------------------------------------------------------------------------|
 | DE  | Docker Essentials                  | Docker, Use cases, How it works, Images, Registries, Volumes, Deployment                  |
+| KE  | Kubernetes Essentials              | kubectl, pods, services, Deployments mainly focus on core API principles (non alpha/beta) |
 | AC  | Advanced Containers                | Volumes,                                                                                  |
 | CP  | Containers in Production*          | Ops                                                                                       |
 | CSE | Container Security Essentials      |                                                                                           |
 | ACS | Advanced Container Security        |                                                                                           |
-| KE  | Kubernetes Essentials              | kubectl, pods, services, Deployments mainly focus on core API pricinpels (non alpha/beta) |
 | AK  | Advanced Kubernetes                | Ingress, GKE, ConfigMaps, Volumes, init containers, jobs, scheduled jobs                  |
 | KP  | Kubernetes in Production*          | Multi-Master, AuthZ/N...                                                                  |
 | KI  | Installing Kubernetes              | Different Methods, Binaries, Container, Static Pods,...                                   |
