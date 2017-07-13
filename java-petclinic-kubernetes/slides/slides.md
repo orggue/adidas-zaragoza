@@ -1,8 +1,13 @@
+---
+title: Spring PetClinic on Kubernetes
+revealOptions:
+    transition: 'none'
+    slideNumber: 'true'
+
+---
+
 ## Spring PetClinic on Kubernetes
-### How to run Java apps on Kubernetes
-&nbsp;
-### 
-<img width="400" src="slides/img/cs-logo-transparent-background.png">
+
 ---
 
 ## Overview
@@ -26,8 +31,10 @@ You should leave here knowing:
 
 ## Docker and the JVM - the Good
 
- - Java runs on Linux, so it can easily run in Docker container
+ - Java runs on Linux, so it can easily run in a Docker container
  - Good support - base images for all JDK, JRE and Maven versions
+
+---
 
 ## Building Java apps
 
@@ -36,19 +43,24 @@ You should leave here knowing:
  - But Docker layer caching makes up for it
  - Supported base image for Maven
 
+---
+
 ## Docker and the JVM - the Bad
 
  - Java memory management designed be single process on machine
  - No more sharing of JVM by deploying to Java App Server (Tomcat)
  - JVM before version 9 doesn't respect container memory limits
- 
+ - Runs out of memory if *any* limit is set on container
+ - Without limit Java process just uses more and more memory without ever returning to OS
+
+---
+
 ## Solutions
 
- - 
-
-## TODO
-
-slides
-
-resource limits,requests
-
+ - Manually configuring Xmx flag to about 50% of available container memory
+ - Fabric8 base image contains script to set memory limits correctly
+ - Java 9 will correctly adjust JVM memory usage to container limit
+ 
+ https://hub.docker.com/r/fabric8/java-jboss-openjdk8-jdk/
+ 
+ https://developers.redhat.com/blog/2017/03/14/java-inside-docker/
