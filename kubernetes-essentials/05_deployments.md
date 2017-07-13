@@ -132,7 +132,7 @@ kubectl set image deployment/hello-node hello-node=hello-node:v2
 We can use ab (Apache Benchmark) to generate traffic to our application and then watch for failures. Using `--watch-only` we'll see updates of the pods.
 
 ```
-ab -n 50000 -c 1  $(minikube service hello-node --url)/
+ab -n 50000 -c 1  $IP:$PORT/
 kubectl get po --watch-only
 ```
 
@@ -192,7 +192,7 @@ kubectl set image deployment/hello-node hello-node=hello-node:v2
 Generate traffic:
 
 ```
-ab -n 50000 -c 1  $(minikube service hello-node --url)/
+ab -n 50000 -c 1  $IP/$PORT
 kubectl get po --watch-only
 ```
 

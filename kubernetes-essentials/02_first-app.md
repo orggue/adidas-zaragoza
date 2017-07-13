@@ -21,29 +21,24 @@ kubectl get nodes --help
 
 ---
 
-Before we start we need to ensure that minikube is running:
-```
-minikube status
-```
-If it`s not running issue:
-```
-minikube start
-```
+Before we start set up `kubectl` so it uses the supplied training config
 
-Check that kubectl is configured to talk to your cluster, by running the kubectl version command:
-```bash
-kubectl version
 ```
+export KUBECONFIG=~/training-config
+kubectl config get-contexts
+CURRENT   NAME                                    CLUSTER                                 AUTHINFO                                NAMESPACE
+*         gke_adam-k8s_europe-west1-b_cluster-1   gke_adam-k8s_europe-west1-b_cluster-1   gke_adam-k8s_europe-west1-b_cluster-1
 
-You can see both the client and the server versions.
+```
 
 ---
 
 To view the nodes in the cluster, run the `kubectl get nodes` command:
 ```bash
-kubectl get nodes
-NAME       STATUS    AGE       VERSION
-minikube   Ready     1h        v1.5.3
+NAME                                       STATUS    AGE       VERSION
+gke-cluster-1-default-pool-0989cb44-3mc2   Ready     20h       v1.6.4
+gke-cluster-1-default-pool-0989cb44-533n   Ready     20h       v1.6.4
+gke-cluster-1-default-pool-0989cb44-mdf5   Ready     20h       v1.6.4
 ```
 
 Here we see the available nodes, just one in our case. Kubernetes will choose where to deploy our application based on the available Node resources.
@@ -55,11 +50,11 @@ Here we see the available nodes, just one in our case. Kubernetes will choose wh
 Let’s run our first app on Kubernetes with the kubectl run command. The `run` command creates a new deployment for the specified container. This is the simpliest way of deploying a container.
 
 ```bash
-kubectl run hello-minikube \  
+kubectl run hello \  
  --image=gcr.io/google_containers/echoserver:1.4 \
  --port=8080
 
-deployment "hello-minikube" created
+deployment "hello" created
 ```
 
 ---
@@ -76,7 +71,7 @@ This performed a few things:
 ```bash
 kubectl get deployments
 NAME             DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
-hello-minikube   1         1         1            1           51s
+hello            1         1         1            1           51s
 
 ```
 
@@ -93,7 +88,7 @@ kubectl get pod
 ```
 Create the proxy:
 ```bash
-kubectl port-forward hello-minikube-3015430129-g95j6 8080:8080
+kubectl port-forward hello-3015430129-g95j6 8080:8080
 ```
 We now have a connection between our host and the Kubernetes cluster.
 
@@ -146,7 +141,7 @@ BODY:
 Delete old **Deployment**
 
 ```
-kubectl delete deployment hello-minikube
+kubectl delete deployment hello
 ```
 
 ---
@@ -154,15 +149,15 @@ kubectl delete deployment hello-minikube
 Create a new **Deployment** and a **Service**
 
 ```
-kubectl run hello-minikube \
+kubectl run hello \
  --image=gcr.io/google_containers/echoserver:1.4 \
   --port=8080 --expose --service-overrides='{ "spec": { \
-     "type": "NodePort" } }'
-service "hello-minikube" created
-deployment "hello-minikube" created
+     "type": "LoadBalancer" } }'
+service "hello" created
+deployment "hello" created
 ```
 
-This creates a new **Deployment** and a service of **type:NodePort**. A random high port will be allocated to which we can connect.
+This creates a new **Deployment** and a service of **type:LoadBalancer**. A random high port will be allocated to which we can connect.
 
 ---
 
@@ -171,20 +166,31 @@ View the **Service**:
 ```
 kubectl get service
 kubectl get svc
-NAME             CLUSTER-IP   EXTERNAL-IP   PORT(S)          AGE
-hello-minikube   10.0.0.233   <nodes>       8080:31075/TCP   24s
-kubernetes       10.0.0.1     <none>        443/TCP          28m
+NAME          CLUSTER-IP      EXTERNAL-IP    PORT(S)          AGE
+hello         10.63.251.230   35.187.76.71   8080:31285/TCP   24s
+kubernetes    10.0.0.1        <none>         443/TCP          28m
 ```
-Access the application with curl:
+Access the external IP with curl:
 
 ```
-curl $(minikube ip):31075
-```
+curl 35.187.76.71:8080
+CLIENT VALUES:
+client_address=10.132.0.3
+command=GET
+real path=/
+query=nil
+request_version=1.1
+request_uri=http://35.187.76.71:8080/
 
-Or when using minikube:
+SERVER VALUES:
+server_version=nginx: 1.10.0 - lua: 10001
 
-```
-curl $(minikube service hello-minikube --url)
+HEADERS RECEIVED:
+accept=*/*
+host=35.187.76.71:8080
+user-agent=curl/7.52.1
+BODY:
+-no body in request-
 ```
 
 ---
@@ -192,7 +198,7 @@ curl $(minikube service hello-minikube --url)
 ### Cleanup
 
 ```
-kubectl delete deployment,service hello-minikube
-deployment "hello-minikube" deleted
-service "hello-minikube" deleted
+kubectl delete deployment,service hello
+deployment "hello" deleted
+service "hello" deleted
 ```
