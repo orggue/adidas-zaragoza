@@ -201,15 +201,23 @@ Use the `kubectl port-forward` command to forward a local port to the health por
 
 ```
 $ kubectl port-forward healthy-monolith 10081:81
+Forwarding from 127.0.0.1:10081 -> 81
+Forwarding from [::1]:10081 -> 81
 ```
 You now have access to the /healthz and /readiness HTTP endpoints
+The command will stay open to host the port forwarding. Hit ctrl-Z, and then immediately run `bg` to move the port-forwarding command into the background, and you will have access to the /healthz and /readiness HTTP endpoints:
 
+```
+$ bg
+[1]+ kubectl port-forward healthy-monolith 10081:81 &
+```
 ----
 
 Force the monolith container readiness probe to fail. Use the curl command to toggle the readiness probe status:
 
 ```
 $ curl http://127.0.0.1:10081/readiness/status
+Handling connection for 10081
 ```
 Wait about 45 seconds and get the status of the healthy-monolith Pod using the kubectl get pods command:
 
@@ -258,6 +266,14 @@ What events where created when the liveness probe failed?
 
 ### Cleanup
 
+Run the `fg` command followed by hitting ctrl-c, to stop the port-forwarding activity which we backgrounded earlier.
+```
+$ fg
+kubectl port-forward healthy-monolith 10081:81
+^C
+```
+
+Delete the health-monolith deployment:
 ```
 $ kubectl delete -f readiness/healthy-monolith.yaml
 ```
