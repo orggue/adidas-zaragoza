@@ -189,7 +189,7 @@ You now have access to the /healthz and /readiness HTTP endpoints
 Force the monolith container readiness probe to fail. Use the curl command to toggle the readiness probe status:
 
 ```
-curl http://127.0.0.1:10081/readiness/status
+$ curl http://127.0.0.1:10081/readiness/status
 ```
 Wait about 45 seconds and get the status of the healthy-monolith Pod using the kubectl get pods command:
 
@@ -208,7 +208,7 @@ Notice the events for the healthy-monolith Pod report details about failing read
 Force the monolith container readiness probe to pass. Use the curl command to toggle the readiness probe status:
 
 ```
-curl http://127.0.0.1:10081/readiness/status
+$ curl http://127.0.0.1:10081/readiness/status
 ```
 Wait about 15 seconds and get the status of the healthy-monolith Pod using the kubectl get pods command:
 
