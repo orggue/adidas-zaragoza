@@ -265,17 +265,23 @@ As you can see it uses 924m of a 1vCPU machine.
 If you scale your application, we should see that each pod is given an equal proportion of CPU time.
 
 ```
-kubectl scale deployment cpustress --replicas=3
+kubectl scale deployment cpustress --replicas=9
 ```
 Once all the pods are running, you will see that each pod is getting approximately an equal proportion of CPU time.
 Note: it can take a moment for the top output to reflect the changes to your deployment.
 
 ```
-kubectl top pod
-NAME                         CPU(cores)   MEMORY(bytes)   
-cpustress-4101692926-1svfw   324m         0Mi             
-cpustress-4101692926-9gkd1   322m         0Mi             
-cpustress-4101692926-zqw2p   326m         0Mi       
+kubectl top pods
+NAME                         CPU(cores)   MEMORY(bytes)
+cpustress-1696410962-08kf9   314m         0Mi
+cpustress-1696410962-r123x   310m         0Mi
+cpustress-1696410962-5r61m   314m         0Mi
+cpustress-1696410962-177g3   322m         0Mi
+cpustress-1696410962-zgfqc   322m         0Mi
+cpustress-1696410962-rh2kn   317m         0Mi
+cpustress-1696410962-nmlvs   321m         0Mi
+cpustress-1696410962-8gl26   318m         0Mi
+cpustress-1696410962-fn667   317m         0Mi    
 ```
 
 Each container is getting 30% of the CPU time per their scheduling request, and we are unable to schedule more.
