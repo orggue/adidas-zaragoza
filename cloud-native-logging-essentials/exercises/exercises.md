@@ -100,9 +100,9 @@ revealOptions:
 ---
 
 
-### Now deploy the service again
+### Now deploy the deployment again
 
-* `kubectl -f create service.yaml`
+* `kubectl -f create deployment.yaml`
 
 
 ---
