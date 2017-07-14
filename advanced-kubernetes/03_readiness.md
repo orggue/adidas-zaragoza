@@ -158,7 +158,7 @@ Relevant part
 
 Create the healthy-monolith pod using
 ```
-kubectl create -f readiness/healthy-monolith.yaml
+$ kubectl create -f configs/readiness/healthy-monolith.yaml
 ```
 
 Thanks to Kelsey Hightower for this application
