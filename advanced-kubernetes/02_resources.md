@@ -532,19 +532,28 @@ deployment "nginx" created
 The default values of the namespace limit will be applied to this pod
 (`kubectl describe pod <pod_name> --namespace=<namespace_name>`)
 ```
+$ kubectl get pods --namespace=limit-example
+NAME                     READY     STATUS    RESTARTS   AGE
+nginx-2371676037-tfncs   1/1       Running   0          4m
+$ kubectl describe pod nginx-2371676037-tfncs --namespace=limit-example
 ...
-spec:
-  containers:
-  - image: nginx
-    imagePullPolicy: Always
-    name: nginx
-    resources:
-      limits:
-        cpu: 300m
-        memory: 200Mi
-      requests:
-        cpu: 200m
-        memory: 100Mi
+Containers:
+  nginx:
+    Container ID:       docker://dece4453779a2664c045ea7edc21f41382d5b067552f5d41f4d65fa984628314
+    Image:              nginx
+    Image ID:           docker://sha256:e4e6d42c70b3f79c5d57c170526592168992eb3303a6594c439302fabd92d9a3
+    Port:               <none>
+    State:              Running
+      Started:          Fri, 14 Jul 2017 12:44:24 +0000
+    Ready:              True
+    Restart Count:      0
+    Limits:
+      cpu:      300m
+      memory:   200Mi
+    Requests:
+      cpu:              200m
+      memory:           100Mi
+...
 ```
 
 ---
