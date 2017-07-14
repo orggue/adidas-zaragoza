@@ -250,7 +250,10 @@ To demonstrate this, you can use `kubectl top pod <PODNAME>` to view the the use
 (This may take some time before metrics are available)
 
 ```
-kubectl top pod cpustress-4101692926-zqw2p
+$ kubectl get pods
+NAME                         READY     STATUS    RESTARTS   AGE
+cpustress-4101692926-zqw2p   1/1       Running   0          1m
+$ kubectl top pod cpustress-4101692926-zqw2p
 NAME                         CPU(cores)   MEMORY(bytes)   
 cpustress-4101692926-zqw2p   924m         0Mi             
 ```
