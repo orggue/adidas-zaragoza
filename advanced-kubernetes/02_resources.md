@@ -474,6 +474,11 @@ Pods which explicitly specify resource limits and requests will not pick up the 
 
 ---
 
+Before you continue ensure you have checked out the training materials repository:
+```
+$ git clone https://github.com/ContainerSolutions/$MODULE_NAME
+```
+
 Create a namespace
 ```
 $ kubectl create namespace limit-example
