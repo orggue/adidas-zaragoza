@@ -317,16 +317,22 @@ cpustress-1437538636-wkzh7   199m         0Mi
 If you scale your application, we should see that each pod is consuming a maximum of 200m CPU shares.
 
 ```
-kubectl scale deployment cpustress --replicas=3
+$ kubectl scale deployment cpustress --replicas=9
 ```
 Once all the pods are running, you will see that each pod is getting approximately an equal proportion of CPU time.
 
 ```
 $ kubectl top pod
-NAME                         CPU(cores)   MEMORY(bytes)   
-cpustress-1437538636-16j24   197m         0Mi             
-cpustress-1437538636-wkzh7   199m         0Mi             
-cpustress-1437538636-bcfh4   201m         0Mi
+NAME                         CPU(cores)   MEMORY(bytes)
+cpustress-2801690769-895wj   198m         0Mi
+cpustress-2801690769-735dt   198m         0Mi
+cpustress-2801690769-gm9cz   199m         0Mi
+cpustress-2801690769-ljt1w   199m         0Mi
+cpustress-2801690769-wt54n   199m         0Mi
+cpustress-2801690769-7c3tc   198m         0Mi
+cpustress-2801690769-f2blv   199m         0Mi
+cpustress-2801690769-7fm9n   201m         0Mi
+cpustress-2801690769-6ssdk   198m         0Mi
 ```
 
 ---
