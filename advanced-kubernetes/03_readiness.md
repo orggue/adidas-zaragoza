@@ -1,6 +1,6 @@
 ### What is Liveness and Readiness
 
-Kubernetes health checks are divided into liveness and readiness probes. 
+Kubernetes health checks are divided into liveness and readiness probes.
 Kubernetes is focusing on running containers in production. Production means that we need a way to ensure pods are actually running and healthy.
 
 ----
@@ -83,8 +83,8 @@ http.HandleFunc("/readiness", func(w http.ResponseWriter, r *http.Request) {
   }
   if err != nil {
     ok = false
-    errMsg += "Database not ok.¥n"
-  } 
+    errMsg += "Database not ok.\n"
+  }
 
   if ok {
     w.Write([]byte("OK"))
@@ -156,7 +156,7 @@ Relevant part
 
 ----
 
-Create the healthy-monolith pod using 
+Create the healthy-monolith pod using
 ```
 kubectl create -f readiness/healthy-monolith.yaml
 ```
@@ -245,6 +245,6 @@ kubectl delete -f readiness/healthy-monolith.yaml
 ----
 
 In this section you learned:
-* How Kubernetes supports application monitoring using liveness and readiness probes. 
-* How to add readiness and liveness probes to Pods 
+* How Kubernetes supports application monitoring using liveness and readiness probes.
+* How to add readiness and liveness probes to Pods
 * What happens when probes fail.
