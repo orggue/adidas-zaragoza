@@ -11,9 +11,9 @@ revealOptions:
 
 ## Outline
 
-* 1. Inspecting logs with `kubectl logs`
+1. Inspecting logs with `kubectl logs`
 
-* 2. Centralized Log Aggregation with Fluentd, Elasticsearch and Kibana
+2. Centralized Log Aggregation with Fluentd, Elasticsearch and Kibana
 
 
 ---
@@ -46,16 +46,17 @@ revealOptions:
 
 * The `files` directory contains code, k8s manifests and a `Dockerfile`
 
-* Edit `deployment.yaml` and replace the string `$YOUR_USERNAME` with your VM username
+* Edit `deployment.yaml` and replace the string `$USER` with your VM username
 
 ---
 
 
 ### Build the image
 
-* Build the Docker image for `server.js`
 
-* `gcloud docker -- build -t eu.gcr.io/$YOUR_USERNAME/server -f Dockerfile_node .`
+```
+gcloud docker -- build -t eu.gcr.io/$USER/server -f Dockerfile .
+```
 
 
 ---
@@ -63,9 +64,9 @@ revealOptions:
 
 ### Push the image
 
-*  The image will be pushed to the Google Container Registry (GCR)
-
-* `gcloud docker -- push eu.gcr.io/$YOUR_USERNAME/server`
+```
+gcloud docker -- push eu.gcr.io/$USER/server
+```
 
 
 ---
@@ -73,7 +74,10 @@ revealOptions:
 
 ###  Create a deployment
 
-* `kubectl create -f deployment.yaml`
+
+```
+kubectl create -f deployment.yaml
+```
 
 
 ---
@@ -81,16 +85,18 @@ revealOptions:
 
 ### Check the logs
 
-* `kubectl logs $POD_NAME`
+```
+kubectl logs $POD_NAME
+```
 
-* If the pod `STATUS` is `ContainerCreating` so you won't see logs yet
+If the pod's `STATUS` is `ContainerCreating` you won't see logs yet
 
 ---
 
 
 ### Change the code
 
-* Add `console.log(request)` to `server.js` inside the request loop
+* Add **`console.log(request)`** to **`server.js`** inside the request loop
 
 * Hack, hack
 
@@ -101,7 +107,9 @@ revealOptions:
 ### Delete the deployment
 
 
-* `kubectl delete deployment server`
+```
+kubectl delete deployment server
+```
 
 
 ---
@@ -109,17 +117,23 @@ revealOptions:
 
 ### Build & push again
 
-* `gcloud docker -- build -t eu.gcr.io/$YOUR_USERNAME/server -f Dockerfile_node .`
+```
+gcloud docker -- build -t eu.gcr.io/$USER/server -f Dockerfile .
+```
 
-* `gcloud docker -- push eu.gcr.io/$YOUR_USERNAME/server`
-
+```
+gcloud docker -- push eu.gcr.io/$USER/server
+```
 
 ---
 
 
 ### Now deploy the deployment again
 
-* `kubectl -f create deployment.yaml`
+
+```
+kubectl -f create deployment.yaml
+```
 
 
 ---
@@ -127,7 +141,10 @@ revealOptions:
 
 ### Now follow the logs
 
-* `kubectl logs -f $POD_NAME`
+
+```
+kubectl logs -f $POD_NAME
+```
 
 
 ---
@@ -138,7 +155,9 @@ revealOptions:
 
 * Port forwarding in the background
 
-* `kubectl port-forward $POD_NAME 8080:8080 &`
+```
+kubectl port-forward $POD_NAME 8080:8080 &
+```
 
 
 ---
@@ -146,16 +165,22 @@ revealOptions:
 
 ### Hit the server with curl
 
-* `curl localhost:8080`
+```
+curl localhost:8080
+```
+
+---
 
 
-* Check the logs in the other terminal
+### Now check the logs in the other terminal
 
 
 ---
 
 
-## Centralized Log Aggregation with Fluentd, Elasticsearch and Kibana
+## Centralized Log Aggregation 
+
+#### with **Fluentd**, **Elasticsearch** and **Kibana**
 
 
 ---
@@ -164,7 +189,7 @@ revealOptions:
 ### Outline
 
 
-* In this exercise you will install the Fluentd, Elasticsearch and Kibana
+* In this exercise you will install Fluentd, Elasticsearch and Kibana
 
 * Then you can experiment with the setup and search logs in Kibana
 
@@ -176,10 +201,12 @@ revealOptions:
 
 * The cluster already has a Fluentd that is integrated with GCP
 
-* `kubectl --namespace=kube-system get ds`
+```
+kubectl --namespace=kube-system get ds
+```
 
 
-----
+---
 
 
 ### Deploying Fluentd
@@ -187,11 +214,15 @@ revealOptions:
  
 * We will deploy Fluentd with Elasticsearch config
 
-* `kubectl create -f fleuntd-daemonset.yaml`
+```
+kubectl create -f fleuntd-daemonset.yaml
+```
 
 * Check that it is running
 
-* `kubectl --namespace=kube-system get ds`
+```
+kubectl --namespace=kube-system get ds
+```
 
 
 ---
@@ -201,11 +232,15 @@ revealOptions:
 
 * Deploy the ReplicationController and Service
 
-* `kubectl create -f elasticsearch-rc.yaml`
+```
+kubectl create -f elasticsearch-rc.yaml
+```
 
-* `kubectl create -f elasticsearch-service.yaml`
+```
+kubectl create -f elasticsearch-service.yaml
+```
 
-  
+
 ---
 
 
@@ -213,11 +248,17 @@ revealOptions:
 
 * Check if it is up
   
-* `kubectl --namespace=kube-system get pods`  
+```
+kubectl --namespace=kube-system get pods
+```  
+
+* Copy the `EXTERNAL-IP` from the output
 
 * Hit the endpoint
 
-* `curl $EXTERNAL_IP    :9200`
+```
+curl $EXTERNAL-IP:9200
+```
 
 
 ---
@@ -227,11 +268,15 @@ revealOptions:
 
 * Deploy the ReplicationController and Service
 
-* `kubectl create -f kibana-rc.yaml`
+```
+kubectl create -f kibana-rc.yaml
+```
 
-* `kubectl create -f kibana-service.yaml`
+```
+kubectl create -f kibana-service.yaml
+```
 
-  
+
 ---
 
 
@@ -239,15 +284,17 @@ revealOptions:
 
 * Check if it is up
   
-* `kubectl --namespace=kube-system get pods`  
+```
+kubectl --namespace=kube-system get pods
+```  
 
-* Check the external IP
+* Copy the `EXTERNAL-IP` from the output
 
-* `kubectl get pods --namespace=kube-system` 
+```
+kubectl get pods --namespace=kube-system
+``` 
 
-* Open the UI in the browser
-
-* `curl $EXTERNAL_IP:5601`
+* Open the UI in the browser at `$EXTERNAL-IP:5601`
 
 
 ---
