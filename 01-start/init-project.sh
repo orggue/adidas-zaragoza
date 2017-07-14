@@ -4,7 +4,7 @@ set -eu
 read -p 'Number of participants to create: ' nrofpart
 read -p 'Number of exisiting instances: ' existingpart
 export PROJECT=$(gcloud config get-value project)
-export CUSTOMER_ID=${PROJECT}
+export USER_ID="traininguser"
 export NR_OF_PARTICIPANTS=${nrofpart}
 export EXISTING_PARTICIPANTS=${existingpart}
 
@@ -20,4 +20,5 @@ fi
 
 gcloud compute instances list
 
-echo "ssh -i participant-key-rsa ${CUSTOMER_ID}@IP"
+echo "Use the following command to log in to machines:"
+echo "ssh -i participant-key-rsa ${USER_ID}@IP"

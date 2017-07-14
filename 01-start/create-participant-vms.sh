@@ -2,7 +2,7 @@
 set -eu
 
 if [ ! -f ./participant-key-rsa ]; then
-    ssh-keygen -t rsa -C "${CUSTOMER_ID}@contianer-solutions.com" -f ./participant-key-rsa -N ''
+    ssh-keygen -t rsa -C "${USER_ID}@contianer-solutions.com" -f ./participant-key-rsa -N ''
 fi
 
 export SSH_PUBLIC_KEY=$(cat participant-key-rsa.pub)
