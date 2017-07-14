@@ -54,7 +54,7 @@ Repercussions:
 ### Setting resource limits
 
 
-* If a pod is scheduled successfully, the container is guaranteed the amount of resources requested. 
+* If a pod is scheduled successfully, the container is guaranteed the amount of resources requested.
 * Scheduling is based on requests, not limits.
 * Set resource requests so Kubernetes can schedule containers on different nodes.
 * Set resource limits to prevent an application from taking up all resources.
@@ -246,7 +246,7 @@ This will create a single pod on your node that requests 1/10 of a CPU, but it h
 
 ----
 
-To demonstrate this, you can use `kubectl top pod <PODNAME>` to view the the used CPU shares. 
+To demonstrate this, you can use `kubectl top pod <PODNAME>` to view the the used CPU shares.
 (This may take some time before metrics are available)
 
 ```
@@ -473,7 +473,7 @@ Create a namespace
 $ kubectl create namespace limit-example
 ```
 
-Apply the LimitRange (`configs/limits.yaml`) to the new namespace 
+Apply the LimitRange (`configs/limits.yaml`) to the new namespace
 ```
 $ kubectl create -f configs/limits.yaml -n limit-example
 ```
