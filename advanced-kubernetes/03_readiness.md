@@ -230,10 +230,14 @@ Use the `kubectl describe` command to get more details about the failing readine
 ```
 $ kubectl describe pods healthy-monolith
 ```
+
 Notice the Ready flag has changed for the healthy-monolith pod:
 
 ```
 $ kubectl describe pods healthy-monolith | grep -i ready
+    Ready:		False
+  Ready 	False
+Tolerations:	node.alpha.kubernetes.io/notReady:NoExecute for 300s
 ```
 
 ----
