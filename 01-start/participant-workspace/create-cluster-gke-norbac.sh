@@ -12,7 +12,7 @@ gcloud container clusters create "${clustername}" \
 --username="admin" \
 --cluster-version "1.6.4" \
 --machine-type "n1-standard-1" \
---disk-size "100" \
+--disk-size "20" \
 --network "default" \
 --enable-cloud-logging \
 --no-enable-cloud-monitoring
