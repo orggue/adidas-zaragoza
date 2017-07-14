@@ -27,6 +27,9 @@ revealOptions:
 git clone https://github.com/microservices-demo/microservices-demo
 ```
 
+Read the documentation located at: https://microservices-demo.github.io/microservices-demo
+
+To start the sock-shop, follow the instructions at: https://microservices-demo.github.io/microservices-demo/deployment/kubernetes-start.html
 
 ---
 
@@ -45,3 +48,11 @@ wget "https://cloud.weave.works/k8s/scope.yaml?k8s-version=$(kubectl version | b
 kubectl apply --namespace kube-system -f weave-scope.yaml
 ```
 
+Now take a look around. Try:
+
+* Viewing instances
+* Browsing to the command promt on an instance
+* Killing and instance
+* Scaling an instance
+
+If you get stuck, check out the documentation at: https://www.weave.works/docs/scope/latest/features/
