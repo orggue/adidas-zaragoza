@@ -580,6 +580,13 @@ $ kubectl create -f configs/invalid-cpu-pod.yaml -n limit-example
 Error from server (Forbidden): error when creating "configs/invalid-cpu-pod.yaml": pods "invalid-pod" is forbidden: [maximum cpu usage per Pod is 2, but limit is 3., maximum cpu usage per Container is 2, but limit is 3.]
 ```
 
+Clean up the resources used during this module:
+```
+$ kubectl delete --all pods
+$ kubectl delete --all deployments
+$ kubectl delete namespace limit-example
+```
+
 ---
 
 [Next up Readiness/Liveness...](./03_readiness.md)
