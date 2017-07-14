@@ -16,7 +16,7 @@ if [[ -z "$SERVICE_ACCOUNT" ]]; then
     exit 1
 fi
 
-#./create-participant-vms.sh
+./create-participant-vms.sh
 
 gcloud compute instances list
 

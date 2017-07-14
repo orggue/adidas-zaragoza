@@ -7,3 +7,6 @@ apt-cache policy docker-ce
 sudo apt-get install -y docker-ce
 sudo systemctl status docker
 sudo usermod -aG docker CUSTOMER_ID
+
+sudo apt-get upgrade -y
+sudo snap install kubectl --classic

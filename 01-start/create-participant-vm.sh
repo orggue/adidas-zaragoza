@@ -16,3 +16,6 @@ sleep 30
 gcloud compute scp init-vm.sh ${PARTICIPANT_ID}:~/
 gcloud compute ssh ${PARTICIPANT_ID} --command "sed -i 's/CUSTOMER_ID/${CUSTOMER_ID}/g' ~/init-vm.sh"
 gcloud compute ssh ${PARTICIPANT_ID} --command "~/init-vm.sh"
+
+gcloud compute scp ./participant-workspace/* ${CUSTOMER_ID}@${PARTICIPANT_ID}:/home/${CUSTOMER_ID}/
+gcloud compute ssh ${CUSTOMER_ID}@${PARTICIPANT_ID} --command "~/setup-workspace.sh"
