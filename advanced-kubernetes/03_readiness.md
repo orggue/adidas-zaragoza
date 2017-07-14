@@ -225,12 +225,16 @@ $ kubectl get pods healthy-monolith
 NAME               READY     STATUS    RESTARTS   AGE
 healthy-monolith   0/1       Running   0          12m
 ```
-Use the kubectl describe command to get more details about the failing readiness probe:
+Use the `kubectl describe` command to get more details about the failing readiness probe:
 
 ```
 $ kubectl describe pods healthy-monolith
 ```
-Notice the events for the healthy-monolith Pod report details about failing readiness probe.
+Notice the Ready flag has changed for the healthy-monolith pod:
+
+```
+$ kubectl describe pods healthy-monolith | grep -i ready
+```
 
 ----
 
