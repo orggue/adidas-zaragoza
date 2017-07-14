@@ -204,7 +204,6 @@ $ kubectl port-forward healthy-monolith 10081:81
 Forwarding from 127.0.0.1:10081 -> 81
 Forwarding from [::1]:10081 -> 81
 ```
-You now have access to the /healthz and /readiness HTTP endpoints
 The command will stay open to host the port forwarding. Hit ctrl-Z, and then immediately run `bg` to move the port-forwarding command into the background, and you will have access to the /healthz and /readiness HTTP endpoints:
 
 ```
