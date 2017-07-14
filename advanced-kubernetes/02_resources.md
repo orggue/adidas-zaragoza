@@ -4,7 +4,7 @@ In this section we'll discuss:
 * Quality of Service (QoS)
 * Resource Quotas
 
-----
+---
 
 ### The resource model
 
@@ -21,11 +21,11 @@ What exactly is a resource in Kubernetes?
 **Nvidia GPU**
 * Alpha support (1 GPU per-node)
 
-----
+---
 
 ### Requests and Limits
 
-Request: (soft limit)
+Request:
 
 How much of a resource a container is asking to use with a strong guarantee of availability.
 * CPU (millicores, 1/1000 of one core)
@@ -33,7 +33,7 @@ How much of a resource a container is asking to use with a strong guarantee of a
 
 Scheduler will not over-commit requests.  
 
-----
+---
 
 ### Requests and Limits
 
@@ -41,7 +41,7 @@ Limit: (hard limit)
 * Maximum amount of a resource a container can access.
 * Scheduler ignores limits.
 
-----
+---
 
 ### Requests and Limits
 
@@ -49,7 +49,7 @@ Repercussions:
 * Usage > Request: resources might be available.
 * Usage > Limit: killed or throttled.
 
-----
+---
 
 ### Setting resource limits
 
@@ -61,7 +61,7 @@ Repercussions:
 
 This is why you should ALWAYS set both resource requests and resource limits.
 
-----
+---
 
 ### Compressible Resource Guarantees
 
@@ -71,7 +71,7 @@ Kubernetes only supports CPU at the moment.
 * This isn't fully guaranteed today because CPU isolation is at the container level. Pod level cgroups will be introduced soon to achieve this goal.
 * Excess CPU resources will be distributed based on the amount of CPU requested.
 
-----
+---
 
 ### Compressible Resource Guarantees
 
@@ -82,18 +82,18 @@ Example (1 vCPU available):
 
 Pods will be throttled if they exceed their limit. If limit is unspecified, pods can use excess CPU when available.
 
-----
+---
 
 ### Incompressible Resource Guarantees
 
 Kubernetes only supports memory at the moment.
 
-* Pods will get the amount of memory they request, if they exceed their memory request, they could be killed (if some other pod needs memory).
+* Pods will get the amount of memory they request. If they exceed their memory request, they could be killed (if some other pod needs memory).
 * If pods consume less memory than requested, they will not be killed (except in cases where system tasks or daemons need more memory).
 
 When Pods use more memory than their limit, will be killed by the kernel.
 
-----
+---
 
 ### Quality of Service Classes
 Guaranteed: highest protection.
@@ -102,7 +102,7 @@ Guaranteed: highest protection.
 
 * If `limits` and optionally `requests` (not equal to `0`) are set for all resources across all containers and they are *equal*, then the pod is classified as **Guaranteed**.
 
-----
+---
 
 ### Guaranteed
 
@@ -120,7 +120,7 @@ containers:
 				memory: 100Mi
 ```
 
-----
+---
 
 ### Guaranteed
 
@@ -145,7 +145,7 @@ containers:
 				memory: 100Mi
 ```
 
-----
+---
 
 ### Best Effort: lowest protection
 
@@ -161,7 +161,7 @@ containers:
 		resources:
 ```
 
-----
+---
 
 ### Burstable: medium protection
 
@@ -169,7 +169,7 @@ containers:
 
 - If `requests` and optionally `limits` are set (not equal to `0`) for one or more resources across one or more containers, and they are *not equal*, then the pod is classified as **Burstable**.
 
-----
+---
 
 Container `bar` has no resources specified.
 
@@ -187,7 +187,7 @@ containers:
 	name: bar
 ```
 
-----
+---
 
 Containers `foo` and `bar` have limits set for different resources.
 
@@ -204,7 +204,7 @@ containers:
 				cpu: 100m
 ```
 
-----
+---
 
 Container `foo` has no limits set, and `bar` has neither requests nor limits specified.
 
@@ -219,7 +219,7 @@ containers:
 	name: bar
 ```
 
-----
+---
 
 How is “protection” implemented?
 * CPU: some Best Effort/Burstable container using more than its request is throttled.
@@ -227,7 +227,7 @@ How is “protection” implemented?
 * Memory: some Best Effort/Burstable container using more than its request is killed.
     * OOM score + user-space evictions.
 
-----
+---
 
 ### Examples
 
@@ -235,7 +235,7 @@ Each container in a pod may specify the amount of CPU it requests on a node.
 
 CPU requests are used at schedule time, and represent a minimum amount of CPU that should be reserved for your container to run.
 
-----
+---
 
 Let's demonstrate this concept using a simple container that will consume as much CPU as possible.
 ```
@@ -244,7 +244,7 @@ $ kubectl run cpustress --image=busybox --requests=cpu=100m \
 ```
 This will create a single pod on your node that requests 1/10 of a CPU, but it has no limit on how much CPU it may actually consume on the node.
 
-----
+---
 
 To demonstrate this, you can use `kubectl top pod <PODNAME>` to view the the used CPU shares. 
 (This may take some time before metrics are available)
@@ -260,7 +260,7 @@ cpustress-4101692926-zqw2p   924m         0Mi
 
 As you can see it uses 924m of a 1vCPU machine.
 
-----
+---
 
 If you scale your application, we should see that each pod is given an equal proportion of CPU time.
 
@@ -286,7 +286,7 @@ cpustress-1696410962-fn667   317m         0Mi
 
 Each container is getting 30% of the CPU time per their scheduling request, and we are unable to schedule more.
 
-----
+---
 
 ### Cleanup
 
@@ -294,7 +294,7 @@ Each container is getting 30% of the CPU time per their scheduling request, and 
 $ kubectl delete deployment cpustress
 ```
 
-----
+---
 
 ### CPU limit
 
@@ -312,7 +312,7 @@ NAME                         CPU(cores)   MEMORY(bytes)
 cpustress-1437538636-wkzh7   199m         0Mi             
 ```
 
-----
+---
 
 If you scale your application, we should see that each pod is consuming a maximum of 200m CPU shares.
 
@@ -329,7 +329,7 @@ cpustress-1437538636-wkzh7   199m         0Mi
 cpustress-1437538636-bcfh4   201m         0Mi
 ```
 
-----
+---
 
 ### Memory requests
 
@@ -342,7 +342,7 @@ $ kubectl run memhog --image=derekwaynecarr/memhog --requests=memory=100Mi \
 --command -- /bin/sh -c "while true; do memhog -r100 200m; sleep 1; done"
 ```
 
-----
+---
 
 Verify the usage with `kubectl top pod`
 ```
@@ -353,7 +353,7 @@ memhog-328396322-dh03t   772m         200Mi
 
 We request 100Mi, but have burst our memory usage to a greater value. That's called Burstable.
 
-----
+---
 
 ### Memory limits
 
@@ -373,7 +373,7 @@ memhog-4201114837-svfjl   632m         100Mi
 ```
 As you can see we are only consuming 100MB on the node.
 
-----
+---
 
 Let's demonstrate what happens if you exceed your allowed memory usage by creating a replication controller whose pod will keep being OOM killed because it attempts to allocate 300MB of memory, but is limited to 200Mi.
 
@@ -382,7 +382,7 @@ $ kubectl run memhog-oom --image=derekwaynecarr/memhog --limits=memory=200Mi \
 --command -- memhog -r100 300m
 ```
 
-----
+---
 
 If we describe the created pod, you will see that it keeps restarting until it goes into a CrashLoopBackOff.
 
@@ -403,7 +403,7 @@ kubectl describe po memhog-oom-3179143800-gmdbc |grep -C 3 "Terminated"
 
 ```
 
-----
+---
 
 ### What if my node runs out of memory?
 
@@ -411,7 +411,7 @@ With Guaranteed resources you are not in major danger of causing an OOM event on
 
 If any individual container consumes more than their specified limit, it will be killed.
 
-----
+---
 
 With *BestEffort* and *Burstable* resources it is possible that a container will request more memory than is actually available on the node.
 
@@ -421,11 +421,11 @@ If this happens:
 * Processes with lower values are preserved in favor of processes with higher values.
 * The system daemons (kubelet, kube-proxy, docker) all run with low OOMScoreAdjust values.
 
-----
+---
 
 Containers with *Guaranteed* memory are given a lower value than *Burstable* containers which have a lower value than *BestEffort* containers. As a consequence, containers with *BestEffort* should be killed before the other tier.
 
-----
+---
 
 ### Example
 
@@ -441,7 +441,7 @@ $ kubectl run mem-besteffort --replicas=10 --image=derekwaynecarr/memhog \
 	--requests=cpu=10m --command -- memhog -r10000 500m
 ```
 
-----
+---
 
 This will force a SystemOOM.
 ```
@@ -451,7 +451,7 @@ $ kubectl get events | grep OOM
 
 The process relies on the Kernel to react to system OOM events. Depending on how the host operating system is configured, and which process the Kernel ultimately decides to kill on your Node, you may experience unstable results.
 
-----
+---
 
 ### Resource Quota
 
@@ -466,7 +466,7 @@ Applied at admission time.
 
 Pods which explicitly specify resource limits and requests will not pick up the namespace default values.
 
-----
+---
 
 Create a namespace
 ```
@@ -507,7 +507,7 @@ spec:
     type: Container
 ```
 
-----
+---
 
 Create a deployment in this namespace
 
@@ -516,7 +516,7 @@ $ kubectl run nginx --image=nginx --replicas=1 --namespace=limit-example
 deployment "nginx" created
 ```
 
-----
+---
 
 The default values of the namespace limit will be applied to this pod
 (`kubectl describe pod...`)
@@ -536,7 +536,7 @@ spec:
         memory: 100Mi
 ```
 
-----
+---
 
 If we deploy a pod which exceeds the limit
 
@@ -560,6 +560,6 @@ $ kubectl create -f configs/invalid-cpu-pod.yaml -n limit-example
 Error from server (Forbidden): error when creating "configs/invalid-cpu-pod.yaml": pods "invalid-pod" is forbidden: [maximum cpu usage per Pod is 2, but limit is 3., maximum cpu usage per Container is 2, but limit is 3.]
 ```
 
-----
+---
 
 [Next up Readiness/Liveness...](./03_readiness.md)
