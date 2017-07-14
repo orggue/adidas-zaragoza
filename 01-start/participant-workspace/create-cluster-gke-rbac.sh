@@ -2,9 +2,7 @@
 
 read -p 'Name of the cluster: ' clustername
 
-PROJECT="adam-k8s"
-
-gcloud beta container --project ${PROJECT} clusters create "cluster-1" \
+gcloud beta container clusters create "${clustername}" \
 --zone "europe-west1-b" \
 --num-nodes "3" \
 --username="admin" \
@@ -16,4 +14,4 @@ gcloud beta container --project ${PROJECT} clusters create "cluster-1" \
 --no-enable-cloud-monitoring \
 --no-enable-legacy-authorization
 
-gcloud container clusters get-credentials cluster-1
+gcloud container clusters get-credentials ${clustername}

@@ -1,3 +1,11 @@
+---
+title: Docker Essentials
+revealOptions:
+    transition: 'none'
+    slideNumber: 'true'
+
+---
+
 ## Docker Essentials
 
 ---
@@ -488,14 +496,15 @@ on.
  - Borg
  - LXC
 
--
+---
+
 ## First Container Tech
 
  - Glued together missing pieces
  - Fast and portable
  - Targetted developers
 
--
+---
 
 ## Enabled New Workflow
 
@@ -506,14 +515,14 @@ on.
  - Works the same everywhere
  - Contains dependencies and environment
 
--
+---
 
 ## Not possible before
  
  - VMs too slow and clunky
  - Developer interface lacking
 
--
+---
 
 ## Agility
 
@@ -521,7 +530,7 @@ on.
  - Test faster
  - Deploy faster
 
--
+---
 
 ## Reliablity
 
@@ -546,7 +555,7 @@ on.
  - Test faster
  - Make sure you ship what you test!
 
--
+---
 
 ## Microservices
 
@@ -555,7 +564,7 @@ on.
  - As opposed to monoliths
  - Scale-out as opposed to scale-up
 
--
+---
 
 ## The Good
 
@@ -565,7 +574,7 @@ on.
  - Easier to distribute
  - Use best tool for the job
 
--
+---
 
 ## The Bad
 
@@ -574,7 +583,7 @@ on.
 
 <img width="500" src="slides/img/microservices-function.png">
 
--
+---
 
 ## The Ugly
 
@@ -594,8 +603,6 @@ on.
  - Don't allow running containers to change
  - Instead replace with new containers 
  - Simpler, no need for CM
-
--
 
 ---
 
