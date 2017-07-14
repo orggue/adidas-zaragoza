@@ -108,16 +108,16 @@ Guaranteed: highest protection.
 
 ```yaml
 containers:
-	name: foo
-		resources:
-			limits:
-				cpu: 10m
-				memory: 1Gi
-	name: bar
-		resources:
-			limits:
-				cpu: 100m
-				memory: 100Mi
+    name: foo
+        resources:
+            limits:
+                cpu: 10m
+                memory: 1Gi
+    name: bar
+        resources:
+            limits:
+                cpu: 100m
+                memory: 100Mi
 ```
 
 ---
@@ -126,23 +126,23 @@ containers:
 
 ```yaml
 containers:
-	name: foo
-		resources:
-			limits:
-				cpu: 10m
-				memory: 1Gi
-			requests:
-				cpu: 10m
-				memory: 1Gi
+    name: foo
+        resources:
+            limits:
+                cpu: 10m
+                memory: 1Gi
+            requests:
+                cpu: 10m
+                memory: 1Gi
 
-	name: bar
-		resources:
-			limits:
-				cpu: 100m
-				memory: 100Mi
-			requests:
-				cpu: 100m
-				memory: 100Mi
+    name: bar
+        resources:
+            limits:
+                cpu: 100m
+                memory: 100Mi
+            requests:
+                cpu: 100m
+                memory: 100Mi
 ```
 
 ---
@@ -155,10 +155,10 @@ containers:
 
 ```yaml
 containers:
-	name: foo
-		resources:
-	name: bar
-		resources:
+    name: foo
+        resources:
+    name: bar
+        resources:
 ```
 
 ---
@@ -175,16 +175,16 @@ Container `bar` has no resources specified.
 
 ```yaml
 containers:
-	name: foo
-		resources:
-			limits:
-				cpu: 10m
-				memory: 1Gi
-			requests:
-				cpu: 10m
-				memory: 1Gi
+    name: foo
+        resources:
+            limits:
+                cpu: 10m
+                memory: 1Gi
+            requests:
+                cpu: 10m
+                memory: 1Gi
 
-	name: bar
+    name: bar
 ```
 
 ---
@@ -193,15 +193,15 @@ Containers `foo` and `bar` have limits set for different resources.
 
 ```yaml
 containers:
-	name: foo
-		resources:
-			limits:
-				memory: 1Gi
+    name: foo
+        resources:
+            limits:
+                memory: 1Gi
 
-	name: bar
-		resources:
-			limits:
-				cpu: 100m
+    name: bar
+        resources:
+            limits:
+                cpu: 100m
 ```
 
 ---
@@ -210,13 +210,13 @@ Container `foo` has no limits set, and `bar` has neither requests nor limits spe
 
 ```yaml
 containers:
-	name: foo
-		resources:
-			requests:
-				cpu: 10m
-				memory: 1Gi
+    name: foo
+        resources:
+            requests:
+                cpu: 10m
+                memory: 1Gi
 
-	name: bar
+    name: bar
 ```
 
 ---
@@ -439,12 +439,12 @@ Don't do this on your minikube. It will crash the VM!
 
 ```
 $ kubectl run mem-guaranteed --image=derekwaynecarr/memhog --replicas=2 \
-	--requests=cpu=10m --limits=memory=600Mi --command \
-	-- memhog -r100000 500m
+    --requests=cpu=10m --limits=memory=600Mi --command \
+    -- memhog -r100000 500m
 $ kubectl run mem-burstable --image=derekwaynecarr/memhog --replicas=2 \
-	--requests=cpu=10m,memory=600Mi --command -- memhog -r100000 100m
+    --requests=cpu=10m,memory=600Mi --command -- memhog -r100000 100m
 $ kubectl run mem-besteffort --replicas=10 --image=derekwaynecarr/memhog \
-	--requests=cpu=10m --command -- memhog -r10000 500m
+    --requests=cpu=10m --command -- memhog -r10000 500m
 ```
 
 ---
