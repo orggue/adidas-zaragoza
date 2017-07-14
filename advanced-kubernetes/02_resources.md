@@ -268,6 +268,7 @@ If you scale your application, we should see that each pod is given an equal pro
 kubectl scale deployment cpustress --replicas=3
 ```
 Once all the pods are running, you will see that each pod is getting approximately an equal proportion of CPU time.
+Note: it can take a moment for the top output to reflect the changes to your deployment.
 
 ```
 kubectl top pod
