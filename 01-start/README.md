@@ -21,5 +21,24 @@ gcloud compute instances list
 
 1. Each participant should use the private key provided, the IP of the machine and the project name as username:
 ```bash
-ssh -i participant-key-rsa adidas-173709@35.190.217.74
+ssh -i participant-key-rsa traininguser@35.190.217.74
 ```
+
+1. Each participant should create 
+
+### Notes
+
+ * Participant permissions are controlled by the service account `participant-sa`. If they don't have access to something
+ they should, go to IAM and add some more permissions.
+ 
+ * The user on all VMs is `traininguser`. The private key is the same for everyone. You can get it in a bucket under the
+ project. E.g: https://console.cloud.google.com/storage/browser/participant-pk/?project=adidas-173709&organizationId=879351307558
+ 
+ You can also make this bucket public to share the key with participants.
+ 
+ * Participants are expected to create their own clusters using either `./create-cluster-gke-norbac.sh` or
+ `./create-cluster-gke-rbac.sh` for RBAC enabled clusters. They will find these scripts in their home directories.
+ 
+ * For any commands that need a project ID, the ID is stored in PROJECT variable (`echo $PROJECT`)
+ 
+ 
