@@ -287,7 +287,7 @@ kubectl port-forward healthy-monolith 10081:81
 
 Delete the health-monolith deployment:
 ```
-$ kubectl delete -f readiness/healthy-monolith.yaml
+$ kubectl delete -f configs/readiness/healthy-monolith.yaml
 ```
 
 ----
