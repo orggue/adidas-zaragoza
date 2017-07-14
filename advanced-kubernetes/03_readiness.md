@@ -180,7 +180,7 @@ In this tutorial you'll see how Kubernetes handels failed readiness probes. The 
 Use the `kubectl port-forward` command to forward a local port to the health port of the healthy-monolith Pod.
 
 ```
-kubectl port-forward healthy-monolith 10081:81
+$ kubectl port-forward healthy-monolith 10081:81
 ```
 You now have access to the /healthz and /readiness HTTP endpoints
 
@@ -194,12 +194,12 @@ curl http://127.0.0.1:10081/readiness/status
 Wait about 45 seconds and get the status of the healthy-monolith Pod using the kubectl get pods command:
 
 ```
-kubectl get pods healthy-monolith
+$ kubectl get pods healthy-monolith
 ```
 Use the kubectl describe command to get more details about the failing readiness probe:
 
 ```
-kubectl describe pods healthy-monolith
+$ kubectl describe pods healthy-monolith
 ```
 Notice the events for the healthy-monolith Pod report details about failing readiness probe.
 
@@ -213,7 +213,7 @@ curl http://127.0.0.1:10081/readiness/status
 Wait about 15 seconds and get the status of the healthy-monolith Pod using the kubectl get pods command:
 
 ```
-kubectl get pods healthy-monolith
+$ kubectl get pods healthy-monolith
 ```
 
 ----
@@ -223,7 +223,7 @@ kubectl get pods healthy-monolith
 Building on what you learned in the previous tutorial use the kubectl port-forward and curl commands to force the monolith container liveness probe to fail. Observe how Kubernetes responds to failing liveness probes.
 
 ```
-curl http://127.0.0.1:10081/healthz/status
+$ curl http://127.0.0.1:10081/healthz/status
 ```
 
 ----
@@ -239,7 +239,7 @@ What events where created when the liveness probe failed?
 ### Cleanup
 
 ```
-kubectl delete -f readiness/healthy-monolith.yaml
+$ kubectl delete -f readiness/healthy-monolith.yaml
 ```
 
 ----
