@@ -239,7 +239,7 @@ CPU requests are used at schedule time, and represent a minimum amount of CPU th
 
 Let's demonstrate this concept using a simple container that will consume as much CPU as possible.
 ```
-kubectl run cpustress --image=busybox --requests=cpu=100m \
+$ kubectl run cpustress --image=busybox --requests=cpu=100m \
 -- md5sum /dev/urandom
 ```
 This will create a single pod on your node that requests 1/10 of a CPU, but it has no limit on how much CPU it may actually consume on the node.
@@ -265,13 +265,13 @@ As you can see it uses 924m of a 1vCPU machine.
 If you scale your application, we should see that each pod is given an equal proportion of CPU time.
 
 ```
-kubectl scale deployment cpustress --replicas=9
+$ kubectl scale deployment cpustress --replicas=9
 ```
 Once all the pods are running, you will see that each pod is getting approximately an equal proportion of CPU time.
 Note: it can take a moment for the top output to reflect the changes to your deployment.
 
 ```
-kubectl top pods
+$ kubectl top pods
 NAME                         CPU(cores)   MEMORY(bytes)
 cpustress-1696410962-08kf9   314m         0Mi
 cpustress-1696410962-r123x   310m         0Mi
@@ -291,7 +291,7 @@ Each container is getting 30% of the CPU time per their scheduling request, and 
 ### Cleanup
 
 ```
-kubectl delete deployment cpustress
+$ kubectl delete deployment cpustress
 ```
 
 ----
@@ -301,13 +301,13 @@ kubectl delete deployment cpustress
 Setting a limit will allow you to control the maximum amount of CPU that your container can burst to.
 
 ```
-kubectl run cpustress --image=busybox --requests=cpu=100m \
+$ kubectl run cpustress --image=busybox --requests=cpu=100m \
 --limits=cpu=200m -- md5sum /dev/urandom
 ```
 
 You can verify that by using `kubectl top`:
 ```
-kubectl top pod
+$ kubectl top pod
 NAME                         CPU(cores)   MEMORY(bytes)   
 cpustress-1437538636-wkzh7   199m         0Mi             
 ```
@@ -322,7 +322,7 @@ kubectl scale deployment cpustress --replicas=3
 Once all the pods are running, you will see that each pod is getting approximately an equal proportion of CPU time.
 
 ```
-kubectl top pod
+$ kubectl top pod
 NAME                         CPU(cores)   MEMORY(bytes)   
 cpustress-1437538636-16j24   197m         0Mi             
 cpustress-1437538636-wkzh7   199m         0Mi             
@@ -338,7 +338,7 @@ By default, a container is able to consume as much memory on the node as possibl
 Let's demonstrate this by creating a pod that runs a single container which requests 100Mi of memory. The container will allocate and write to 200MB of memory every 2 seconds.
 
 ```
-kubectl run memhog --image=derekwaynecarr/memhog --requests=memory=100Mi \
+$ kubectl run memhog --image=derekwaynecarr/memhog --requests=memory=100Mi \
 --command -- /bin/sh -c "while true; do memhog -r100 200m; sleep 1; done"
 ```
 
@@ -346,7 +346,7 @@ kubectl run memhog --image=derekwaynecarr/memhog --requests=memory=100Mi \
 
 Verify the usage with `kubectl top pod`
 ```
-kubectl top pod
+$ kubectl top pod
 NAME                     CPU(cores)   MEMORY(bytes)   
 memhog-328396322-dh03t   772m         200Mi    
 ```
@@ -362,12 +362,12 @@ If you specify a memory limit, you can constrain the amount of memory your conta
 For example, let's limit our container to 200Mi of memory, and just consume 100MB.
 
 ```
-kubectl run memhog --image=derekwaynecarr/memhog --limits=memory=200Mi \
+$ kubectl run memhog --image=derekwaynecarr/memhog --limits=memory=200Mi \
 --command -- /bin/sh -c "while true; do memhog -r100 100m; sleep 1; done"
 ```
 
 ```
-kubectl top pod
+$ kubectl top pod
 NAME                      CPU(cores)   MEMORY(bytes)   
 memhog-4201114837-svfjl   632m         100Mi     
 ```
@@ -378,7 +378,7 @@ As you can see we are only consuming 100MB on the node.
 Let's demonstrate what happens if you exceed your allowed memory usage by creating a replication controller whose pod will keep being OOM killed because it attempts to allocate 300MB of memory, but is limited to 200Mi.
 
 ```
-kubectl run memhog-oom --image=derekwaynecarr/memhog --limits=memory=200Mi \
+$ kubectl run memhog-oom --image=derekwaynecarr/memhog --limits=memory=200Mi \
 --command -- memhog -r100 300m
 ```
 
@@ -388,7 +388,7 @@ If we describe the created pod, you will see that it keeps restarting until it g
 
 
 ```
-kubectl get po
+$ kubectl get po
 NAME                          READY     STATUS      RESTARTS   AGE
 memhog-4201114837-svfjl       1/1       Running     0          11m
 memhog-oom-3179143800-gmdbc   0/1       OOMKilled   5          3m
@@ -432,12 +432,12 @@ Containers with *Guaranteed* memory are given a lower value than *Burstable* con
 Don't do this on your minikube. It will crash the VM!
 
 ```
-kubectl run mem-guaranteed --image=derekwaynecarr/memhog --replicas=2 \
+$ kubectl run mem-guaranteed --image=derekwaynecarr/memhog --replicas=2 \
 	--requests=cpu=10m --limits=memory=600Mi --command \
 	-- memhog -r100000 500m
-kubectl run mem-burstable --image=derekwaynecarr/memhog --replicas=2 \
+$ kubectl run mem-burstable --image=derekwaynecarr/memhog --replicas=2 \
 	--requests=cpu=10m,memory=600Mi --command -- memhog -r100000 100m
-kubectl run mem-besteffort --replicas=10 --image=derekwaynecarr/memhog \
+$ kubectl run mem-besteffort --replicas=10 --image=derekwaynecarr/memhog \
 	--requests=cpu=10m --command -- memhog -r10000 500m
 ```
 
@@ -445,7 +445,7 @@ kubectl run mem-besteffort --replicas=10 --image=derekwaynecarr/memhog \
 
 This will force a SystemOOM.
 ```
-kubectl get events | grep OOM
+$ kubectl get events | grep OOM
 {kubelet gke-cluster-1-default-pool-312d7520-c4db}      System OOM encountered
 ```
 
@@ -470,12 +470,12 @@ Pods which explicitly specify resource limits and requests will not pick up the 
 
 Create a namespace
 ```
-kubectl create namespace limit-example
+$ kubectl create namespace limit-example
 ```
 
 Apply the LimitRange (`configs/limits.yaml`) to the new namespace 
 ```
-kubectl create -f configs/limits.yaml -n limit-example
+$ kubectl create -f configs/limits.yaml -n limit-example
 ```
 
 ```
@@ -512,7 +512,7 @@ spec:
 Create a deployment in this namespace
 
 ```
-kubectl run nginx --image=nginx --replicas=1 --namespace=limit-example
+$ kubectl run nginx --image=nginx --replicas=1 --namespace=limit-example
 deployment "nginx" created
 ```
 
@@ -556,7 +556,7 @@ spec:
 ```
 The output of kubectl is
 ```
-kubectl create -f configs/invalid-cpu-pod.yaml -n limit-example
+$ kubectl create -f configs/invalid-cpu-pod.yaml -n limit-example
 Error from server (Forbidden): error when creating "configs/invalid-cpu-pod.yaml": pods "invalid-pod" is forbidden: [maximum cpu usage per Pod is 2, but limit is 3., maximum cpu usage per Container is 2, but limit is 3.]
 ```
 
