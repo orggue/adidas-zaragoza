@@ -218,10 +218,12 @@ Force the monolith container readiness probe to fail. Use the curl command to to
 $ curl http://127.0.0.1:10081/readiness/status
 Handling connection for 10081
 ```
-Wait about 45 seconds and get the status of the healthy-monolith Pod using the kubectl get pods command:
+Wait about 45 seconds and get the status of the healthy-monolith Pod using the kubectl get pods command. Note that 0 pods are currently ready:
 
 ```
 $ kubectl get pods healthy-monolith
+NAME               READY     STATUS    RESTARTS   AGE
+healthy-monolith   0/1       Running   0          12m
 ```
 Use the kubectl describe command to get more details about the failing readiness probe:
 
