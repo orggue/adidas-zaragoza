@@ -558,7 +558,7 @@ Containers:
 
 ---
 
-If we deploy a pod which exceeds the limit
+If we deploy a pod which exceeds the limit, using the following yaml:
 
 ```
 apiVersion: v1
