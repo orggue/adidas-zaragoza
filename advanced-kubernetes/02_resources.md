@@ -530,7 +530,7 @@ deployment "nginx" created
 ---
 
 The default values of the namespace limit will be applied to this pod
-(`kubectl describe pod...`)
+(`kubectl describe pod <pod_name> --namespace=<namespace_name>`)
 ```
 ...
 spec:
