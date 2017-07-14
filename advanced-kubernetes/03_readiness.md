@@ -169,7 +169,27 @@ Thanks to Kelsey Hightower for this application
 
 Pods will not be marked ready until the readiness probe returns an HTTP 200 response. Use the `kubectl describe` to view details for the healthy-monolith Pod.
 
+```
+$ kubectl describe pod healthy-monolith | grep -i ready
+    Ready:		True
+  Ready 	True
+Tolerations:	node.alpha.kubernetes.io/notReady:NoExecute for 300s
+```
+
 The healthy-monolith Pod logs each health check. Use the `kubectl logs` command to view them.
+
+```
+$ kubectl logs healthy-monolith
+2017/07/14 13:29:53 Starting server...
+2017/07/14 13:29:53 Health service listening on 0.0.0.0:81
+2017/07/14 13:29:53 HTTP service listening on 0.0.0.0:80
+10.36.0.1:57834 - - [Fri, 14 Jul 2017 13:30:02 UTC] "GET /healthz HTTP/1.1" Go-http-client/1.1
+10.36.0.1:57840 - - [Fri, 14 Jul 2017 13:30:07 UTC] "GET /readiness HTTP/1.1" Go-http-client/1.1
+10.36.0.1:57856 - - [Fri, 14 Jul 2017 13:30:17 UTC] "GET /healthz HTTP/1.1" Go-http-client/1.1
+10.36.0.1:57858 - - [Fri, 14 Jul 2017 13:30:17 UTC] "GET /readiness HTTP/1.1" Go-http-client/1.1
+10.36.0.1:57880 - - [Fri, 14 Jul 2017 13:30:27 UTC] "GET /readiness HTTP/1.1" Go-http-client/1.1
+10.36.0.1:57894 - - [Fri, 14 Jul 2017 13:30:32 UTC] "GET /healthz HTTP/1.1" Go-http-client/1.1
+```
 
 ----
 
