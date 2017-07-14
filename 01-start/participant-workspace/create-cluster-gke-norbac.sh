@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 
-read -p 'Name of the cluster: ' clustername
+if [[ -z "$1" ]]; then
+    read -p 'Name of the cluster: ' clustername
+else
+    clustername=$1
+fi
 
 gcloud container clusters create "${clustername}" \
 --zone "europe-west1-b" \
