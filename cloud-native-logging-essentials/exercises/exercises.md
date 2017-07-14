@@ -9,7 +9,24 @@ revealOptions:
 
 ---
 
-## Inspecting logs with `kubectl logs`
+## Outline
+
+* 1. Inspecting logs with `kubectl logs`
+
+* 2. Centralized Log Aggregation with Fluentd, Elasticsearch and Kibana
+
+
+---
+
+
+## 1. Inspecting logs with `kubectl logs`
+
+
+---
+
+
+### Outline
+
 
 * We will deploy a pod, deployment and service
 
@@ -133,3 +150,113 @@ revealOptions:
 
 
 * Check the logs in the other terminal
+
+
+---
+
+
+## Centralized Log Aggregation with Fluentd, Elasticsearch and Kibana
+
+
+---
+
+
+### Outline
+
+
+* In this exercise you will install the Fluentd, Elasticsearch and Kibana
+
+* Then you can experiment with the setup and search logs in Kibana
+
+
+---
+
+
+### Deploying Fluentd
+
+* The cluster already has a Fluentd that is integrated with GCP
+
+* `kubectl --namespace=kube-system get ds`
+
+
+----
+
+
+### Deploying Fluentd
+ 
+ 
+* We will deploy Fluentd with Elasticsearch config
+
+* `kubectl create -f fleuntd-daemonset.yaml`
+
+* Check that it is running
+
+* `kubectl --namespace=kube-system get ds`
+
+
+---
+
+
+### Deploying Elasticsearch
+
+* Deploy the ReplicationController and Service
+
+* `kubectl create -f elasticsearch-rc.yaml`
+
+* `kubectl create -f elasticsearch-service.yaml`
+
+  
+---
+
+
+### Deploying Elasticsearch
+
+* Check if it is up
+  
+* `kubectl --namespace=kube-system get pods`  
+
+* Hit the endpoint
+
+* `curl $EXTERNAL_IP    :9200`
+
+
+---
+
+
+### Deploy Kibana
+
+* Deploy the ReplicationController and Service
+
+* `kubectl create -f kibana-rc.yaml`
+
+* `kubectl create -f kibana-service.yaml`
+
+  
+---
+
+
+### Deploying Kibana
+
+* Check if it is up
+  
+* `kubectl --namespace=kube-system get pods`  
+
+* Check the external IP
+
+* `kubectl get pods --namespace=kube-system` 
+
+* Open the UI in the browser
+
+* `curl $EXTERNAL_IP:5601`
+
+
+---
+
+
+### Experiment!
+
+* Now deploy pods from the previous exercise or your own app
+
+* Go to Kibana 'Discover' and find logs
+
+* Kibana Docs https://www.elastic.co/guide/en/kibana/current/index.html
