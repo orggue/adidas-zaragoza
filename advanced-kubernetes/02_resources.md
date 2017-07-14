@@ -305,7 +305,7 @@ $ kubectl run cpustress --image=busybox --requests=cpu=100m \
 --limits=cpu=200m -- md5sum /dev/urandom
 ```
 
-You can verify that by using `kubectl top`:
+You can verify that by using `kubectl top pod`:
 ```
 $ kubectl top pod
 NAME                         CPU(cores)   MEMORY(bytes)   
