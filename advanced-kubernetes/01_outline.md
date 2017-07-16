@@ -1,11 +1,3 @@
----
-title: Advanced Kubernetes
-revealOptions:
-    transition: 'none'
-    slideNumber: 'true'
-
----
-
 # Outline
 
 * [Resources](./02_resources.md)
@@ -18,7 +10,7 @@ revealOptions:
 * [Networking](./09_networking.md)
 * [Helm charts](./10_helm.md)
 
----
+----
 
 ## Objectives
 Attendees who successfully complete this course will learn *Kubernetes inside and out*, and be able to:
@@ -29,6 +21,6 @@ Attendees who successfully complete this course will learn *Kubernetes inside an
 * Setup RBAC for secure communication with your cluster
 * Add and configure a Pod Network (flannel) on top of Kubernetes cluster
 
----
+----
 
 [First up Resources...](./02_resources.md)
