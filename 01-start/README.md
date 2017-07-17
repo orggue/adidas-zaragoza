@@ -8,9 +8,27 @@ Select Project Editor, Viewer, Browser and Service Account Actor roles when crea
 
 1. Enable Google Container Registry in the web console
 
+1. Run `./init-project.sh` and tell it to create a single participant. Once that is done have the VM create a cluster.
+ (`gcloud compute ssh traininguser@participant-1 --command "./create-cluster-gke-norbac.sh"`).
+ 
+ This will both test the VM and cluster creation and activate the quotas for the next step. Activation means
+ they will be used so they will show up in the list without you having to search for them.
+
+1. Ask Google to raise the following quotas on the project:
+
+    P = number of participants
+- Total SSD disk reserved (GB) : P * 10Gb
+- Total persistent disk reserved (GB) : P * 30Gb
+- CPUs : P * 6
+- IP Addresses : P * 4
+
+In a few hours an email will arrive from Google asking to verify the request by either transferring money or
+pointing to another project that already had quotas raised. Reply to them saying the `container-solutions` project
+already has that. In another few hours max the quotas should be raised.
+
 1. Point gcloud to the new project `gcloud config set project PROJECT_NAME`
 
-1. Run init-project.sh
+1. Run init-project.sh to create the rest 
 
 1. Distribute the private key that was created by the script (`participant-key-rsa`) to the participants.
 
