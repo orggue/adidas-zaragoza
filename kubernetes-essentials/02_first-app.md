@@ -50,7 +50,7 @@ Here we see the available nodes, just one in our case. Kubernetes will choose wh
 Let’s run our first app on Kubernetes with the kubectl run command. The `run` command creates a new deployment for the specified container. This is the simpliest way of deploying a container.
 
 ```bash
-kubectl run hello \  
+kubectl run hello \
  --image=gcr.io/google_containers/echoserver:1.4 \
  --port=8080
 
