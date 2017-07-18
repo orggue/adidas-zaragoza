@@ -149,10 +149,7 @@ kubectl delete deployment hello
 Create a new **Deployment** and a **Service**
 
 ```
-kubectl run hello \
- --image=gcr.io/google_containers/echoserver:1.4 \
-  --port=8080 --expose --service-overrides='{ "spec": { \
-     "type": "LoadBalancer" } }'
+kubectl run hello --image=gcr.io/google_containers/echoserver:1.4 --port=8080 --expose --service-overrides='{ "spec": { "type": "LoadBalancer" } }'
 service "hello" created
 deployment "hello" created
 ```
