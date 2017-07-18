@@ -160,7 +160,8 @@ And create the `petclinic` database by execing into the MySQL pod (you will have
 name of the pod) and running the `mysql` client. 
 
 ```bash
-kubectl exec -ti mysql-340072548-zrj6f -- mysql -uroot -ppassword -e "create database petclinic"
+kubectl exec -ti mysql-340072548-zrj6f -- mysql \
+  -uroot -ppassword -e "create database petclinic"
 ```
 
 After a while the PetClinic pods should restart, find MySQL and run successfully. Check your LoadBalancer Service
