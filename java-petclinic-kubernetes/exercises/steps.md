@@ -166,7 +166,7 @@ And create the `petclinic` database by execing into the MySQL pod (you will have
 name of the pod) and running the `mysql` client. 
 
 ```bash
-$ kubectl exec -ti mysql-340072548-zrj6f -- mysql \
+$ kubectl exec -ti "<mysql-podname>" -- mysql \
   -uroot -ppassword -e "create database petclinic"
 ```
 
