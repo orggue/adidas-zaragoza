@@ -174,7 +174,7 @@ After a while the PetClinic pods should restart, find MySQL and run successfully
 for an external IP to load the page in your browser. Note that even though the Spring application doesn't support
 proper waiting for the database to come online, Kubernetes can make up for it by restarting it when it crashes.
 
-If the kubernetes restart is taking to long, you can force a restart of the failed pods:
+If the kubernetes restart is taking too long, you can force a restart of the failed pods:
 ```
 $ watch kubectl get pods
 Every 2.0s: kubectl get pods            participant-7: Fri Jul 21 12:46:50 2017
