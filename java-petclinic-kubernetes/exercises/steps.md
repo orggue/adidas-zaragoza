@@ -11,7 +11,7 @@ You don't need to have a JDK or JRE installed to complete this exercise!
 1. Clone PetClinic
 
 ```bash
-git clone https://github.com/spring-projects/spring-petclinic.git
+$ git clone https://github.com/spring-projects/spring-petclinic.git
 cd spring-petclinic
 ```
 
@@ -40,7 +40,7 @@ CMD ["java", "-jar", "spring-petclinic-1.5.1.jar"]
 3. Build your Docker image
 
 ```bash
-docker build -t eu.gcr.io/adam-k8s/petclinic -t petclinic .
+$ docker build -t eu.gcr.io/adam-k8s/petclinic -t petclinic .
 ```
 
 You can use `docker images | grep petclinic` to see your created image. The image name has to container the name
@@ -53,7 +53,7 @@ By default PetClinic will run with an embedded HSQLDB database. This makes it co
 image is working properly.
 
 ```bash
-docker run -ti -p 8080:8080 petclinic
+$ docker run -ti -p 8080:8080 petclinic
 ```
 
 If you can access the application on `http://localhost:8080` then you can continue to the next step.
@@ -63,7 +63,7 @@ If you can access the application on `http://localhost:8080` then you can contin
 Use `gcloud` to push the image to the registry:
 
 ```bash
-gcloud docker -- push eu.gcr.io/adam-k8s/petclinic
+$ gcloud docker -- push eu.gcr.io/adam-k8s/petclinic
 ```
 
 6. Run the application on Kubernetes
@@ -120,17 +120,17 @@ spec:
 Create a file called petclinic.yaml with the above content and let `kubectl` apply it to your cluster.
 
 ```bash
-kubectl apply -f petclinic.yaml
+$ kubectl apply -f petclinic.yaml
 ```
 
 Observe the creation of you objects using 
 ```bash
-watch kubectl service,deployment,pod
+$ watch kubectl get service,deployment,pod
 ```
 You will see that your pod is failing to start and is getting restarted by Kubernetes. Use
 ```bash
-kubectl get pods
-kubectl logs petclinic-[insertyourpodidhere]
+$ kubectl get pods
+$ kubectl logs petclinic-[insertyourpodidhere]
 ```
 to see the logs of one of your pods. You will see it's trying to connect to MySQL which is not available as we have not
 started it yet.
@@ -141,26 +141,26 @@ Configure the standard storage class. Configuring a StorageClass will allow our 
 persistent storage from GCE automatically.
 
 ```bash
-kubectl apply -f resources/standard-storage-class-gcepd.yaml
+$ kubectl apply -f resources/standard-storage-class-gcepd.yaml
 ```
 
 We can now deploy MySQL and define a Service for it.
 
 ```bash
-kubectl apply -f resources/mysql.yaml
+$ kubectl apply -f resources/mysql.yaml
 ```
 
 Verify it gets started properly:
 
 ```bash
-watch kubectl get pods
+$ watch kubectl get pods
 ```
 
 And create the `petclinic` database by execing into the MySQL pod (you will have to look up the exact 
 name of the pod) and running the `mysql` client. 
 
 ```bash
-kubectl exec -ti mysql-340072548-zrj6f -- mysql \
+$ kubectl exec -ti mysql-340072548-zrj6f -- mysql \
   -uroot -ppassword -e "create database petclinic"
 ```
 
