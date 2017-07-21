@@ -133,7 +133,13 @@ $ kubectl get pods
 $ kubectl logs petclinic-[insertyourpodidhere]
 ```
 to see the logs of one of your pods. You will see it's trying to connect to MySQL which is not available as we have not
-started it yet.
+started it yet. The error will look like this:
+
+```
+at com.mysql.jdbc.StandardSocketFactory.connect(StandardSocketFactory.java:188) ~[mysql-connector-java-5.1.42.jar!/:5.1.42]
+        at com.mysql.jdbc.MysqlIO.<init>(MysqlIO.java:300) ~[mysql-connector-java-5.1.42.jar!/:5.1.42]
+        ... 95 common frames omitted
+```
 
 7. Start MySQL on Kubernetes
 
