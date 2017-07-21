@@ -156,7 +156,7 @@ We can now deploy MySQL and define a Service for it.
 $ kubectl apply -f resources/mysql.yaml
 ```
 
-Verify it gets started properly:
+Verify that `mysql` gets started properly:
 
 ```bash
 $ watch kubectl get pods
