@@ -173,3 +173,27 @@ $ kubectl exec -ti "<mysql-podname>" -- mysql \
 After a while the PetClinic pods should restart, find MySQL and run successfully. Check your LoadBalancer Service
 for an external IP to load the page in your browser. Note that even though the Spring application doesn't support
 proper waiting for the database to come online, Kubernetes can make up for it by restarting it when it crashes.
+
+If the kubernetes restart is taking to long, you can force a restart of the failed pods:
+```
+$ watch kubectl get pods
+Every 2.0s: kubectl get pods            participant-7: Fri Jul 21 12:46:50 2017
+
+NAME                         READY     STATUS             RESTARTS   AGE
+hello-node                   1/1       Running            2          2h
+mysql-1593257332-pdcd9       1/1       Running            0          6m
+petclinic-1586484156-4tm3k   0/1       CrashLoopBackOff   10         31m
+petclinic-1586484156-7jt9p   0/1       CrashLoopBackOff   10         31m
+petclinic-1586484156-nlr25   0/1       CrashLoopBackOff   10         31m
+^C
+$ kubectl delete pod petclinic-1586484156-4tm3k
+$ kubectl delete pod petclinic-1586484156-7jt9p
+$ kubectl delete pod petclinic-1586484156-nlr2
+$ kubectl get pods
+NAME                         READY     STATUS    RESTARTS   AGE
+hello-node                   1/1       Running   2          2h
+mysql-1593257332-pdcd9       1/1       Running   0          10m
+petclinic-1586484156-2ln69   1/1       Running   0          2m
+petclinic-1586484156-c56rz   1/1       Running   0          26s
+petclinic-1586484156-j55vk   1/1       Running   0          2m
+```
