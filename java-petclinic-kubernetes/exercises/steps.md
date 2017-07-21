@@ -12,7 +12,7 @@ You don't need to have a JDK or JRE installed to complete this exercise!
 
 ```bash
 $ git clone https://github.com/spring-projects/spring-petclinic.git
-cd spring-petclinic
+$ cd spring-petclinic
 ```
 
 2. Create a Dockerfile
