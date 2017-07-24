@@ -4,7 +4,6 @@ A Pod is made up of one or several containers plus some data volumes that can be
 
 * define a deployment backed by a emptyDir
 * define a deployment backed by a emptyDir(memory backed storage)
-* define a deployment backed by a hostPath 
 * define a deployment backed by a persistent volume and persistent volume claim 
 * define a deployment backed by a persistent volume and persistent volume claim using a StorageClass
 
@@ -100,64 +99,35 @@ total 0
 ```
 ----
 
-
-### hostPath
-
-* In this excecise we'll demonstrate the usefulness of having a hostPath by mounting a directory and writing to it.
-
-```
-apiVersion: v1
-kind: Pod
-metadata:
-  name: alpine
-spec:
-  containers:
-  - name: alp
-    image: alpine
-    volumeMounts:
-    - name: test
-      mountPath: /tmp
-    command:
-      - sleep
-      - "3600"
-  volumes:
-  - name: test
-    hostPath:
-        path: /tmp
-```
-
-Once the pod has been deployed we can echo a word into a file in that directory and verify it's existence from the host. Since we're running this in minikube the host isn't our host but 
-minikube therefore we'll need to run the command through minikube.
-
-```
-$ kubectl exec -it alpine -- /bin/sh -c "echo 'test' >> /tmp/test.txt" 
-$ minikube ssh cat /tmp/test.txt
-```
-
 ### Persistent Volumes and Claims
 
 * In this exercise we'll demonstrate the use of Persistent Volumes(PV) and Persistent Volume Claims(PVC).
 
-First we need to create Disk and then a PV, otherwise we won't have anything to claim.
+First we will create a disk and a PV that we will later claim and use with a Pod
 ```
-$ gcloud compute disks create [DISK_NAME] --size [DISK_SIZE] --type [DISK_TYPE]
-$ gcloud compute instances attach-disk [INSTANCE_NAME] --disk [DISK_NAME]
+$ gcloud compute disks create disk-$HOSTNAME --size 8GB --type pd-standard
 ```
+
+Create a file called `pv.yaml` with the following contents:
+
 ```
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: data
+  name: <MY_PV_NAME>
 spec:
   capacity:
     storage: 5Gi
   accessModes:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
+  storageClassName: training
   gcePersistentDisk:
-    pdName: "data"
+    pdName: <MY_DISK_NAME>
     fsType: "ext4"
 ```
+
+Note that you will need to replace <MY_DISK_NAME> with the name you used in the create command and you should replace <MY_PV_NAME> with the output of `echo pv-$HOSTNAME`.
 
 ----
 
@@ -165,22 +135,23 @@ Create the PV and check it's status with the `get` and `describe` command.
 
 ```
 $ kubectl create -f pv.yaml
-$ kubectl get pv
-$ kubectl describe pv
+$ kubectl get pv pv-$HOSTNAME
+$ kubectl describe pv-$HOSTNAME
 ```
 
 ----
 
-Next we need to create a PVC which claims the PV defined above. The definition of this is given below.
+Next we need to create a PVC which claims the PV defined above. Crate a file `pvc.yaml` with the following contents, replacing <MY_PVC_NAME> with the output of `echo pvc-$HOSTNAME`. 
 
 ```
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: myclaim
+  name: <MY_PVC_NAME>
 spec:
   accessModes:
     - ReadWriteOnce
+  storageClassName: training
   resources:
     requests:
       storage: 4Gi
@@ -192,13 +163,13 @@ Create the PVC and check it's status with the `get` and `describe` command.
 
 ```
 $ kubectl create -f pvc.yaml
-$ kubectl get pvc
-$ kubectl describe pvc
+$ kubectl get pvc pvc-$HOSTNAME
+$ kubectl describe pvc-$HOSTNAME
 ```
 
 ----
 
-Lastly we'll create a Pod and attach the PVC to it:
+Lastly we'll create a Pod and attach the PVC to it. Create the file `pod_pvc.yaml` with the following contents (replacing <MY_PVC_NAME> with the output of `echo pvc-$HOSTNAME`.
 
 ```
 apiVersion: v1
@@ -226,7 +197,7 @@ spec:
   volumes:
     - name: test
       persistentVolumeClaim:
-        claimName: myclaim
+        claimName: <MY_PVC_NAME>
 ```
 
 ----
@@ -272,27 +243,14 @@ You might be interested to test this using this [example](https://github.com/kub
 
 ----
 
-First check and remove any existing persitent volumes
+GKE comes with a default StorageClass that will dynamically provision persitent disks on demand. We can see this by running:
 
 ```
-$ kubectl get pv
-NAME      CAPACITY   ACCESSMODES   RECLAIMPOLICY   STATUS      CLAIM     STORAGECLASS   REASON    AGE
-pv0001    10Gi       RWO           Retain          Available                                      3s
-
-$ kubectl delete pv pv001
-persistentvolume "pv0001" deleted
+$ kubectl get storageclass
+...
+$ kubectl describe storageclass standard
+...
 ```
-
-----
-
-Create the storage class and verify via `get` command
-
-```
-$ kubectl apply -f <name>.yaml
-$ kubectl get sc
-```
-
-----
 
 Next we create a persistent volume claim including that storage class.
 
@@ -301,7 +259,7 @@ Next we create a persistent volume claim including that storage class.
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: mystorageclaim
+  name: <MY_SC_CLAIM>
   annotations:
     volume.beta.kubernetes.io/storage-class: "standard"
 spec:
