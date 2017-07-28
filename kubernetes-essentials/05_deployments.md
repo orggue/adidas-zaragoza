@@ -44,14 +44,14 @@ spec:
     spec:
       containers:
       - name: hello-node
-        image: hello-node:v1
+        image: nginx:1.12
         ports:
         - containerPort: 8080
 ```
 
 ---
 
-### Deploy
+### Deploy to K8s
 
 ```
 kubectl create -f configs/deployment-v1.yaml
@@ -73,6 +73,7 @@ hello-node-364036756   1         1         1         16s
 
 ---
 
+<<<<<<< variant A
 ### Scaling Deployments
 
 * **ReplicaSet**s can be scaled through the **Deployment** or independently.  
@@ -94,6 +95,31 @@ kubectl describe rs hello-node-364036756
 ---
 
 ### Scale down the **Deployment**
+>>>>>>> variant B
+### Scale up/down the Deployment
+####### Ancestor
+### Scaling Deployments
+
+ReplicaSets can be scaled through the Deployment or independently.  
+Use the `kubectl scale` command to scale:
+
+```
+kubectl scale --replicas=3 rs/hello-node-364036756
+replicaset "hello-node-364036756" scaled
+```
+
+----
+
+### Check the status of scaling the ReplicaSet
+```
+kubectl get rs hello-node-364036756
+kubectl describe rs hello-node-364036756
+```
+
+----
+
+### Scale down the Deployment
+======= end
 
 ```
 kubectl scale deployments hello-node --replicas=2
@@ -113,27 +139,29 @@ kubectl get pods
 
 ---
 
-### Updating Deployments (RollingUpdate)
+### Updating Deployments 
 
-* **RollingUpdate** is the default strategy.
-* Updates **Pods** one (or a few) at a time.
+(`RollingUpdate`)
+
+* RollingUpdate is the default strategy.
+* Updates Pods one (or a few) at a time.
+
+----
+
+### Common workflow
+
 * Update the text of the application, creating a new version of the image.
 * Build a new image and tag it with v2.
 * Update the **Deployment**:
 
 ```
-kubectl set image deployment/hello-node hello-node=hello-node:v2
+kubectl set image deployment/hello-node hello-node=muellermich/hello-node:v2
 ```
 
----
-
-### Validate that it works
-
-We can use ab (Apache Benchmark) to generate traffic to our application and then watch for failures. Using `--watch-only` we'll see updates of the pods.
+* Check status via 
 
 ```
-ab -n 50000 -c 1  $IP:$PORT/
-kubectl get po --watch-only
+kubectl rollout status deployment hello-node
 ```
 
 ---
@@ -171,32 +199,29 @@ spec:
     spec:
       containers:   
       - name: hello-node
-        image: hello-node:v1
+        image: nginx:1.13
         ports:
         - containerPort: 8080
 ```
 
 ---
 
-### Updating Deployments (Recreate)
+### Deploy to K8s
 
-Update the **Deployment**
 ```
-kubectl set image deployment/hello-node hello-node=hello-node:v2
+kubectl create -f configs/deployment-v2.yaml
 ```
 
 ---
 
-### Validate that it works
+### Updating Deployments (Recreate)
 
-Generate traffic:
-
+Update the Deployment
 ```
-ab -n 50000 -c 1  $IP/$PORT
-kubectl get po --watch-only
-```
+kubectl set image deployment/hello-node hello-node=muellermich/hello-node:v2
 
-Notice that requests fail because the old pods are terminated before the new pods are started.
+kubectl get pods -w
+```
 
 ---
 
@@ -210,9 +235,19 @@ kubectl delete -f configs/deployment-v2.yaml
 
 ### Do it yourself
 
-* Create a **Deployment** for one nginx:1.12-alpine container.
-* Create a **Service** manifest to expose Nginx.
-* Scale the **Deployment** up to 3.
+* Create a deployment for one nginx:1.12 container.
+* Create a service manifest to expose Nginx.
+* Scale the deployment up to 3.
 * Validate the scaling was successful.
+<<<<<<< variant A
 * Update the **Deployment** to use nginx:1.13-alpine.
+>>>>>>> variant B
+* Update the deployment to use nginx:1.13
+####### Ancestor
+* Update the deployment to use nginx:1.13-alpine.
+======= end
 * Cleanup
+
+----
+
+[FIN](../01_outline.md)

@@ -240,6 +240,13 @@ $ kubectl describe pods healthy-monolith | grep -i ready
 Tolerations:	node.alpha.kubernetes.io/notReady:NoExecute for 300s
 ```
 
+Notice the details about failing probes.
+
+```
+Liveness:     http-get http://:81/healthz delay=5s timeout=5s period=15s #success=1 #failure=3
+Readiness:    http-get http://:81/readiness delay=5s timeout=1s period=10s #success=1 #failure=3
+```
+
 ----
 
 Force the monolith container readiness probe to pass. Use the curl command to toggle the readiness probe status:
@@ -275,7 +282,6 @@ What events where created when the liveness probe failed?
 
 ----
 
-
 ### Cleanup
 
 Run the `fg` command followed by hitting ctrl-c, to stop the port-forwarding activity which we backgrounded earlier.
@@ -293,6 +299,6 @@ $ kubectl delete -f configs/readiness/healthy-monolith.yaml
 ----
 
 In this section you learned:
-* How Kubernetes supports application monitoring using liveness and readiness probes.
-* How to add readiness and liveness probes to Pods
+* How Kubernetes supports application monitoring using liveness and readiness probes. 
+* How to add readiness and liveness probes to Pods 
 * What happens when probes fail.

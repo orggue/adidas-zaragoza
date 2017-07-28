@@ -28,47 +28,10 @@ In this lab you will:
 
 ---
 
-### Create node.js app
-
-Note port 8080 in `www.listen` directive.
-
+### Deploy application to Kubernetes
 ```
-var http = require('http');
-var handleRequest = function(request, response) {
-  response.writeHead(200);
-  response.end("Hello World!");
-}
-var www = http.createServer(handleRequest);
-www.listen(8080);
-```
-Save as `server.js`
+kubectl run hello-node --image=nginx:1.12 --port=80
 
----
-
-### Create Docker image
-
-Create the `Dockerfile` for hello-node (note port 8080 in `EXPOSE` command):
-```
-FROM node:6-alpine
-EXPOSE 8080
-COPY server.js /
-ENTRYPOINT ["node", "/server.js"]
-```
-
----
-
-### Build the container
-
-```
-docker build -t hello-node:v1 -f Dockerfile_node .
-```
-
----
-
-### Deploy application
-
-```
-kubectl run hello-node --image=hello-node:v1 --port=8080
 deployment "hello-node" created
 ```
 
@@ -80,9 +43,7 @@ deployment "hello-node" created
 kubectl get deployment
 NAME         DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
 hello-node   1         1         1            1           49s
-```
 
-```
 kubectl get pod
 NAME                          READY     STATUS    RESTARTS   AGE
 hello-node-2399519400-02z6l   1/1       Running   0          54s
@@ -102,7 +63,7 @@ kubectl config view
 
 ### Creating a **Pod** manifest
 
-Explore the `hello-world` **Pod** configuration file:
+Explore the `hello-node` pod configuration file:
 
 ```
 apiVersion: v1
@@ -114,9 +75,9 @@ metadata:
 spec:
   containers:
     - name: hello-node
-      image: hello-node:v1
+      image: nginx:1.12
       ports:
-        - containerPort: 8080
+        - containerPort: 80
 ```
 
 ---
@@ -173,7 +134,7 @@ Hello World!
 
 ### Do it yourself
 * Create an `nginx.conf` which returns a  
-`200 "From zero to hero"`.
+`200 "Hello Kiwi"`.
 * Create a custom Nginx image.
 * Build the container.
 * Create a **Pod** manifest using the image.
@@ -204,3 +165,8 @@ Execute a shell in a **Pod**, like in Docker:
 ```
 kubectl exec -ti <PODNAME> /bin/sh
 ```
+
+----
+
+[Next up Services...](../04_services.md)
+

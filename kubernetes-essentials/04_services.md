@@ -7,7 +7,12 @@ revealOptions:
 
 ## Creating and Managing **Service**s
 
-In this section you will create a `hello-node` **Service** and "expose" the `hello-node` **Pod**. You will learn how to:
+In this section you will create a `hello-node` service and "expose" the `hello-node` Pod. 
+
+You will learn how to:
+
+* Create a service.
+* Use labels and selectors to expose Pods.
 
 * Create a **Service**.
 * Use label and selectors to expose a limited set of **Pod**s externally.
@@ -23,7 +28,7 @@ In this section you will create a `hello-node` **Service** and "expose" the `hel
 
 ### **Service** types
 
-* `ClusterIP` Exposes the **Service** on a cluster-internal IP.
+* `ClusterIP` (Default) Exposes the service on a cluster-internal IP.
 
 * `NodePort` Expose the **Service** on a specific port on each node.
 
@@ -38,7 +43,6 @@ In this section you will create a `hello-node` **Service** and "expose" the `hel
 Explore the hello-node **Service** configuration file:
 
 ```
-cat service.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -48,7 +52,7 @@ spec:
   ports:
   - port: 8080
     protocol: TCP
-    targetPort: 8080
+    targetPort: 80
     nodePort: 30080
   selector:
     app: hello-node
@@ -61,15 +65,17 @@ Setting `nodePort` is optional. If not set, a random high port is assigned.
 Create the hello-node **Service** using `kubectl`:
 
 ```
-kubectl create -f service.yaml
+kubectl create -f configs/service.yaml
 ```
 
 ---
 
 ### Query the **Service**
 
+Use the IP of any of your nodes.
+
 ```
-curl -i 0.0.0.0:30080
+curl -i [cluster-node-ip]:30080
 ```
 
 ---
@@ -99,10 +105,17 @@ Use `kubectl label` to add labels.
 ```
 kubectl label pods hello-node 'secure=disabled'
 ```
+... and to modify
+```
+kubectl label pods hello-node "app=goodbye-node" --overwrite
+kubectl describe pod hello-node
+```
 
 ---
 
 View the endpoints of the `hello-node` **Service**:
+
+(Note the difference from the last call to `describe`)
 
 ```
 kubectl describe services hello-node
@@ -112,6 +125,19 @@ kubectl describe services hello-node
 
 ### Do it yourself
 
-* Create a **Service** for the nginx **Pod**s.
-* Expose port 80 to a static `nodePort` 31000.
-* Access the **Service** using `curl` or a browser.
+* Create a service for the nginx pods.
+* Expose port 80 to a static nodePort 31000.
+* Access the service using `curl` or a browser.
+
+----
+
+### Cleanup
+
+```
+kubectl delete po --all
+kubectl delete svc --all
+```
+
+----
+
+[Next up Deployments...](../05_deployments.md)
