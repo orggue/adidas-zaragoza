@@ -10,7 +10,7 @@ gcloud container clusters create "${clustername}" \
 --zone "europe-west1-b" \
 --num-nodes "3" \
 --username="admin" \
---cluster-version "1.6.4" \
+--cluster-version "1.6.7" \
 --machine-type "n1-standard-1" \
 --disk-size "20" \
 --network "default" \
