@@ -69,6 +69,7 @@ revealOptions:
 * Service
 * Label
 * Selector
+* User Interface
 
 ---
 
@@ -135,6 +136,18 @@ revealOptions:
 ### **Selector**
 
 * Match **Pod**s based on their *Label*s
+
+---
+
+### **User Interface**
+
+* Easy to use interface
+
+* Good *high-level* overview of the cluster
+
+* Allows one to quickly drill down into details
+
+* Really useful for debugging
 
 ---
 
