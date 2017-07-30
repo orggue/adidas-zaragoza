@@ -153,7 +153,7 @@ background (for example for debugging purposes), use the `docker exec` command:
 
 ```
 $ docker exec -it web bash
-root@9a141d0a2663:/# ps aux
+root@9a141d0a2663:/# apt-get update && apt-get install -y procps && ps aux
 USER   PID %CPU %MEM    VSZ   RSS TTY  STAT START   TIME COMMAND
 root     1  0.0  0.0  31760  4948 ?    Ss   12:19   0:00 nginx: m
 nginx    7  0.0  0.0  32152  2964 ?    S    12:19   0:00 nginx: w
@@ -161,6 +161,11 @@ root     8  0.4  0.0  20244  3184 ?    Ss   12:21   0:00 bash
 root    15  0.0  0.0  17500  2016 ?    R+   12:21   0:00 ps aux
 root@9a141d0a2663:/# exit
 ```
+
+If you noticed we had to install `ps` first because the nginx image
+is built on a slimmed down debian image (debian:stretch-slim).
+These slimmed down images are preffered many times because they decrease the
+size of the images and at the same time minimize the vector of attack.
 
 
 Finally, we can stop the running container with the `stop` command:
