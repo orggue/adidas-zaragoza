@@ -74,16 +74,19 @@ We see that there is 1 **Deployment** running a single instance of your app.
 
 By default applications are only visible inside the cluster. We can create a proxy to connect to our application.  
 Find out the **Pod** name:
+
 ```
 kubectl get <obejct>
 ```
+
 Create the proxy:
+
 ```bash
 kubectl port-forward hello-3015430129-g95j6 8080:8080
 ```
 
-kubectl describe <object>
-```
+kubectl describe `<object>`
+
 you can gather information about the status of your objects like pods, deployments, services, etc.
 
 ---
