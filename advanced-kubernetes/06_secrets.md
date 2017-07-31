@@ -81,21 +81,21 @@ A secret volume is used to pass sensitive information, such as passwords, to pod
 Secret volumes are backed by tmpfs (a RAM-backed filesystem) so they are never written to non-volatile storage.
 Important: You must create a secret in the Kubernetes API before you can use it
 
-We'll make the `redis.conf` available to the container via a Volume using secrets
+We'll serve a webpage via a Volume using secrets. This is definitely the wrong way to do things, but serves as an example of how secrets are dynamically updated.
 
 ----
 
 ### Creating a Secret Using kubectl create secret
 
 ```
-kubectl create secret generic db-user-pass --from-file=redis.conf
+kubectl create secret generic index --from-file=config/secrets/index.html
 ```
 
 Validate that it's been created:
 ```
 kubectl get secrets
 
-kubectl describe secret db-user-pass
+kubectl describe secret index
 ```
 Note that neither get nor describe shows the contents of the file by default
 
@@ -105,40 +105,39 @@ Note that neither get nor describe shows the contents of the file by default
 
 ```
         volumeMounts:
-        - mountPath: /usr/local/etc/redis
+        - mountPath: /usr/share/nginx/html
           name: config
           readOnly: true
       volumes:
         - name: config
           secret:
-            secretName: db-user-pass
+            secretName: index
 ```
 
 ----
 
-### Create a redis master
+### Create a nginx pod
 
 ```
-kubectl create -f redis-controller.yaml
+kubectl create -f config/secrets/nginx-controller.yaml
 ```
 
 ----
 
-### Validate that the redis is working
+### Validate that the nginx is working
 ```
-kubectl port-forward <PODNAME> 6379
+kubectl port-forward <PODNAME> 8080:80 > /dev/null &
 ```
 ```bash
-telnet localhost 6379
-CONFIG GET loglevel
+curl localhost:8080
+Hello World
 ```
 
 ----
 
-###  Configure redis password
-Uncomment `#requirepass foobared` in `redis.conf`
+### Update the message
 ```
-sed -i -e 's/#requirepass foobared/requirepass foobared/g' redis.conf
+echo "Hello again" > index.html
 ```
 or just with your editor
 
@@ -147,31 +146,20 @@ or just with your editor
 ### Update your secret
 
 ```
-kubectl delete secret db-user-pass
-kubectl create secret generic db-user-pass --from-file=redis.conf
+kubectl delete secret index
+kubectl create secret generic index --from-file=config/secrets/index.html
 ```
 
 Mounted Secrets are updated automatically but it's using its local ttl-based cache for getting the current value of the secret. The total time is kubelet sync period + ttl of secrets cache in kubelet (~1min). But as we can't do at the moment `kubectl apply --from-file` this isn' working. 
 
 ----
 
-### Validate that the redis.conf is updated
+### Validate that the index.html has updated
 
-Access to pod and validate the `redis.conf`
 
 ```
-kubectl exec -ti <PODNAME> bash
-cat /usr/local/etc/redis/redis.conf | grep foobar
-```
-
-----
-
-### Validate that the redis is using our config
-```
-kubectl port-forward <redis-pod-name> 6379
-```
-```bash
-telnet localhost 6379
+curl localhost:8080
+Hello again
 ```
 
 ----
