@@ -73,7 +73,6 @@ hello-node-364036756   1         1         1         16s
 
 ---
 
-<<<<<<< variant A
 ### Scaling Deployments
 
 * **ReplicaSet**s can be scaled through the **Deployment** or independently.  
@@ -95,31 +94,6 @@ kubectl describe rs hello-node-364036756
 ---
 
 ### Scale down the **Deployment**
->>>>>>> variant B
-### Scale up/down the Deployment
-####### Ancestor
-### Scaling Deployments
-
-ReplicaSets can be scaled through the Deployment or independently.  
-Use the `kubectl scale` command to scale:
-
-```
-kubectl scale --replicas=3 rs/hello-node-364036756
-replicaset "hello-node-364036756" scaled
-```
-
-----
-
-### Check the status of scaling the ReplicaSet
-```
-kubectl get rs hello-node-364036756
-kubectl describe rs hello-node-364036756
-```
-
-----
-
-### Scale down the Deployment
-======= end
 
 ```
 kubectl scale deployments hello-node --replicas=2
@@ -239,13 +213,7 @@ kubectl delete -f configs/deployment-v2.yaml
 * Create a service manifest to expose Nginx.
 * Scale the deployment up to 3.
 * Validate the scaling was successful.
-<<<<<<< variant A
 * Update the **Deployment** to use nginx:1.13-alpine.
->>>>>>> variant B
-* Update the deployment to use nginx:1.13
-####### Ancestor
-* Update the deployment to use nginx:1.13-alpine.
-======= end
 * Cleanup
 
 ----
