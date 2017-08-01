@@ -33,23 +33,18 @@ You should leave here knowing:
 
 # So what is it?
 
--
-
-<br/>
 A Docker container is a _portable_ store for a _single component_ and its _dependencies_
 
-<br/>
+<img src="./img/container.png">
 
-<img src="slides/img/container.png">
-
--
+---
 
 ## Isn't this just a lightweight VM?
 
  - Both provide _isolated environments_
  - Large overlap in use cases
 
--
+---
 
 ## Not quite
 
@@ -59,9 +54,8 @@ A Docker container is a _portable_ store for a _single component_ and its _depen
    - Much smaller image size
  - Developer oriented interface
 
--
+---
 
-<!-- .slide: data-background="slides/img/shipping_fade.png" -->
 ## The Shipping Metaphor
 
  - Goods come in a variety of shapes and sizes
@@ -70,7 +64,7 @@ A Docker container is a _portable_ store for a _single component_ and its _depen
  - Historically, shipping was a manual process
    - Dock workers needed to unload and load ships
 
--
+---
 
 ## The Intermodal Container
 
@@ -81,9 +75,9 @@ A Docker container is a _portable_ store for a _single component_ and its _depen
      - trucks, fork-lifts, cranes, trains
  - Led to enormous savings in time and effort
 
-<img src="slides/img/container.png">
+<img src="./img/container.png">
 
--
+---
 
 ## IT Diversity
 
@@ -94,13 +88,15 @@ A Docker container is a _portable_ store for a _single component_ and its _depen
    - Message Queues
    - REST APIs
    - Backend servers
-   ...
+
+---
+
  - All of which must run on a variety of environments
    - Developer's laptops
    - In-house testing cluster
    - Production VMs in the cloud
   
--
+---
 
  - Changes between environments cause problems
    - Different libraries, operating systems, configuration
@@ -108,7 +104,8 @@ A Docker container is a _portable_ store for a _single component_ and its _depen
    - Hard to test everything with everything
    - Continuous manual effort
 
--
+
+---
 
  - Enter the Docker container!
  - Container dependencies down to the OS
@@ -116,6 +113,7 @@ A Docker container is a _portable_ store for a _single component_ and its _depen
  - Lightweight enough to be easily moved between environments
 
 ---
+
 # First Steps Exercise
 
  - Quick play with Docker to see what it looks like
@@ -139,7 +137,7 @@ A Docker container is a _portable_ store for a _single component_ and its _depen
    - `docker rmi == docker image rm`
  - `--help` gives info on commands and subcommands
 
--
+---
 
 ## A Closer Look
 
@@ -150,28 +148,30 @@ A Docker container is a _portable_ store for a _single component_ and its _depen
  - `debian` is the image name
  - `bash` is the command to run inside the container
 
--
+---
 
 <!-- client server architecture -->
 
 ## Behind the scenes
 
-<img width="250" src="slides/img/vm_arch.png"> &nbsp;
-<img width="250" src="slides/img/container_arch.png">
+<img width="250" src="./img/vm_arch.png"> &nbsp;
+<img width="250" src="./img/container_arch.png">
 
--
+---
 
 ## Client Server Architecture
 
 
-<img width="650" src="slides/img/docker_architecture.svg">
+<img width="650" src="./img/docker_architecture.svg">
+
+---
 
  - Daemon starts and manages containers
  - Client connects to daemon over HTTP
  - Client runs natively on Linux, Mac, Windows
  - Server is Linux only 
 
--
+---
 
 ## Docker Images
 
@@ -180,11 +180,11 @@ A Docker container is a _portable_ store for a _single component_ and its _depen
    - image == class
    - container == instance
 
--
+---
 
-<img src="slides/img/container_layers.jpg">
+<img src="./img/container_layers.jpg">
 
--
+---
 
 ## Docker Hub
 
@@ -196,14 +196,15 @@ A Docker container is a _portable_ store for a _single component_ and its _depen
  - Applications
    - Redis, Wordpress, RevealJS...
 
--
+---
 
 ## Creating an Image Exercise
 
  - Let's see how we can make our own images
  - Open the "Building an Image with Commit" exercise
 
--
+
+---
 
 ## Problems
 
@@ -211,23 +212,24 @@ A Docker container is a _portable_ store for a _single component_ and its _depen
    - it's not easily repeatable
    - have to manually re-run all steps to make changes
      - e.g. update software, tweak configuration
--
+
+---
 
 ## Dockerfiles
 
  - The solution is to use a *Dockerfile*
  - List of repeatable steps for creating an image
 
-<img width="600" src="slides/img/dockerfile_fade.png">
+<img width="600" src="./img/dockerfile_fade.png">
 
--
+---
 
 ## Dockerfile in Action
 
  - Let's see how we can use a Dockerfile to create our image
  - Open the "Building an Image using a Dockerfile" exercise
 
--
+---
 
 ## Caching & Docker Builds
 
@@ -254,17 +256,18 @@ Removing intermediate container 377e166c1138
 Successfully built 7c93004dce27
 ```
 
-
--
+---
 
 ## Storing Docker Images
 
  - Docker images are stored in a *registry*
  - These can be local or remote
 
-<img src="slides/img/docker_reg.png">
+<img src="./img/docker_reg.png">
 
--
+
+---
+
 
 ## Docker Hub
 
@@ -274,7 +277,9 @@ Successfully built 7c93004dce27
  - Free of charge for public images
  - https://hub.docker.com/
  
--
+
+---
+
 
 ## Image Namespaces
 
@@ -288,7 +293,8 @@ Successfully built 7c93004dce27
     - `localhost:8000/myreg`
     - `quay.io/coreos/etcd` 
 
--
+
+---
 
 ## Tags
 
@@ -302,7 +308,7 @@ Successfully built 7c93004dce27
    - it is not necessarily the most up-to-date image
    - may not exist
 
--
+---
 
 ## Container Filesystems
 
@@ -316,7 +322,8 @@ Successfully built 7c93004dce27
    - File is copied up and "hides" the original
  - Enables very fast start-up
  
--
+
+---
 
 ## Union Filesystem
 
@@ -326,7 +333,7 @@ Successfully built 7c93004dce27
  - Multiple underlying implementations
    - Overlay, AUFS, ZFS, BTRFS, device mapper...
 
--
+---
 
 ## Persisting Data
 
@@ -336,7 +343,7 @@ Successfully built 7c93004dce27
  - A volume is a file or directory that lives outside the UFS
  - Volumes have native performance
 
--
+---
 
 ## Creating Volumes
 
@@ -345,21 +352,21 @@ Successfully built 7c93004dce27
    - with the `docker volume create` subcommand
    - With the `VOLUME` statement in Dockerfiles
 
--
+---
 
 ## Volume Management
 
  - Users can choose which folder on the host a volume maps to
    - or let Docker choose
 
--
+---
 
 ## Volumes Exercise
 
  - Let's have a look at volumes in action
  - Open the Docker Volumes worksheet
 
--
+---
 
 ## Docker and Databases
 
@@ -371,7 +378,7 @@ Successfully built 7c93004dce27
    - or you know what you're doing
  - Instead use VM or service (RDS etc)
 
--
+---
 
 ## Talking between containers
 
@@ -379,7 +386,7 @@ Successfully built 7c93004dce27
  - Don't have time to cover multi-host
  - But let's see how we can have two containers can communicate
 
--
+---
 
 ## Docker Networks
 
@@ -389,14 +396,14 @@ Successfully built 7c93004dce27
  - Containers on the same network can talk to each other by name
    - Behind the scenes Docker runs a DNS server
 
--
+---
 
 ## Networking Exercise
 
  - Let's take a quick look at networking
  - Open the network exercises sheet
 
--
+---
 
 ## Compose
 
@@ -405,7 +412,7 @@ Successfully built 7c93004dce27
    - lots of options
    - exacerbated when lots of containers
 
--
+---
 
 ## Compose
 
@@ -415,14 +422,14 @@ Successfully built 7c93004dce27
  - Can also be used in production
    - particularly with Swarm mode
 
--
+---
 
 ## Compose Exercise
 
  - Let's take a quick look at compose in action
  - Open the Compose worksheet
 
--
+---
 
 ## A Complete Example
 
@@ -430,14 +437,14 @@ Successfully built 7c93004dce27
  - A full example can be found at
   - https://github.com/microservices-demo/microservices-demo/blob/master/deploy/docker-compose/docker-compose.yml
 
--
+---
 
 ## Docker Building Blocks
 
 To get the most out of Docker, it's good to understand the features it builds
 on.
 
--
+---
 
 ## Linux Kernel Features
 
@@ -447,7 +454,7 @@ on.
  - A lot of Docker is simply exploiting Kernel features
  - Arguably less secure than VM
 
--
+---
 
 ## cgroups
   
@@ -458,7 +465,7 @@ on.
    - Isolates
    - Accounts for 
 
--
+---
 
 ## Namespaces
 
@@ -467,7 +474,7 @@ on.
   - Network
   - Plus some others
 
--
+---
 
 ## Capabilities
 
@@ -476,11 +483,10 @@ on.
 
 ---
 
-<br/>
 
 # So why is Docker so popular?
 
--
+---
 
 ## Containers aren't new
 
@@ -488,14 +494,15 @@ on.
  - Borg
  - LXC
 
--
+---
+
 ## First Container Tech
 
  - Glued together missing pieces
  - Fast and portable
  - Targetted developers
 
--
+---
 
 ## Enabled New Workflow
 
@@ -506,14 +513,14 @@ on.
  - Works the same everywhere
  - Contains dependencies and environment
 
--
+---
 
 ## Not possible before
  
  - VMs too slow and clunky
  - Developer interface lacking
 
--
+---
 
 ## Agility
 
@@ -521,7 +528,7 @@ on.
  - Test faster
  - Deploy faster
 
--
+---
 
 ## Reliablity
 
@@ -535,9 +542,8 @@ on.
 
 # What For?
 
--
+---
 
-<!-- .slide: data-background="slides/img/pipeline_fade.png" -->
 ## CI/CD Pipelines
 
 
@@ -546,7 +552,7 @@ on.
  - Test faster
  - Make sure you ship what you test!
 
--
+---
 
 ## Microservices
 
@@ -555,7 +561,7 @@ on.
  - As opposed to monoliths
  - Scale-out as opposed to scale-up
 
--
+---
 
 ## The Good
 
@@ -565,27 +571,30 @@ on.
  - Easier to distribute
  - Use best tool for the job
 
--
+---
 
 ## The Bad
 
  - How to divide system into microservices?
  - Fast function calls become slow REST calls
 
-<img width="500" src="slides/img/microservices-function.png">
+<img width="500" src="./img/microservices-function.png">
 
--
+---
 
 ## The Ugly
 
  - Complexity is moved to network
 
-<img width="500" src="slides/img/microservice_arch.png">
+<img width="500" src="./img/microservice_arch.png">
 
--
+---
+
 <!-- .slide: data-background="#000000" -->
-<img src="slides/img/death-star.jpg">
--
+<img src="./img/death-star.jpg">
+
+
+---
 
 
 ## Immutable infrastructure
@@ -594,8 +603,6 @@ on.
  - Don't allow running containers to change
  - Instead replace with new containers 
  - Simpler, no need for CM
-
--
 
 ---
 
