@@ -4,6 +4,14 @@
 
 In this exercise we'll briefly explore the Docker Compose tool.
 
+First we will insure docker-compose is installed
+
+On your ubuntu machine
+
+```
+$ sudo apt-get install -y docker-compose
+```
+
 Create a file `docker-compose.yml` with the following contents:
 
 ```
