@@ -68,6 +68,7 @@ hello            1         1         1            1           51s
 ```
 
 We see that there is 1 **Deployment** running a single instance of your app.
+
 ---
 
 ### Inspect your application
