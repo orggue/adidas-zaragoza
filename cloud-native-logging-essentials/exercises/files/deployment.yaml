@@ -11,6 +11,6 @@ spec:
     spec:
       containers:
       - name: server
-        image: eu.gcr.io/$YOUR_USERNAME/server
+        image: eu.gcr.io/adidas-zaragoza/HOSTNAME-server
         ports:
         - containerPort: 8080

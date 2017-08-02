@@ -46,7 +46,12 @@ revealOptions:
 
 * The `files` directory contains code, k8s manifests and a `Dockerfile`
 
-* Edit `deployment.yaml` and replace the string `$USER` with your VM username
+* Edit `deployment.yaml` and replace the string `HOSTNAME` with your VM hostname
+
+```
+# to get hostname
+$ echo $HOSTNAME
+```
 
 ---
 
@@ -55,7 +60,7 @@ revealOptions:
 
 
 ```
-gcloud docker -- build -t eu.gcr.io/$USER/server -f Dockerfile .
+gcloud docker -- build -t eu.gcr.io/adidas-zaragoza/$HOSTNAME-server -f Dockerfile .
 ```
 
 
@@ -65,7 +70,7 @@ gcloud docker -- build -t eu.gcr.io/$USER/server -f Dockerfile .
 ### Push the image
 
 ```
-gcloud docker -- push eu.gcr.io/$USER/server
+gcloud docker -- push eu.gcr.io/adidas-zaragoza/$HOSTNAME-server
 ```
 
 
