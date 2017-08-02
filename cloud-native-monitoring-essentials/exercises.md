@@ -103,7 +103,7 @@ kubectl port-forward USER_POD_ID 8000:80 -n sock-shop
 ```
 Then hit it with a bunch of requests
 ```
-siege --concurrent=20 --reps=100 http://localhost:8000/healt
+siege --concurrent=20 --reps=100 http://localhost:8000/health
 ```
 
 You can visit prometheus and enter your own PromQL
