@@ -93,7 +93,7 @@ sudo apt-get install -y siege
 
 Now we will port forward to the user service
 
-First get your pod id
+First get your user pod id
 ```
 kubectl get pods -n sock-shop
 ```
