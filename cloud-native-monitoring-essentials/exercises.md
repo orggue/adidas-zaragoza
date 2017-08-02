@@ -22,54 +22,102 @@ revealOptions:
 
 ## Installing Weave Sock Shop
 
-* Check out the Sock Shop code
+* Check out the Sock Shop code for cs training
 
 ```
 git clone https://github.com/microservices-demo/microservices-demo
+cd microservices-demo/deploy/kubernetes
+git checkout cs-training
 ```
 
-Read the documentation located at: https://microservices-demo.github.io/microservices-demo
+Now we will deploy the Sock Shop
 
-To start the sock-shop, follow the instructions at: https://microservices-demo.github.io/microservices-demo/deployment/kubernetes-start.html
+```
+kubectl create -f manifests/sock-shop-ns.yaml -f manifests
+```
+Do you know why we ran create in this order?  Did you get an error?
+Please ask us to explain
 
-_Note: You will need to create the namespace `sock-shop`_
+Insure the sock-shop is running
+```
+kubectl get pods -n sock-shop
+```
+
+Not all services may come up the only required one is user
 
 ---
-
 
 ## Installing Prometheus
 
-* `cd` to the `/deploy/kubernetes/manifests-monitoring` directory.
+To install prometheus 
 
-* Create the monitoring namespace with `kubectl apply -f monitoring-ns.yaml`
+First visit https://requestb.in
 
-* Create an alertrules volume. Although we're not going to use alerts, it is required by the
-  deployment: `kubectl apply -f prometheus-alertrules.yaml`
+Click create requestbin
 
-* Create a `ConfigMap` that inform prometheus to scrape kubernetes services `kubectl apply -f prometheus-configmap.yaml`
+Copy the url and replace REQUESTBIN_URL in
 
-* Deploy and expose prometheus: `kubectl apply -f prometheus-dep.yaml` and `kubectl apply -f prometheus-svc.yaml`
+```
+manifests-monitoring/alertmanager-configmap.yaml
+```
+Keep the requestb.in page open
 
----
+Now launch prometheus, grafana and the alertmanager 
 
-# Connecting to Prometheus
+```
+kubectl create -f manifests-monitoring/monitoring-ns.yaml -f manifests-monitoring
+```
 
-First, connect to prometheus. The service exposed a `NodePort` on port `31090`.
+Wait for the prometheus endpoints to be available
 
-Let's open the GCE firewall on that port so we can access:
+```
+kubectl get svc -n monitoring
+```
 
-* `gcloud compute firewall-rules create prometheus --allow tcp:31090`
+Visit the endpoint for grafana and prometheus
 
-Now, list all the instances on GKE (you will see all clusters) and copy the external ip address of
-one of your nodes:
+While in prometheus go to alerts you have one alert rule
 
-* `gcloud compute instances list`
+```
+rate(microservices_demo_user_request_count[1m]) > 20
+```
 
-(Alternatively, use `kubectl get nodes -o yaml` and inspect the output)
+Basically fire an alert if the request rate for the user service goes over 20 in a minute
 
-* Using your local browser, browse to `http://<IP_ADDRESS>:31090`. You should see the prometheus UI.
+We will force this to happen
 
----
+install siege
+```
+sudo apt-get install -y siege 
+```
+
+Now we will port forward to the user service
+
+First get your pod id
+```
+kubectl get pods -n sock-shop
+```
+And proxy to the service
+```
+kubectl port-forward USER_POD_ID 8000:80 -n sock-shop
+```
+Then hit it with a bunch of requests
+```
+siege --concurrent=20 --reps=100 http://localhost:8000/healt
+```
+
+You can visit prometheus and enter your own PromQL
+to see the effects of siege
+
+```
+rate(microservices_demo_user_request_count[1m])
+```
+
+After a few minutes if you visit the Alerts tab in Prometheus
+you will see an alert is active
+
+Visit the request bin url and you will see that the endpoint
+has been hit with an alert
 
 # Using Prometheus
 
@@ -84,35 +132,6 @@ Now take a look around. Try:
   -f /deploy/kubernetes/manifests/loadtest-dep.yaml`
 
 * Watch the rate of requests again.
-
-* Use the `request_duration_seconds_bucket` parameter to plot the median and 95% percentile duration
-  of the requests made by the load-test. (see the docs)
-
----
-
-# Installing Grafana
-
-Now we're going to install Grafana. Grafana is an open source dashboarding application that has good
-integration with Prometheus.
-
-Rather than applying individual Grafana deployments and services, it is easier to just deploy the
-entire `kubernetes-monitoring` directory.
-
-`cd ~ ; kubectl apply -f microservices-demo/deploy/kubernetes/manifests-monitoring/`
-
-* Get the pods for the monitoring namespace and make sure the Grafana pod starts.
-
----
-
-# Using Grafana
-
-Our service manifest declares a `NodePort` of 31300.
-
-* Open up the GKE firewall to allow port 31300
-
-* Login with the default username and password of `admin` and `admin`
-
-* Browse to the `sock-shop-performance` dashboard.
 
 ---
 
