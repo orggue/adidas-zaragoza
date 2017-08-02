@@ -6,6 +6,23 @@ revealOptions:
 ---
 
 # Welcome...
+
+---
+
+## Introductions
+
+Jason Smith
+
+Cyle Riggs
+
+Hamish Hutchings
+
+---
+
+## Who are you?
+
+---
+
 ## Let's get started
 
 ---
@@ -13,6 +30,8 @@ revealOptions:
 ### Get the private key and your VM's IP address from the instructors
 
 Everyone will use a separate VM and your own Kubernetes cluster
+
+https://tinyurl.com/y8tkraq7
 
 ---
 
@@ -57,3 +76,18 @@ Once you have putty...
 ### Setup Putty - url and save profile (2/2)
 
 <img src="img/putty-2.png">
+
+### Provision your cluster
+./create-cluster-gke-norbac.sh
+
+###
+
+git clone on VM
+
+git clone git@github.com:ContainerSolutions/adidas-zaragoza.git
+
+open in browser 
+
+https://github.com/ContainerSolutions/adidas-zaragoza
+
+
