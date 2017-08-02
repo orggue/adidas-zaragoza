@@ -36,9 +36,9 @@ of shell scripts which begin with `#!/bin/bash`, as they will not work by
 default in alpine linux, and will produce a cryptic error:
 ```
 $ cat <<EOF > test.sh
-> #!/bin/bash
-> echo Hello from shell script
-> EOF
+#!/bin/bash
+echo Hello from shell script
+EOF
 $ chmod +x test.sh
 $ docker run -v $(pwd)/test.sh:/test.sh alpine /test.sh
 standard_init_linux.go:187: exec user process caused "no such file or directory"
@@ -55,9 +55,9 @@ With a small modification we can see that the shell script works just fine in
 sh:
 ```
 $ cat <<EOF > test.sh
-> #!/bin/sh
-> echo Hello from shell script
-> EOF
+#!/bin/sh
+echo Hello from shell script
+EOF
 $ chmod +x test.sh
 $ docker run -v $(pwd)/test.sh:/test.sh alpine /test.sh
 Hello from shell script
@@ -67,9 +67,9 @@ Some bash scripts may not work in sh, even with modification. Let's look at how
 to install bash using `apk`, the alpine linux package manager.
 ```
 $ cat <<EOF > test.sh
-> #!/bin/bash
-> echo Hello from shell script
-> EOF
+#!/bin/bash
+echo Hello from shell script
+EOF
 $ chmod +x test.sh
 $ docker run -it -v $(pwd)/test.sh:/test.sh alpine sh
 / # apk --no-cache add bash
