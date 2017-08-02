@@ -40,7 +40,7 @@ revealOptions:
 
 ### Preparation
 
-* Go to `training-modules/cloud-native-logging-essentials/exercises`
+* Go to `adidas-zaragoza/cloud-native-logging-essentials/exercises`
 
 * This directory contains this slide deck
 
@@ -123,12 +123,13 @@ kubectl delete deployment server
 ### Build & push again
 
 ```
-gcloud docker -- build -t eu.gcr.io/$USER/server -f Dockerfile .
+gcloud docker -- build -t eu.gcr.io/adidas-zaragoza/$HOSTNAME-server -f Dockerfile .
 ```
 
 ```
-gcloud docker -- push eu.gcr.io/$USER/server
+gcloud docker -- push eu.gcr.io/adidas-zaragoza/$HOSTNAME-server
 ```
+
 
 ---
 
@@ -137,7 +138,7 @@ gcloud docker -- push eu.gcr.io/$USER/server
 
 
 ```
-kubectl -f create deployment.yaml
+kubectl create -f deployment.yaml
 ```
 
 
@@ -220,7 +221,7 @@ kubectl --namespace=kube-system get ds
 * We will deploy Fluentd with Elasticsearch config
 
 ```
-kubectl create -f fleuntd-daemonset.yaml
+kubectl create -f fluentd-daemonset.yaml
 ```
 
 * Check that it is running
@@ -257,14 +258,20 @@ kubectl create -f elasticsearch-service.yaml
 kubectl --namespace=kube-system get pods
 ```  
 
+Then get the svc IP and port
+```
+kubectl --namespace=kube-system get svc
+```
+
 * Copy the `EXTERNAL-IP` from the output
 
 * Hit the endpoint
 
-```
-curl $EXTERNAL-IP:9200
-```
 
+```
+curl $EXTERNAL-IP:$EXTERNAL_PORT
+```
+Or visit from your browser
 
 ---
 
@@ -293,13 +300,14 @@ kubectl create -f kibana-service.yaml
 kubectl --namespace=kube-system get pods
 ```  
 
+Then get the svc IP and port
+```
+kubectl --namespace=kube-system get svc
+```
+
 * Copy the `EXTERNAL-IP` from the output
 
-```
-kubectl get pods --namespace=kube-system
-``` 
-
-* Open the UI in the browser at `$EXTERNAL-IP:5601`
+* Open the UI in the browser at `$EXTERNAL-IP:$EXTERNAL_PORT`
 
 
 ---
