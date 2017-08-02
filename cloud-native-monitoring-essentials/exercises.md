@@ -145,16 +145,5 @@ Grafana documentation can be found here: http://docs.grafana.org/guides/basic_co
 
 * Create a "metric" showing the number of sock orders.
 
----
-
-# Extra
-
-If you've finished all this, and you have some extra time, browse to the alertmanager directory:
-
-`cd /deploy/kubernetes/manifests-alerting/`
-
-The prometheus alertmanager provides an alert mechanism for prometheus.
-
-* Investigate. :-)
 
 
