@@ -44,6 +44,9 @@ $ docker-compose up -d
 
 You should now be able to access the application at http://localhost:5000
 
-Try some of the other Compose commands that you can list with `docker-copmose
+Try some of the other Compose commands that you can list with `docker-compose
 --help` e.g. `logs` and `ps`.
 
+## Bonus Task
+
+Try to build a docker compose file for your favorite development stack.
