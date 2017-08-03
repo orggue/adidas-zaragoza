@@ -51,6 +51,14 @@ Repercussions:
 
 ---
 
+### Requests and Limits
+
+In other words:
+* A process using more than its request could get throttled
+* A process using more than its limit could get killed
+
+---
+
 ### Setting resource limits
 
 
