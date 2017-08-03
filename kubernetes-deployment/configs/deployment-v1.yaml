@@ -8,7 +8,7 @@ spec:
     metadata:
       labels:
         app: hello-node
-        version: 1
+        version: one
     spec:
       containers:
       - name: hello-node
