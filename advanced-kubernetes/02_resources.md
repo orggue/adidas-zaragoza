@@ -65,7 +65,15 @@ This is why you should ALWAYS set both resource requests and resource limits.
 
 ### Compressible Resource Guarantees
 
-Kubernetes only supports CPU at the moment.
+Resources that are easily throttled, such as CPU and network I/O, are referred
+to as compressible.
+
+Incompressible resources are things like memory, or consumed disk space.
+
+
+---
+
+### Compressible Resource Guarantees
 
 * Pods are guaranteed to get the amount of CPU they request.
 * This isn't fully guaranteed today because CPU isolation is at the container level. Pod level cgroups will be introduced soon to achieve this goal.
