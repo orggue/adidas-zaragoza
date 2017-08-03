@@ -77,7 +77,10 @@ Incompressible resources are things like memory, or consumed disk space.
 
 * Pods are guaranteed to get the amount of CPU they request.
 * This isn't fully guaranteed today because CPU isolation is at the container level. Pod level cgroups will be introduced soon to achieve this goal.
+  *   https://github.com/kubernetes/features/issues/126
+
 * Excess CPU resources will be distributed based on the amount of CPU requested.
+
 
 ---
 
