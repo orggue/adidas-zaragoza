@@ -223,9 +223,7 @@ containers:
 
 How is “protection” implemented?
 * CPU: some Best Effort/Burstable container using more than its request is throttled.
-    * CPU shares + CPU quota.
 * Memory: some Best Effort/Burstable container using more than its request is killed.
-    * OOM score + user-space evictions.
 
 ---
 
