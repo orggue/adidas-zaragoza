@@ -188,8 +188,8 @@ curl -H "Host: bar.baz.com" http://<HOST_IP>/foo
 We want to have SSL for our services enabled. So let's create first the needed certificates for `foo.bar.com`:
 
 ```
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /work/tls.key \
--out /work/tls.crt -subj "/CN=foo.bar.com"
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout tls.key \
+-out tls.crt -subj "/CN=foo.bar.com"
 openssl dhparam -out dhparam.pem 4096
 ```
 No openssl installed? No Problem.
