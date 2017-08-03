@@ -52,7 +52,9 @@ To test if the new version causes havoc in your system
 
 ### A/B
 
-Have two versions running next with distributed traffic
+Have two versions running next to each other distributed traffic
+To tests features
+"Does this button get used more if it is red?"
 
 ---
 
@@ -62,3 +64,22 @@ Have two versions running next with distributed traffic
 Have two versions running next to each other and switch back and forth between them
 
 ---
+
+### With Selectors
+
+It can be accomplished with selectors of a service on deployments
+
+### The Problem
+
+It means you need to be aware of how your pods are scaling
+to measure the quantity of your deployments
+
+There are no guarantees of distribution equal to the ratio of pods
+
+Seperate deployments for each version of a service
+
+Lots of manual intervention
+
+### Other tools
+
+Other tools can perform deployment strategies better
