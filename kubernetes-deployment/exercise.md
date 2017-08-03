@@ -66,7 +66,6 @@ spec:
     metadata:
       labels:
         app: hello-node
-        version: one
     spec:
       containers:
       - name: hello-node
